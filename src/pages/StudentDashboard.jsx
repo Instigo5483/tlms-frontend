@@ -1,125 +1,297 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { motion, AnimatePresence } from 'motion/react'
 import Navbar from '../components/Navbar'
 import { useAuth } from '../hooks/useAuth'
 
+const BACKEND = import.meta.env.VITE_BACKEND_URL
+
 export default function StudentDashboard() {
-  const { user } = useAuth()
+  const { user, token } = useAuth()
   const navigate = useNavigate()
+  const [tab, setTab] = useState('connected')
+  const [enrollments, setEnrollments] = useState([])
+  const [loading, setLoading] = useState(true)
 
   const initials = user?.full_name
     ? user.full_name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
     : '??'
 
+  useEffect(() => { loadEnrollments() }, [])
+
+  async function loadEnrollments() {
+    try {
+      const res = await fetch(`${BACKEND}/api/enrollments/mine`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      const data = await res.json()
+      setEnrollments(Array.isArray(data) ? data : [])
+    } catch (err) { console.error(err) }
+    finally { setLoading(false) }
+  }
+
+  async function handleRemove(enrollmentId) {
+    if (!confirm('Remove this connection?')) return
+    try {
+      await fetch(`${BACKEND}/api/enrollments/${enrollmentId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      setEnrollments(prev => prev.filter(e => e.id !== enrollmentId))
+    } catch { alert('Failed to remove. Try again.') }
+  }
+
+  const connected = enrollments.filter(e => e.status === 'accepted')
+  const pending = enrollments.filter(e => e.status === 'pending')
+
+  const tabs = [
+    { key: 'connected', label: 'Connected', count: connected.length },
+    { key: 'pending', label: 'Pending', count: pending.length },
+    { key: 'explore', label: 'Find Tutors', count: null },
+  ]
+
   return (
-    <>
+    <div style={{ minHeight: '100vh', background: '#000' }}>
       <Navbar />
-      <main style={{
-        position: 'relative', zIndex: 1,
-        minHeight: '100vh',
-        background: '#0a0f1e',
-        padding: '84px 1.5rem 3rem',
-        maxWidth: '1100px',
-        margin: '0 auto'
-      }}>
+      <main style={{ padding: '80px 1.5rem 3rem', maxWidth: '1000px', margin: '0 auto' }}>
 
         {/* Header */}
-        <div style={{
-          display: 'flex', alignItems: 'center',
-          gap: '1rem', marginBottom: '2.5rem'
-        }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2.5rem', paddingTop: '1rem' }}
+        >
           <div style={{
-            width: '52px', height: '52px', borderRadius: '50%',
-            background: 'rgba(26,115,232,0.2)',
-            border: '2px solid rgba(26,115,232,0.4)',
+            width: '48px', height: '48px', borderRadius: '12px',
+            background: 'rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.1)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: 700, fontSize: '1.1rem', color: '#60a5fa'
-          }}>
-            {initials}
-          </div>
+            fontWeight: 700, fontSize: '1rem', color: '#fff', flexShrink: 0
+          }}>{initials}</div>
           <div>
-            <h1 style={{ color: '#f1f5f9', fontWeight: 700, fontSize: '1.5rem' }}>
-              Welcome back, {user?.full_name?.split(' ')[0] || 'Student'}
+            <h1 style={{ color: '#fff', fontWeight: 800, fontSize: 'clamp(1.2rem, 3vw, 1.5rem)', letterSpacing: '-0.02em' }}>
+              {user?.full_name?.split(' ')[0] || 'Student'}
             </h1>
-            <p style={{ color: '#64748b', fontSize: '0.9rem' }}>{user?.email}</p>
+            <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.82rem', marginTop: '2px' }}>{user?.email}</p>
           </div>
-        </div>
+          <span style={{
+            marginLeft: 'auto', fontSize: '0.72rem', fontWeight: 600,
+            padding: '4px 12px', borderRadius: '999px',
+            background: 'rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            color: 'rgba(255,255,255,0.4)', whiteSpace: 'nowrap'
+          }}>Student</span>
+        </motion.div>
 
-        {/* Stat cards */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '1rem', marginBottom: '2.5rem'
-        }}>
+        {/* Stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1px', marginBottom: '2rem', background: 'rgba(255,255,255,0.06)', borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}
+        >
           {[
-            { label: 'Saved Tutors', value: '0', icon: '🔖' },
-            { label: 'Sessions Booked', value: '0', icon: '📅' },
-            { label: 'Subjects Learning', value: '0', icon: '📚' },
-          ].map(s => (
-            <div key={s.label} style={{
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: '14px', padding: '1.4rem'
-            }}>
-              <div style={{ fontSize: '1.6rem', marginBottom: '0.6rem' }}>{s.icon}</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 700, color: '#f1f5f9' }}>{s.value}</div>
-              <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '2px' }}>{s.label}</div>
+            { label: 'Connected', value: connected.length },
+            { label: 'Pending', value: pending.length },
+            { label: 'Total', value: enrollments.length },
+          ].map((s, i) => (
+            <div key={s.label} style={{ padding: '1.4rem', background: '#000' }}>
+              <div style={{ fontSize: '2rem', fontWeight: 800, color: '#fff', letterSpacing: '-0.03em' }}>{s.value}</div>
+              <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.35)', marginTop: '4px' }}>{s.label}</div>
             </div>
           ))}
-        </div>
+        </motion.div>
 
-        {/* Quick actions */}
-        <h2 style={{ color: '#f1f5f9', fontWeight: 600, fontSize: '1.1rem', marginBottom: '1rem' }}>
-          Quick Actions
-        </h2>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '1rem', marginBottom: '2.5rem'
-        }}>
-          {[
-            { icon: '🔍', title: 'Find a Tutor', desc: 'Browse and filter tutors by subject or grade', action: () => navigate('/discover') },
-            { icon: '👤', title: 'Edit Profile', desc: 'Update your name, grade, and subjects', action: () => {} },
-          ].map(a => (
-            <button key={a.title} onClick={a.action} style={{
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: '14px', padding: '1.4rem',
-              textAlign: 'left', cursor: 'pointer',
-              transition: 'border-color 0.2s',
-            }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(26,115,232,0.5)'}
-              onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'}
-            >
-              <div style={{ fontSize: '1.6rem', marginBottom: '0.6rem' }}>{a.icon}</div>
-              <div style={{ fontWeight: 600, color: '#f1f5f9', marginBottom: '4px' }}>{a.title}</div>
-              <div style={{ fontSize: '0.85rem', color: '#64748b' }}>{a.desc}</div>
+        {/* Tabs */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+          style={{ display: 'flex', gap: '4px', marginBottom: '1.5rem', background: '#0a0a0a', padding: '4px', borderRadius: '12px', width: 'fit-content', border: '1px solid rgba(255,255,255,0.06)' }}
+        >
+          {tabs.map(t => (
+            <button key={t.key} onClick={() => setTab(t.key)} style={{
+              padding: '7px 16px', border: 'none', cursor: 'pointer',
+              borderRadius: '8px', fontSize: '0.82rem', fontWeight: 600,
+              background: tab === t.key ? 'rgba(255,255,255,0.1)' : 'transparent',
+              color: tab === t.key ? '#fff' : 'rgba(255,255,255,0.35)',
+              transition: 'all 0.2s', whiteSpace: 'nowrap'
+            }}>
+              {t.label}{t.count !== null ? ` (${t.count})` : ''}
             </button>
           ))}
-        </div>
+        </motion.div>
 
-        {/* Recent activity placeholder */}
-        <h2 style={{ color: '#f1f5f9', fontWeight: 600, fontSize: '1.1rem', marginBottom: '1rem' }}>
-          Recent Activity
-        </h2>
-        <div style={{
-          background: 'rgba(255,255,255,0.03)',
-          border: '1px solid rgba(255,255,255,0.06)',
-          borderRadius: '14px', padding: '3rem',
-          textAlign: 'center'
-        }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '0.8rem' }}>📭</div>
-          <p style={{ color: '#64748b', fontSize: '0.95rem' }}>No activity yet.</p>
-          <button onClick={() => navigate('/discover')} style={{
-            marginTop: '1rem', padding: '10px 24px',
-            background: '#1a73e8', color: '#fff',
-            border: 'none', borderRadius: '8px',
-            fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem'
-          }}>
-            Find your first tutor
-          </button>
-        </div>
-
+        {/* Content */}
+        <AnimatePresence mode="wait">
+          {loading ? (
+            <motion.div key="loading"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
+            >
+              {[1,2,3].map(i => (
+                <motion.div key={i}
+                  animate={{ opacity: [0.3, 0.6, 0.3] }}
+                  transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.15 }}
+                  style={{ height: '80px', background: '#0a0a0a', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.04)' }}
+                />
+              ))}
+            </motion.div>
+          ) : tab === 'connected' ? (
+            <motion.div key="connected"
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+            >
+              {connected.length === 0 ? (
+                <EmptyState text="No connections yet" sub="Find a tutor or center to get started" action={() => navigate('/discover')} actionLabel="Browse Tutors" />
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {connected.map((e, i) => (
+                    <EnrollmentCard key={e.id} enrollment={e} index={i}
+                      onRemove={() => handleRemove(e.id)}
+                      onView={() => navigate(`/profile/${e.role}/${e.tutor_id}`)}
+                    />
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          ) : tab === 'pending' ? (
+            <motion.div key="pending"
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+            >
+              {pending.length === 0 ? (
+                <EmptyState text="No pending requests" sub="Your connection requests will appear here" />
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {pending.map((e, i) => (
+                    <EnrollmentCard key={e.id} enrollment={e} index={i}
+                      onRemove={() => handleRemove(e.id)}
+                      onView={() => navigate(`/profile/${e.role}/${e.tutor_id}`)}
+                      label="Cancel"
+                    />
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          ) : (
+            <motion.div key="explore"
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              style={{
+                textAlign: 'center', padding: '4rem 1rem',
+                border: '1px solid rgba(255,255,255,0.06)',
+                borderRadius: '20px', background: '#0a0a0a'
+              }}
+            >
+              <div style={{ fontSize: '2.5rem', marginBottom: '1rem', opacity: 0.4 }}>◎</div>
+              <p style={{ color: 'rgba(255,255,255,0.5)', marginBottom: '0.5rem', fontWeight: 600 }}>Find tutors and centers</p>
+              <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>Discover verified tutors near you</p>
+              <motion.button
+                whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+                onClick={() => navigate('/discover')}
+                style={{
+                  padding: '12px 28px', background: '#fff', color: '#000',
+                  border: 'none', borderRadius: '12px', fontWeight: 700,
+                  cursor: 'pointer', fontSize: '0.9rem'
+                }}
+              >Browse Tutors</motion.button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
-    </>
+    </div>
+  )
+}
+
+function EnrollmentCard({ enrollment, onRemove, onView, label, index }) {
+  const isCenter = enrollment.role === 'center'
+  const initials = enrollment.name?.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '??'
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.05 }}
+      style={{
+        background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.06)',
+        borderRadius: '14px', padding: '1.1rem 1.2rem',
+        display: 'flex', alignItems: 'center',
+        justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem'
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{
+          width: '38px', height: '38px', borderRadius: '10px', flexShrink: 0,
+          background: 'rgba(255,255,255,0.06)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontWeight: 700, fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)'
+        }}>{initials}</div>
+        <div>
+          <p style={{ color: '#fff', fontWeight: 600, fontSize: '0.9rem' }}>{enrollment.name}</p>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '3px', flexWrap: 'wrap' }}>
+            <span style={{
+              fontSize: '0.68rem', padding: '2px 8px', borderRadius: '6px',
+              background: 'rgba(255,255,255,0.06)',
+              color: 'rgba(255,255,255,0.4)',
+              border: '1px solid rgba(255,255,255,0.08)'
+            }}>{isCenter ? 'Center' : 'Tutor'}</span>
+            {enrollment.status === 'pending' && (
+              <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.3)' }}>Awaiting approval</span>
+            )}
+            {enrollment.status === 'accepted' && enrollment.monthly_fee > 0 && (
+              <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.35)' }}>₹{enrollment.monthly_fee}/month</span>
+            )}
+          </div>
+        </div>
+      </div>
+      <div style={{ display: 'flex', gap: '8px' }}>
+        <button onClick={onView} style={{
+          padding: '6px 14px', background: 'transparent',
+          border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: '8px', color: 'rgba(255,255,255,0.5)',
+          cursor: 'pointer', fontSize: '0.78rem', fontWeight: 500
+        }}>View</button>
+        <button onClick={onRemove} style={{
+          padding: '6px 14px',
+          background: 'rgba(248,113,113,0.06)',
+          border: '1px solid rgba(248,113,113,0.15)',
+          borderRadius: '8px', color: '#f87171',
+          cursor: 'pointer', fontSize: '0.78rem', fontWeight: 500
+        }}>{label || 'Remove'}</button>
+      </div>
+    </motion.div>
+  )
+}
+
+function EmptyState({ text, sub, action, actionLabel }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+      style={{
+        textAlign: 'center', padding: '4rem 1rem',
+        border: '1px solid rgba(255,255,255,0.06)',
+        borderRadius: '20px', background: '#0a0a0a'
+      }}
+    >
+      <div style={{ fontSize: '2rem', marginBottom: '1rem', opacity: 0.2 }}>◎</div>
+      <p style={{ color: 'rgba(255,255,255,0.4)', marginBottom: '0.3rem', fontWeight: 600 }}>{text}</p>
+      <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.82rem', marginBottom: action ? '1.5rem' : 0 }}>{sub}</p>
+      {action && (
+        <motion.button
+          whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+          onClick={action} style={{
+            padding: '10px 24px', background: '#fff', color: '#000',
+            border: 'none', borderRadius: '10px',
+            fontWeight: 700, cursor: 'pointer', fontSize: '0.88rem'
+          }}
+        >{actionLabel}</motion.button>
+      )}
+    </motion.div>
   )
 }

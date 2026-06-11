@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from 'motion/react'
 import Navbar from '../components/Navbar'
 import { useAuth } from '../hooks/useAuth'
 
-const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'
+const BACKEND = import.meta.env.VITE_BACKEND_URL
 
-export default function TutorDashboard() {
+export default function CenterDashboard() {
   const { user, token } = useAuth()
 
   const initials = user?.full_name
@@ -15,33 +15,36 @@ export default function TutorDashboard() {
   const [tab, setTab] = useState('profile')
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [loadedProfile, setLoadedProfile] = useState(null)
+  const [loaded, setLoaded] = useState(null)
   const [students, setStudents] = useState([])
   const [studentsLoading, setStudentsLoading] = useState(false)
   const [profile, setProfile] = useState({
-    bio: '', monthly_rate: '', subjects: '', grade_levels: '',
-    phone: '', country: '', state: '', district: '', area: ''
+    center_name: '', phone: '', address: '',
+    country: '', state: '', district: '', area: '',
+    subjects: '', grade_levels: '', bio: '', website: ''
   })
 
   useEffect(() => { loadProfile(); loadStudents() }, [])
 
   async function loadProfile() {
     try {
-      const res = await fetch(`${BACKEND}/api/auth/me`, {
+      const res = await fetch(`${BACKEND}/api/center/${user.id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       const data = await res.json()
-      setLoadedProfile(data)
+      setLoaded(data)
       setProfile({
-        bio: data.bio || '',
-        monthly_rate: data.monthly_rate || '',
-        subjects: data.subjects?.join(', ') || '',
-        grade_levels: data.grade_levels?.join(', ') || '',
+        center_name: data.center_name || '',
         phone: data.phone || '',
+        address: data.address || '',
         country: data.country || '',
         state: data.state || '',
         district: data.district || '',
         area: data.area || '',
+        subjects: data.subjects?.join(', ') || '',
+        grade_levels: data.grade_levels?.join(', ') || '',
+        bio: data.bio || '',
+        website: data.website || ''
       })
     } catch (err) { console.error(err) }
   }
@@ -58,34 +61,19 @@ export default function TutorDashboard() {
     finally { setStudentsLoading(false) }
   }
 
-  async function saveProfile() {
+  async function save() {
     setSaving(true)
     try {
-      const res = await fetch(`${BACKEND}/api/tutor/${user.id}`, {
+      const subjectsArr = profile.subjects.split(',').map(s => s.trim()).filter(Boolean)
+      const gradesArr = profile.grade_levels.split(',').map(s => s.trim()).filter(Boolean)
+      const res = await fetch(`${BACKEND}/api/center/${user.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({
-          bio: profile.bio,
-          monthly_rate: Number(profile.monthly_rate),
-          subjects: profile.subjects.split(',').map(s => s.trim()).filter(Boolean),
-          grade_levels: profile.grade_levels.split(',').map(s => s.trim()).filter(Boolean),
-          phone: profile.phone,
-          country: profile.country,
-          state: profile.state,
-          district: profile.district,
-          area: profile.area,
-        })
+        body: JSON.stringify({ ...profile, subjects: subjectsArr, grade_levels: gradesArr })
       })
       const data = await res.json()
       if (!res.ok) { alert(data.error || 'Failed to save'); return }
-      setLoadedProfile(prev => ({
-        ...prev, bio: profile.bio,
-        monthly_rate: Number(profile.monthly_rate),
-        subjects: profile.subjects.split(',').map(s => s.trim()).filter(Boolean),
-        grade_levels: profile.grade_levels.split(',').map(s => s.trim()).filter(Boolean),
-        phone: profile.phone, country: profile.country,
-        state: profile.state, district: profile.district, area: profile.area,
-      }))
+      setLoaded(prev => ({ ...prev, ...profile, subjects: subjectsArr, grade_levels: gradesArr }))
       setEditing(false)
     } catch { alert('Failed to save. Try again.') }
     finally { setSaving(false) }
@@ -134,15 +122,17 @@ export default function TutorDashboard() {
   const accepted = students.filter(s => s.status === 'accepted')
 
   const fields = [
-    { label: 'Bio', name: 'bio', placeholder: 'Tell students about yourself...', type: 'textarea' },
-    { label: 'Subjects (comma separated)', name: 'subjects', placeholder: 'Math, Physics, Chemistry' },
-    { label: 'Grade Levels (comma separated)', name: 'grade_levels', placeholder: 'Grade 9, Grade 10, A-Level' },
-    { label: 'Monthly Rate (₹)', name: 'monthly_rate', placeholder: '2000', type: 'number' },
+    { label: 'Center Name', name: 'center_name', placeholder: 'ABC Tuition Center' },
     { label: 'Phone', name: 'phone', placeholder: '+91 98765 43210' },
+    { label: 'Address', name: 'address', placeholder: 'Full address', type: 'textarea' },
     { label: 'Country', name: 'country', placeholder: 'India' },
     { label: 'State', name: 'state', placeholder: 'Assam' },
     { label: 'District', name: 'district', placeholder: 'Kamrup' },
     { label: 'Area (optional)', name: 'area', placeholder: 'Guwahati' },
+    { label: 'Subjects (comma separated)', name: 'subjects', placeholder: 'Math, Science' },
+    { label: 'Grade Levels (comma separated)', name: 'grade_levels', placeholder: 'Grade 9, Grade 10' },
+    { label: 'Bio', name: 'bio', placeholder: 'About your center...', type: 'textarea' },
+    { label: 'Website (optional)', name: 'website', placeholder: 'https://yourcenter.com' },
   ]
 
   return (
@@ -166,7 +156,7 @@ export default function TutorDashboard() {
           }}>{initials}</div>
           <div>
             <h1 style={{ color: '#fff', fontWeight: 800, fontSize: 'clamp(1.2rem, 3vw, 1.5rem)', letterSpacing: '-0.02em' }}>
-              {user?.full_name || 'Tutor'}
+              {loaded?.center_name || user?.full_name || 'Center'}
             </h1>
             <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.82rem', marginTop: '2px' }}>{user?.email}</p>
           </div>
@@ -176,7 +166,7 @@ export default function TutorDashboard() {
             background: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.08)',
             color: 'rgba(255,255,255,0.4)', whiteSpace: 'nowrap'
-          }}>Tutor</span>
+          }}>Tuition Center</span>
         </motion.div>
 
         {/* Stats */}
@@ -195,8 +185,7 @@ export default function TutorDashboard() {
           {[
             { label: 'Students', value: accepted.length },
             { label: 'Requests', value: pending.length },
-            { label: 'Subjects', value: loadedProfile?.subjects?.length || 0 },
-            { label: 'Rate', value: loadedProfile?.monthly_rate ? `₹${loadedProfile.monthly_rate}` : '—' },
+            { label: 'Subjects', value: loaded?.subjects?.length || 0 },
           ].map(s => (
             <div key={s.label} style={{ padding: '1.2rem', background: '#000' }}>
               <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#fff', letterSpacing: '-0.03em' }}>{s.value}</div>
@@ -231,8 +220,8 @@ export default function TutorDashboard() {
           ))}
         </motion.div>
 
-        {/* Profile tab */}
         <AnimatePresence mode="wait">
+          {/* Profile tab */}
           {tab === 'profile' && (
             <motion.div key="profile"
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
@@ -240,10 +229,10 @@ export default function TutorDashboard() {
             >
               <div style={{
                 background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.06)',
-                borderRadius: '16px', padding: '1.8rem', marginBottom: '1rem'
+                borderRadius: '16px', padding: '1.8rem'
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.4rem' }}>
-                  <h2 style={{ color: '#fff', fontWeight: 700, fontSize: '0.95rem', letterSpacing: '-0.01em' }}>Your Profile</h2>
+                  <h2 style={{ color: '#fff', fontWeight: 700, fontSize: '0.95rem', letterSpacing: '-0.01em' }}>Center Profile</h2>
                   <button onClick={() => setEditing(!editing)} style={{
                     padding: '6px 16px', borderRadius: '8px',
                     border: '1px solid rgba(255,255,255,0.1)',
@@ -270,7 +259,7 @@ export default function TutorDashboard() {
                               style={{ width: '100%', padding: '10px 14px', background: '#111 !important', border: '1px solid rgba(255,255,255,0.08) !important', borderRadius: '10px !important', color: '#fff !important', fontSize: '0.9rem', resize: 'vertical' }}
                             />
                           ) : (
-                            <input type={f.type || 'text'} placeholder={f.placeholder}
+                            <input type="text" placeholder={f.placeholder}
                               value={profile[f.name]}
                               onChange={e => setProfile(p => ({ ...p, [f.name]: e.target.value }))}
                               style={{ width: '100%', height: '42px', padding: '0 14px', background: '#111 !important', border: '1px solid rgba(255,255,255,0.08) !important', borderRadius: '10px !important', color: '#fff !important', fontSize: '0.9rem' }}
@@ -280,7 +269,7 @@ export default function TutorDashboard() {
                       ))}
                       <motion.button
                         whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                        onClick={saveProfile} disabled={saving}
+                        onClick={save} disabled={saving}
                         style={{
                           alignSelf: 'flex-start', padding: '10px 28px',
                           background: saving ? 'rgba(255,255,255,0.1)' : '#fff',
@@ -290,15 +279,21 @@ export default function TutorDashboard() {
                         }}
                       >{saving ? 'Saving...' : 'Save Changes'}</motion.button>
                     </motion.div>
-                  ) : loadedProfile?.bio ? (
+                  ) : loaded?.bio ? (
                     <motion.div key="view"
                       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                      style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
+                      style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
                     >
-                      <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem', lineHeight: 1.7 }}>{loadedProfile.bio}</p>
-                      {loadedProfile.subjects?.length > 0 && (
+                      <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem', lineHeight: 1.7 }}>{loaded.bio}</p>
+                      {loaded.address && <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.82rem' }}>{loaded.address}</p>}
+                      {loaded.phone && <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.82rem' }}>{loaded.phone}</p>}
+                      {loaded.website && (
+                        <a href={loaded.website} target="_blank" rel="noreferrer"
+                          style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.82rem' }}>{loaded.website}</a>
+                      )}
+                      {loaded.subjects?.length > 0 && (
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                          {loadedProfile.subjects.map(s => (
+                          {loaded.subjects.map(s => (
                             <span key={s} style={{
                               background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
                               color: 'rgba(255,255,255,0.5)', fontSize: '0.78rem', padding: '3px 10px', borderRadius: '6px'
@@ -306,20 +301,12 @@ export default function TutorDashboard() {
                           ))}
                         </div>
                       )}
-                      {loadedProfile.grade_levels?.length > 0 && (
+                      {loaded.grade_levels?.length > 0 && (
+                        <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.82rem' }}>{loaded.grade_levels.join(', ')}</p>
+                      )}
+                      {(loaded.district || loaded.state) && (
                         <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.82rem' }}>
-                          {loadedProfile.grade_levels.join(', ')}
-                        </p>
-                      )}
-                      {loadedProfile.monthly_rate > 0 && (
-                        <p style={{ color: '#fff', fontWeight: 700, fontSize: '1rem' }}>₹{loadedProfile.monthly_rate}/month</p>
-                      )}
-                      {loadedProfile.phone && (
-                        <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.82rem' }}>{loadedProfile.phone}</p>
-                      )}
-                      {(loadedProfile.district || loadedProfile.state) && (
-                        <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.82rem' }}>
-                          {[loadedProfile.area, loadedProfile.district, loadedProfile.state, loadedProfile.country].filter(Boolean).join(', ')}
+                          {[loaded.area, loaded.district, loaded.state, loaded.country].filter(Boolean).join(', ')}
                         </p>
                       )}
                     </motion.div>
@@ -328,7 +315,7 @@ export default function TutorDashboard() {
                       initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                       style={{ color: 'rgba(255,255,255,0.25)', fontSize: '0.9rem', lineHeight: 1.7 }}
                     >
-                      Complete your profile so students can find you on the Discover page.
+                      Complete your center profile so students can find you.
                     </motion.div>
                   )}
                 </AnimatePresence>

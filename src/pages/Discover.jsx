@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
+import { motion, AnimatePresence } from 'motion/react'
 import Navbar from '../components/Navbar'
 
-const BACKEND = 'http://localhost:3001'
-
-const SUBJECTS = ['Math', 'Physics', 'Chemistry', 'Biology', 'English', 'History', 'Geography', 'Computer Science']
-const GRADES = ['Grade 6', 'Grade 7', 'Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'Grade 12', 'A-Level']
+const BACKEND = import.meta.env.VITE_BACKEND_URL
 
 export default function Discover() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -13,297 +11,431 @@ export default function Discover() {
 
   const [tutors, setTutors] = useState([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [filterData, setFilterData] = useState({ subjects: [], grades: [], locations: [] })
+  const [gpsLoading, setGpsLoading] = useState(false)
+  const [showFilters, setShowFilters] = useState(false)
 
   const [filters, setFilters] = useState({
     q: searchParams.get('q') || '',
     subject: searchParams.get('subject') || '',
     grade: searchParams.get('grade') || '',
     maxPrice: searchParams.get('maxPrice') || '',
+    country: searchParams.get('country') || '',
+    state: searchParams.get('state') || '',
+    district: searchParams.get('district') || '',
+    area: searchParams.get('area') || '',
+    type: searchParams.get('type') || '',
   })
 
-  useEffect(() => { fetchTutors() }, [])
+  useEffect(() => { loadFilters(); fetchTutors(filters); autoDetectLocation() }, [])
+
+  async function loadFilters() {
+    try {
+      const res = await fetch(`${BACKEND}/api/filters`)
+      const data = await res.json()
+      setFilterData(data)
+    } catch (err) { console.error(err) }
+  }
+
+  async function autoDetectLocation() {
+    if (!navigator.geolocation) return
+    if (filters.country || filters.district) return
+    setGpsLoading(true)
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      try {
+        const { latitude, longitude } = pos.coords
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`)
+        const data = await res.json()
+        const addr = data.address
+        const detected = {
+          country: addr.country || '',
+          state: addr.state || '',
+          district: addr.county || addr.state_district || addr.district || '',
+          area: addr.suburb || addr.village || addr.town || addr.city || '',
+        }
+        setFilters(f => { const updated = { ...f, ...detected }; fetchTutors(updated); return updated })
+      } catch (err) { console.error(err) }
+      finally { setGpsLoading(false) }
+    }, () => setGpsLoading(false))
+  }
 
   async function fetchTutors(f = filters) {
     setLoading(true)
-    setError('')
     try {
       const params = new URLSearchParams()
-      if (f.q)        params.set('q', f.q)
-      if (f.subject)  params.set('subject', f.subject)
-      if (f.grade)    params.set('grade', f.grade)
-      if (f.maxPrice) params.set('maxPrice', f.maxPrice)
+      Object.entries(f).forEach(([k, v]) => { if (v) params.set(k, v) })
       setSearchParams(params)
-
       const res = await fetch(`${BACKEND}/api/discover?${params}`)
       const data = await res.json()
       setTutors(data)
-    } catch {
-      setError('Could not load tutors. Is the backend running?')
-    } finally {
-      setLoading(false)
-    }
+    } catch { setTutors([]) }
+    finally { setLoading(false) }
   }
 
   function handleFilter(key, value) {
     const updated = { ...filters, [key]: value }
+    if (key === 'country') { updated.state = ''; updated.district = ''; updated.area = '' }
+    if (key === 'state') { updated.district = ''; updated.area = '' }
+    if (key === 'district') { updated.area = '' }
     setFilters(updated)
     fetchTutors(updated)
   }
 
   function clearFilters() {
-    const cleared = { q: '', subject: '', grade: '', maxPrice: '' }
+    const cleared = { q: '', subject: '', grade: '', maxPrice: '', country: '', state: '', district: '', area: '', type: '' }
     setFilters(cleared)
     fetchTutors(cleared)
   }
 
+  const countries = [...new Set(filterData.locations.map(l => l.country).filter(Boolean))].sort()
+  const states = [...new Set(filterData.locations.filter(l => !filters.country || l.country === filters.country).map(l => l.state).filter(Boolean))].sort()
+  const districts = [...new Set(filterData.locations.filter(l => (!filters.state || l.state === filters.state)).map(l => l.district).filter(Boolean))].sort()
+  const areas = [...new Set(filterData.locations.filter(l => (!filters.district || l.district === filters.district)).map(l => l.area).filter(Boolean))].sort()
   const activeFilters = Object.values(filters).filter(Boolean).length
 
   return (
-    <>
+    <div style={{ minHeight: '100vh', background: '#000' }}>
       <Navbar />
-      <main style={{
-        minHeight: '100vh', background: '#0a0f1e',
-        padding: '84px 1.5rem 3rem',
-        maxWidth: '1200px', margin: '0 auto'
-      }}>
+      <main style={{ padding: '80px 1.5rem 3rem', maxWidth: '1200px', margin: '0 auto' }}>
 
-        {/* Page header */}
-        <div style={{ marginBottom: '2rem' }}>
-          <h1 style={{ color: '#f1f5f9', fontWeight: 700, fontSize: '1.8rem', marginBottom: '0.4rem' }}>
-            Find a Tutor
-          </h1>
-          <p style={{ color: '#64748b', fontSize: '0.95rem' }}>
-            {loading ? 'Searching...' : `${tutors.length} tutor${tutors.length !== 1 ? 's' : ''} found`}
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          style={{ marginBottom: '2rem', paddingTop: '1rem' }}
+        >
+          <h1 style={{
+            fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
+            fontWeight: 800, color: '#fff',
+            letterSpacing: '-0.03em', marginBottom: '0.3rem'
+          }}>Find a Tutor</h1>
+          <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.9rem' }}>
+            {loading ? 'Searching...' : `${tutors.length} result${tutors.length !== 1 ? 's' : ''} found`}
+            {gpsLoading && <span style={{ color: 'rgba(255,255,255,0.5)', marginLeft: '8px' }}>· Detecting location...</span>}
           </p>
-        </div>
+        </motion.div>
 
-        {/* Search bar */}
-        <div style={{ display: 'flex', gap: '10px', marginBottom: '1.5rem' }}>
+        {/* Search + controls row */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          style={{ display: 'flex', gap: '10px', marginBottom: '1rem', flexWrap: 'wrap' }}
+        >
           <input
-            type="text"
-            placeholder="Search by name, subject, or bio..."
+            type="text" placeholder="Search by name, subject, or bio..."
             value={filters.q}
             onChange={e => handleFilter('q', e.target.value)}
             style={{
-              flex: 1, height: '46px', padding: '0 1.2rem',
-              background: 'rgba(255,255,255,0.06)',
-              border: '1px solid rgba(255,255,255,0.12)',
-              borderRadius: '10px', color: '#f1f5f9',
-              fontSize: '0.95rem', outline: 'none'
+              flex: 1, minWidth: '200px', height: '44px', padding: '0 1.2rem',
+              background: '#0a0a0a !important',
+              border: '1px solid rgba(255,255,255,0.08) !important',
+              borderRadius: '12px !important', color: '#fff !important',
+              fontSize: '0.9rem'
             }}
           />
-          {activeFilters > 0 && (
-            <button onClick={clearFilters} style={{
-              padding: '0 16px', height: '46px',
-              background: 'rgba(248,113,113,0.1)',
-              border: '1px solid rgba(248,113,113,0.2)',
-              borderRadius: '10px', color: '#f87171',
-              cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600,
-              whiteSpace: 'nowrap'
-            }}>
-              Clear ({activeFilters})
-            </button>
-          )}
-        </div>
 
-        {/* Filter row */}
-        <div style={{
-          display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '2rem'
-        }}>
-          <select value={filters.subject} onChange={e => handleFilter('subject', e.target.value)}
-            style={selectStyle}>
-            <option value="">All Subjects</option>
-            {SUBJECTS.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
-
-          <select value={filters.grade} onChange={e => handleFilter('grade', e.target.value)}
-            style={selectStyle}>
-            <option value="">All Grades</option>
-            {GRADES.map(g => <option key={g} value={g}>{g}</option>)}
-          </select>
-
-          <select value={filters.maxPrice} onChange={e => handleFilter('maxPrice', e.target.value)}
-            style={selectStyle}>
-            <option value="">Any Price</option>
-            <option value="200">Up to ₹200/hr</option>
-            <option value="500">Up to ₹500/hr</option>
-            <option value="1000">Up to ₹1000/hr</option>
-            <option value="2000">Up to ₹2000/hr</option>
-          </select>
-        </div>
-
-        {/* Results */}
-        {error && (
           <div style={{
-            background: 'rgba(248,113,113,0.1)',
-            border: '1px solid rgba(248,113,113,0.2)',
-            borderRadius: '12px', padding: '1.2rem',
-            color: '#f87171', marginBottom: '1.5rem'
+            display: 'flex', background: '#0a0a0a',
+            border: '1px solid rgba(255,255,255,0.08)',
+            borderRadius: '12px', padding: '3px', gap: '2px'
           }}>
-            {error}
-          </div>
-        )}
-
-        {loading ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.2rem' }}>
-            {[1,2,3,4,5,6].map(i => (
-              <div key={i} style={{
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.06)',
-                borderRadius: '16px', padding: '1.5rem', height: '200px',
-                animation: 'pulse 1.5s infinite'
-              }} />
+            {[['', 'All'], ['tutor', 'Tutors'], ['center', 'Centers']].map(([val, label]) => (
+              <button key={val} onClick={() => handleFilter('type', val)} style={{
+                padding: '6px 14px', border: 'none', cursor: 'pointer',
+                borderRadius: '9px', fontSize: '0.82rem', fontWeight: 600,
+                background: filters.type === val ? 'rgba(255,255,255,0.1)' : 'transparent',
+                color: filters.type === val ? '#fff' : 'rgba(255,255,255,0.35)',
+                transition: 'all 0.2s', whiteSpace: 'nowrap'
+              }}>{label}</button>
             ))}
           </div>
-        ) : tutors.length === 0 ? (
-          <div style={{
-            textAlign: 'center', padding: '5rem 1rem',
-            background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.06)',
-            borderRadius: '16px'
+
+          <button onClick={() => setShowFilters(!showFilters)} style={{
+            height: '44px', padding: '0 16px',
+            background: showFilters ? 'rgba(255,255,255,0.1)' : '#0a0a0a',
+            border: '1px solid rgba(255,255,255,0.08)',
+            borderRadius: '12px', color: '#fff',
+            cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600,
+            display: 'flex', alignItems: 'center', gap: '6px',
+            transition: 'all 0.2s', whiteSpace: 'nowrap'
           }}>
-            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔍</div>
-            <p style={{ color: '#64748b', fontSize: '1rem', marginBottom: '0.5rem' }}>
-              No tutors found
-            </p>
-            <p style={{ color: '#475569', fontSize: '0.85rem' }}>
-              Try adjusting your filters or be the first to sign up as a tutor!
-            </p>
-            <button onClick={clearFilters} style={{
-              marginTop: '1.2rem', padding: '10px 24px',
-              background: '#1a73e8', color: '#fff', border: 'none',
-              borderRadius: '8px', fontWeight: 600, cursor: 'pointer'
-            }}>
-              Clear Filters
-            </button>
-          </div>
-        ) : (
+            ⚡ Filters {activeFilters > 0 && `(${activeFilters})`}
+          </button>
+
+          {activeFilters > 0 && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              onClick={clearFilters}
+              style={{
+                height: '44px', padding: '0 16px',
+                background: 'rgba(248,113,113,0.08)',
+                border: '1px solid rgba(248,113,113,0.15)',
+                borderRadius: '12px', color: '#f87171',
+                cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600,
+                whiteSpace: 'nowrap'
+              }}
+            >
+              Clear
+            </motion.button>
+          )}
+        </motion.div>
+
+        {/* Expandable filters */}
+        <AnimatePresence>
+          {showFilters && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              style={{ overflow: 'hidden', marginBottom: '1.5rem' }}
+            >
+              <div style={{
+                padding: '1.5rem', background: '#0a0a0a',
+                border: '1px solid rgba(255,255,255,0.06)',
+                borderRadius: '16px',
+                display: 'flex', gap: '12px', flexWrap: 'wrap',
+                alignItems: 'flex-end'
+              }}>
+                <div style={{ flex: '1 1 140px' }}>
+                  <label style={filterLabelStyle}>Subject</label>
+                  <select value={filters.subject} onChange={e => handleFilter('subject', e.target.value)} style={filterSelectStyle}>
+                    <option value="">All</option>
+                    {filterData.subjects.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+                <div style={{ flex: '1 1 140px' }}>
+                  <label style={filterLabelStyle}>Grade</label>
+                  <select value={filters.grade} onChange={e => handleFilter('grade', e.target.value)} style={filterSelectStyle}>
+                    <option value="">All</option>
+                    {filterData.grades.map(g => <option key={g} value={g}>{g}</option>)}
+                  </select>
+                </div>
+                <div style={{ flex: '1 1 140px' }}>
+                  <label style={filterLabelStyle}>Max Monthly Rate</label>
+                  <select value={filters.maxPrice} onChange={e => handleFilter('maxPrice', e.target.value)} style={filterSelectStyle}>
+                    <option value="">Any</option>
+                    <option value="500">Up to ₹500</option>
+                    <option value="1000">Up to ₹1000</option>
+                    <option value="2000">Up to ₹2000</option>
+                    <option value="5000">Up to ₹5000</option>
+                  </select>
+                </div>
+                <div style={{ flex: '1 1 120px' }}>
+                  <label style={filterLabelStyle}>Country</label>
+                  <input type="text" placeholder="India" value={filters.country}
+                    onChange={e => handleFilter('country', e.target.value)}
+                    list="country-list" style={filterInputStyle} />
+                  <datalist id="country-list">{countries.map(c => <option key={c} value={c} />)}</datalist>
+                </div>
+                <div style={{ flex: '1 1 120px' }}>
+                  <label style={filterLabelStyle}>State</label>
+                  <input type="text" placeholder="Assam" value={filters.state}
+                    onChange={e => handleFilter('state', e.target.value)}
+                    list="state-list" style={filterInputStyle} />
+                  <datalist id="state-list">{states.map(s => <option key={s} value={s} />)}</datalist>
+                </div>
+                <div style={{ flex: '1 1 120px' }}>
+                  <label style={filterLabelStyle}>District</label>
+                  <input type="text" placeholder="Kamrup" value={filters.district}
+                    onChange={e => handleFilter('district', e.target.value)}
+                    list="district-list" style={filterInputStyle} />
+                  <datalist id="district-list">{districts.map(d => <option key={d} value={d} />)}</datalist>
+                </div>
+                <div style={{ flex: '1 1 120px' }}>
+                  <label style={filterLabelStyle}>Area <span style={{ color: 'rgba(255,255,255,0.2)' }}>(optional)</span></label>
+                  <input type="text" placeholder="Guwahati" value={filters.area}
+                    onChange={e => handleFilter('area', e.target.value)}
+                    list="area-list" style={filterInputStyle} />
+                  <datalist id="area-list">{areas.map(a => <option key={a} value={a} />)}</datalist>
+                </div>
+                <button onClick={autoDetectLocation} disabled={gpsLoading} style={{
+                  height: '38px', padding: '0 14px',
+                  background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '10px', color: 'rgba(255,255,255,0.6)',
+                  cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600,
+                  whiteSpace: 'nowrap', alignSelf: 'flex-end'
+                }}>
+                  {gpsLoading ? '...' : '📍 Auto'}
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Results */}
+        {loading ? (
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-            gap: '1.2rem'
+            gap: '12px'
           }}>
-            {tutors.map(tutor => (
-              <TutorCard key={tutor.id} tutor={tutor} />
+            {[1,2,3,4,5,6].map(i => (
+              <motion.div key={i}
+                animate={{ opacity: [0.3, 0.6, 0.3] }}
+                transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.1 }}
+                style={{
+                  height: '200px', background: '#0a0a0a',
+                  borderRadius: '16px', border: '1px solid rgba(255,255,255,0.04)'
+                }}
+              />
             ))}
           </div>
+        ) : tutors.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            style={{
+              textAlign: 'center', padding: '6rem 1rem',
+              border: '1px solid rgba(255,255,255,0.06)',
+              borderRadius: '20px', background: '#0a0a0a'
+            }}
+          >
+            <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.3 }}>◎</div>
+            <p style={{ color: 'rgba(255,255,255,0.4)', marginBottom: '0.5rem', fontWeight: 600 }}>No results found</p>
+            <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>Try adjusting your filters</p>
+            <button onClick={clearFilters} style={{
+              padding: '10px 24px', background: '#fff', color: '#000',
+              border: 'none', borderRadius: '10px', fontWeight: 700,
+              cursor: 'pointer', fontSize: '0.9rem'
+            }}>Clear Filters</button>
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+              gap: '12px'
+            }}
+          >
+            {tutors.map((tutor, i) => (
+              <TutorCard
+                key={`${tutor.role}-${tutor.id}`}
+                tutor={tutor}
+                index={i}
+                onClick={() => navigate(`/profile/${tutor.role}/${tutor.id}`)}
+              />
+            ))}
+          </motion.div>
         )}
       </main>
-
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 0.4; }
-          50% { opacity: 0.8; }
-        }
-        select option { background: #1e293b; color: #f1f5f9; }
-      `}</style>
-    </>
-  )
-}
-
-function TutorCard({ tutor }) {
-  const initials = tutor.full_name
-    ? tutor.full_name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
-    : '??'
-
-  return (
-    <div style={{
-      background: 'rgba(255,255,255,0.05)',
-      border: '1px solid rgba(255,255,255,0.08)',
-      borderRadius: '16px', padding: '1.5rem',
-      display: 'flex', flexDirection: 'column', gap: '1rem',
-      transition: 'border-color 0.2s, transform 0.2s',
-      cursor: 'pointer'
-    }}
-      onMouseEnter={e => {
-        e.currentTarget.style.borderColor = 'rgba(26,115,232,0.4)'
-        e.currentTarget.style.transform = 'translateY(-2px)'
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
-        e.currentTarget.style.transform = 'translateY(0)'
-      }}
-    >
-      {/* Top row */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <div style={{
-          width: '46px', height: '46px', borderRadius: '50%', flexShrink: 0,
-          background: 'rgba(26,115,232,0.2)',
-          border: '2px solid rgba(26,115,232,0.3)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontWeight: 700, fontSize: '1rem', color: '#60a5fa'
-        }}>
-          {initials}
-        </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontWeight: 700, color: '#f1f5f9', fontSize: '1rem' }}>
-            {tutor.full_name}
-          </div>
-          <div style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '2px' }}>
-            {tutor.hourly_rate > 0 ? `₹${tutor.hourly_rate}/hr` : 'Rate not set'}
-          </div>
-        </div>
-        {tutor.hourly_rate > 0 && (
-          <div style={{
-            background: 'rgba(26,115,232,0.15)',
-            border: '1px solid rgba(26,115,232,0.25)',
-            color: '#60a5fa', fontSize: '0.8rem',
-            fontWeight: 700, padding: '4px 10px', borderRadius: '8px',
-            whiteSpace: 'nowrap'
-          }}>
-            ₹{tutor.hourly_rate}/hr
-          </div>
-        )}
-      </div>
-
-      {/* Bio */}
-      {tutor.bio && (
-        <p style={{
-          color: '#94a3b8', fontSize: '0.875rem',
-          lineHeight: 1.6,
-          display: '-webkit-box', WebkitLineClamp: 2,
-          WebkitBoxOrient: 'vertical', overflow: 'hidden'
-        }}>
-          {tutor.bio}
-        </p>
-      )}
-
-      {/* Subjects */}
-      {tutor.subjects?.length > 0 && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-          {tutor.subjects.slice(0, 4).map(s => (
-            <span key={s} style={{
-              background: 'rgba(255,255,255,0.07)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              color: '#94a3b8', fontSize: '0.75rem',
-              padding: '3px 10px', borderRadius: '6px'
-            }}>
-              {s}
-            </span>
-          ))}
-          {tutor.subjects.length > 4 && (
-            <span style={{ color: '#475569', fontSize: '0.75rem', padding: '3px 6px' }}>
-              +{tutor.subjects.length - 4} more
-            </span>
-          )}
-        </div>
-      )}
-
-      {/* Grade levels */}
-      {tutor.grade_levels?.length > 0 && (
-        <div style={{ color: '#475569', fontSize: '0.8rem' }}>
-          📚 {tutor.grade_levels.join(', ')}
-        </div>
-      )}
+      <style>{`select option { background: #111; color: #fff; }`}</style>
     </div>
   )
 }
 
-const selectStyle = {
-  height: '40px', padding: '0 12px',
-  background: 'rgba(255,255,255,0.06)',
-  border: '1px solid rgba(255,255,255,0.12)',
-  borderRadius: '8px', color: '#f1f5f9',
-  fontSize: '0.875rem', outline: 'none', cursor: 'pointer'
+function TutorCard({ tutor, index, onClick }) {
+  const isCenter = tutor.role === 'center'
+  const initials = tutor.full_name?.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '??'
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
+      onClick={onClick}
+      whileHover={{ background: '#111' }}
+      style={{
+        padding: '1.5rem',
+        background: '#0a0a0a',
+        border: '1px solid rgba(255,255,255,0.06)',
+        borderRadius: '16px',
+        cursor: 'pointer',
+        transition: 'background 0.2s'
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '1rem' }}>
+        <div style={{
+          width: '40px', height: '40px', borderRadius: '10px', flexShrink: 0,
+          background: isCenter ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.06)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontWeight: 700, fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)',
+          border: '1px solid rgba(255,255,255,0.08)'
+        }}>{initials}</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.95rem', marginBottom: '3px' }}>
+            {tutor.full_name}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{
+              fontSize: '0.7rem', fontWeight: 600, padding: '2px 8px', borderRadius: '6px',
+              background: 'rgba(255,255,255,0.06)',
+              color: 'rgba(255,255,255,0.5)',
+              border: '1px solid rgba(255,255,255,0.08)'
+            }}>{isCenter ? 'Center' : 'Tutor'}</span>
+            {tutor.monthly_rate > 0 && (
+              <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)' }}>₹{tutor.monthly_rate}/mo</span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {tutor.bio && (
+        <p style={{
+          color: 'rgba(255,255,255,0.35)', fontSize: '0.82rem', lineHeight: 1.6,
+          marginBottom: '1rem',
+          display: '-webkit-box', WebkitLineClamp: 2,
+          WebkitBoxOrient: 'vertical', overflow: 'hidden'
+        }}>{tutor.bio}</p>
+      )}
+
+      {tutor.subjects?.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '0.8rem' }}>
+          {tutor.subjects.slice(0, 3).map(s => (
+            <span key={s} style={{
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              color: 'rgba(255,255,255,0.4)', fontSize: '0.72rem',
+              padding: '2px 8px', borderRadius: '6px'
+            }}>{s}</span>
+          ))}
+          {tutor.subjects.length > 3 && (
+            <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.72rem', padding: '2px 6px' }}>
+              +{tutor.subjects.length - 3}
+            </span>
+          )}
+        </div>
+      )}
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        {(tutor.district || tutor.state) && (
+          <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: '0.75rem' }}>
+            📍 {[tutor.area, tutor.district, tutor.state].filter(Boolean).join(', ')}
+          </span>
+        )}
+        <span style={{
+          fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)',
+          marginLeft: 'auto', fontWeight: 600
+        }}>View →</span>
+      </div>
+    </motion.div>
+  )
+}
+
+const filterLabelStyle = {
+  display: 'block', fontSize: '0.72rem',
+  color: 'rgba(255,255,255,0.35)', marginBottom: '6px',
+  fontWeight: 500, letterSpacing: '0.03em'
+}
+
+const filterSelectStyle = {
+  width: '100%', height: '38px', padding: '0 10px',
+  background: '#111 !important',
+  border: '1px solid rgba(255,255,255,0.08) !important',
+  borderRadius: '10px !important', color: '#fff !important',
+  fontSize: '0.82rem', cursor: 'pointer'
+}
+
+const filterInputStyle = {
+  width: '100%', height: '38px', padding: '0 10px',
+  background: '#111 !important',
+  border: '1px solid rgba(255,255,255,0.08) !important',
+  borderRadius: '10px !important', color: '#fff !important',
+  fontSize: '0.82rem'
 }

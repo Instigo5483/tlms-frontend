@@ -6,6 +6,10 @@ import Discover from './pages/Discover'
 import Login from './pages/Login'
 import StudentDashboard from './pages/StudentDashboard'
 import TutorDashboard from './pages/TutorDashboard'
+import CenterDashboard from './pages/CenterDashboard'
+import Profile from './pages/Profile'
+import Payments from './pages/Payments'
+import Wallet from './pages/Wallet'
 
 function ProtectedRoute({ children, role }) {
   const { user, loading } = useAuth()
@@ -18,16 +22,26 @@ function ProtectedRoute({ children, role }) {
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <BrowserRouter basename="/tlms-frontend">
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/discover" element={<Discover />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/profile/:type/:id" element={<Profile />} />
+          <Route path="/wallet" element={
+            <ProtectedRoute><Wallet /></ProtectedRoute>
+          } />
+          <Route path="/payments" element={
+            <ProtectedRoute><Payments /></ProtectedRoute>
+          } />
           <Route path="/dashboard/student" element={
             <ProtectedRoute role="student"><StudentDashboard /></ProtectedRoute>
           } />
           <Route path="/dashboard/tutor" element={
             <ProtectedRoute role="tutor"><TutorDashboard /></ProtectedRoute>
+          } />
+          <Route path="/dashboard/center" element={
+            <ProtectedRoute role="center"><CenterDashboard /></ProtectedRoute>
           } />
         </Routes>
       </BrowserRouter>
