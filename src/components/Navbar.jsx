@@ -36,23 +36,36 @@ export default function Navbar() {
         display: 'flex', alignItems: 'center',
         justifyContent: 'space-between',
         gap: '0.5rem',
-        padding: '0 1.2rem', height: '44px',
-        background: 'rgba(0,0,0,0.85)',
+        padding: '0 1.2rem', height: '48px',
+        background: 'rgba(5,5,8,0.85)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         borderRadius: '999px',
-        border: '1px solid rgba(255,255,255,0.08)',
+        border: '1px solid rgba(168,85,247,0.2)',
       }}>
 
+      {/* Logo */}
       <Link to="/" style={{
-        color: '#fff', fontWeight: 800,
-        fontSize: '0.95rem', textDecoration: 'none',
-        letterSpacing: '0.05em', whiteSpace: 'nowrap',
-        flexShrink: 0
+        textDecoration: 'none', display: 'flex',
+        alignItems: 'center', gap: '8px', flexShrink: 0
       }}>
-        TLMS
+        <img
+          src="/tlms-frontend/logo.jpeg"
+          alt="TLMS"
+          style={{
+            width: '28px', height: '28px',
+            borderRadius: '8px', objectFit: 'cover'
+          }}
+        />
+        <span style={{
+          fontWeight: 800, fontSize: '0.95rem',
+          letterSpacing: '0.05em', whiteSpace: 'nowrap',
+          background: 'linear-gradient(135deg, #a855f7, #06b6d4)',
+          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
+        }}>TLMS</span>
       </Link>
 
+      {/* Nav links */}
       <div style={{
         display: 'flex', gap: '0.1rem', alignItems: 'center',
         flexWrap: 'nowrap', overflow: 'hidden'
@@ -63,6 +76,7 @@ export default function Navbar() {
         {user && user.role !== 'student' && <NavLink to="/wallet">Wallet</NavLink>}
       </div>
 
+      {/* Auth */}
       <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexShrink: 0 }}>
         {user ? (
           <>
@@ -75,11 +89,11 @@ export default function Navbar() {
             </span>
             <motion.button
               onClick={handleLogout}
-              whileHover={{ background: 'rgba(255,255,255,0.12)' }}
+              whileHover={{ background: 'rgba(168,85,247,0.15)' }}
               whileTap={{ scale: 0.96 }}
               style={{
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.1)',
+                background: 'rgba(168,85,247,0.08)',
+                border: '1px solid rgba(168,85,247,0.2)',
                 color: 'rgba(255,255,255,0.6)',
                 padding: '4px 12px', borderRadius: '999px',
                 cursor: 'pointer', fontSize: '0.78rem', fontWeight: 500,
@@ -92,7 +106,8 @@ export default function Navbar() {
         ) : (
           <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
             <Link to="/login" style={{
-              background: '#fff', color: '#000',
+              background: 'linear-gradient(135deg, #a855f7, #06b6d4)',
+              color: '#fff',
               padding: '6px 16px', borderRadius: '999px',
               textDecoration: 'none', fontSize: '0.82rem', fontWeight: 700,
               whiteSpace: 'nowrap', display: 'block'
@@ -117,7 +132,7 @@ function NavLink({ to, children }) {
     }}
       onMouseEnter={e => {
         e.currentTarget.style.color = '#fff'
-        e.currentTarget.style.background = 'rgba(255,255,255,0.06)'
+        e.currentTarget.style.background = 'rgba(168,85,247,0.1)'
       }}
       onMouseLeave={e => {
         e.currentTarget.style.color = 'rgba(255,255,255,0.45)'

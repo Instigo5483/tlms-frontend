@@ -106,10 +106,10 @@ export default function Discover() {
           style={{ marginBottom: '2rem', paddingTop: '1rem' }}
         >
           <h1 style={{
-            fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
+            fontSize: 'clamp(1.5rem, 4vw, 2.2rem)',
             fontWeight: 800, color: '#fff',
             letterSpacing: '-0.03em', marginBottom: '0.3rem'
-          }}>Find a Tutor</h1>
+          }}>Discover the <span style={{ background: 'linear-gradient(135deg, #a855f7, #06b6d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>perfect tutor</span> for your success</h1>
           <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.9rem' }}>
             {loading ? 'Searching...' : `${tutors.length} result${tutors.length !== 1 ? 's' : ''} found`}
             {gpsLoading && <span style={{ color: 'rgba(255,255,255,0.5)', marginLeft: '8px' }}>· Detecting location...</span>}

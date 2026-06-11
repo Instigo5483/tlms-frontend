@@ -54,13 +54,35 @@ export default function Login() {
   ]
 
   return (
-    <div style={{ minHeight: '100vh', background: '#000', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', background: '#050508', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+
+      {/* Ambient blobs */}
+      <div style={{
+        position: 'fixed', top: '-20%', right: '-10%',
+        width: '600px', height: '600px',
+        background: 'radial-gradient(circle, rgba(168,85,247,0.12) 0%, transparent 70%)',
+        pointerEvents: 'none', filter: 'blur(60px)', zIndex: 0
+      }} />
+      <div style={{
+        position: 'fixed', bottom: '-20%', left: '-10%',
+        width: '600px', height: '600px',
+        background: 'radial-gradient(circle, rgba(6,182,212,0.08) 0%, transparent 70%)',
+        pointerEvents: 'none', filter: 'blur(60px)', zIndex: 0
+      }} />
+      <div style={{
+        position: 'fixed', top: '50%', left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '400px', height: '400px',
+        background: 'radial-gradient(circle, rgba(236,72,153,0.06) 0%, transparent 70%)',
+        pointerEvents: 'none', filter: 'blur(50px)', zIndex: 0
+      }} />
+
       <Navbar />
 
       <div style={{
         flex: 1, display: 'flex',
         alignItems: 'center', justifyContent: 'center',
-        padding: '80px 1.5rem 2rem'
+        padding: '80px 1.5rem 2rem', position: 'relative', zIndex: 1
       }}>
         <motion.div
           initial={{ opacity: 0, y: 30, scale: 0.97 }}
@@ -68,33 +90,47 @@ export default function Login() {
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           style={{
             width: '100%', maxWidth: '400px',
-            background: '#0a0a0a',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: 'rgba(10,10,15,0.9)',
+            border: '1px solid rgba(168,85,247,0.2)',
             borderRadius: '24px', padding: '2.5rem',
             position: 'relative', overflow: 'hidden'
           }}
         >
-          {/* Subtle top glow */}
+          {/* Top glow line */}
           <div style={{
             position: 'absolute', top: 0, left: '50%',
             transform: 'translateX(-50%)',
-            width: '200px', height: '1px',
-            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)'
+            width: '60%', height: '1px',
+            background: 'linear-gradient(90deg, transparent, rgba(168,85,247,0.6), transparent)'
           }} />
+
+          {/* Logo */}
+          <div style={{ textAlign: 'center', marginBottom: '1.8rem' }}>
+            <img
+              src="/tlms-frontend/logo.jpeg"
+              alt="TLMS"
+              style={{ width: '52px', height: '52px', borderRadius: '14px', objectFit: 'cover', marginBottom: '0.8rem' }}
+            />
+            <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase' }}>
+              Connect · Learn · Succeed
+            </div>
+          </div>
 
           {/* Mode toggle */}
           <div style={{
-            display: 'flex', background: '#111',
+            display: 'flex', background: 'rgba(255,255,255,0.04)',
             borderRadius: '12px', padding: '3px',
-            marginBottom: '2rem', position: 'relative'
+            marginBottom: '2rem', border: '1px solid rgba(255,255,255,0.06)'
           }}>
             {['login', 'signup'].map(m => (
               <button key={m} onClick={() => { setMode(m); setError('') }} style={{
                 flex: 1, padding: '8px', border: 'none',
                 borderRadius: '10px', fontSize: '0.85rem', fontWeight: 600,
                 cursor: 'pointer', transition: 'all 0.2s',
-                background: mode === m ? '#fff' : 'transparent',
-                color: mode === m ? '#000' : 'rgba(255,255,255,0.4)',
+                background: mode === m
+                  ? 'linear-gradient(135deg, rgba(168,85,247,0.3), rgba(6,182,212,0.3))'
+                  : 'transparent',
+                color: mode === m ? '#fff' : 'rgba(255,255,255,0.35)',
               }}>
                 {m === 'login' ? 'Sign In' : 'Sign Up'}
               </button>
@@ -112,9 +148,10 @@ export default function Login() {
               style={{ marginBottom: '1.8rem' }}
             >
               <h2 style={{
-                color: '#fff', fontWeight: 700,
-                fontSize: '1.3rem', letterSpacing: '-0.02em',
-                marginBottom: '0.3rem'
+                fontWeight: 700, fontSize: '1.3rem',
+                letterSpacing: '-0.02em', marginBottom: '0.3rem',
+                background: 'linear-gradient(135deg, #fff, rgba(255,255,255,0.7))',
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
               }}>
                 {mode === 'login' ? 'Welcome back' : 'Create account'}
               </h2>
@@ -137,15 +174,19 @@ export default function Login() {
                 style={{ marginBottom: '1.2rem', overflow: 'hidden' }}
               >
                 <div style={{
-                  display: 'flex', gap: '6px',
-                  background: '#111', borderRadius: '10px', padding: '3px'
+                  display: 'flex', gap: '4px',
+                  background: 'rgba(255,255,255,0.04)',
+                  borderRadius: '10px', padding: '3px',
+                  border: '1px solid rgba(255,255,255,0.06)'
                 }}>
                   {roles.map(r => (
                     <button key={r.key} onClick={() => setRole(r.key)} style={{
                       flex: 1, padding: '7px 4px', border: 'none',
                       borderRadius: '8px', fontSize: '0.78rem', fontWeight: 600,
                       cursor: 'pointer', transition: 'all 0.2s',
-                      background: role === r.key ? 'rgba(255,255,255,0.1)' : 'transparent',
+                      background: role === r.key
+                        ? 'linear-gradient(135deg, rgba(168,85,247,0.25), rgba(6,182,212,0.25))'
+                        : 'transparent',
                       color: role === r.key ? '#fff' : 'rgba(255,255,255,0.35)',
                     }}>
                       {r.label}
@@ -224,12 +265,14 @@ export default function Login() {
               whileTap={{ scale: loading ? 1 : 0.98 }}
               style={{
                 marginTop: '4px', height: '46px',
-                background: loading ? 'rgba(255,255,255,0.1)' : '#fff',
-                color: loading ? 'rgba(255,255,255,0.4)' : '#000',
+                background: loading
+                  ? 'rgba(255,255,255,0.08)'
+                  : 'linear-gradient(135deg, #a855f7, #06b6d4)',
+                color: loading ? 'rgba(255,255,255,0.3)' : '#fff',
                 border: 'none', borderRadius: '12px',
                 fontWeight: 700, fontSize: '0.95rem',
                 cursor: loading ? 'not-allowed' : 'pointer',
-                transition: 'background 0.2s, color 0.2s'
+                transition: 'opacity 0.2s'
               }}
             >
               {loading ? 'Please wait...' : mode === 'login' ? 'Sign In' : 'Create Account'}
@@ -238,13 +281,13 @@ export default function Login() {
 
           <p style={{
             textAlign: 'center', marginTop: '1.5rem',
-            fontSize: '0.82rem', color: 'rgba(255,255,255,0.3)'
+            fontSize: '0.82rem', color: 'rgba(255,255,255,0.25)'
           }}>
             {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
             <button onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setError('') }}
               style={{
                 background: 'none', border: 'none',
-                color: 'rgba(255,255,255,0.7)', fontWeight: 600,
+                color: 'rgba(168,85,247,0.8)', fontWeight: 600,
                 cursor: 'pointer', fontSize: '0.82rem'
               }}>
               {mode === 'login' ? 'Sign up' : 'Sign in'}
@@ -271,8 +314,8 @@ function Field({ label, children }) {
 
 const inputStyle = {
   width: '100%', height: '42px', padding: '0 12px',
-  background: '#111 !important',
-  border: '1px solid rgba(255,255,255,0.08) !important',
+  background: 'rgba(255,255,255,0.04) !important',
+  border: '1px solid rgba(168,85,247,0.15) !important',
   borderRadius: '10px !important', color: '#fff !important',
   fontSize: '0.9rem'
 }
