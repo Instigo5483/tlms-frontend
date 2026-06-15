@@ -118,9 +118,10 @@ function PriceRangeSlider({ minVal, maxVal, onChange }) {
           onPointerDown={e => onHandleDown(e, 'min')}
           whileHover={{ scale: 1.25 }} whileTap={{ scale: 1.05 }}
           style={{
-            position: 'absolute', top: '50%', left: `${minPct}%`,
+            position: 'absolute',
+            top: 'calc(50% - 8px)', left: `calc(${minPct}% - 8px)`,
             width: '16px', height: '16px', borderRadius: '50%',
-            background: '#a855f7', transform: 'translate(-50%, -50%)',
+            background: '#a855f7',
             boxShadow: '0 0 0 3px rgba(168,85,247,0.3), 0 2px 8px rgba(0,0,0,0.6)',
             cursor: 'grab', touchAction: 'none',
           }}
@@ -131,9 +132,10 @@ function PriceRangeSlider({ minVal, maxVal, onChange }) {
           onPointerDown={e => onHandleDown(e, 'max')}
           whileHover={{ scale: 1.25 }} whileTap={{ scale: 1.05 }}
           style={{
-            position: 'absolute', top: '50%', left: `${maxPct}%`,
+            position: 'absolute',
+            top: 'calc(50% - 8px)', left: `calc(${maxPct}% - 8px)`,
             width: '16px', height: '16px', borderRadius: '50%',
-            background: '#06b6d4', transform: 'translate(-50%, -50%)',
+            background: '#06b6d4',
             boxShadow: '0 0 0 3px rgba(6,182,212,0.3), 0 2px 8px rgba(0,0,0,0.6)',
             cursor: 'grab', touchAction: 'none',
           }}
