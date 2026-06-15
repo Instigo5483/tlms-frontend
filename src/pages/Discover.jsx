@@ -436,7 +436,7 @@ export default function Discover() {
                   />
                 </div>
                 <div style={{ flex: '1 1 140px' }}>
-                  <label style={filterLabelStyle}>Grade</label>
+                  <label style={filterLabelStyle}>Class</label>
                   <DropdownSingle
                     value={filters.grade}
                     onChange={val => handleFilter('grade', val)}

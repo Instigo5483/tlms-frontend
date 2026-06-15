@@ -369,7 +369,7 @@ export default function CenterDashboard() {
     { label: 'District', name: 'district', placeholder: 'Kamrup' },
     { label: 'Area (optional)', name: 'area', placeholder: 'Guwahati' },
     { label: 'Subjects', name: 'subjects', type: 'multiselect', options: INDIA_SUBJECTS, placeholder: 'Select subjects offered...' },
-    { label: 'Grade Levels', name: 'grade_levels', type: 'multiselect', options: GRADE_LEVELS, placeholder: 'Select grade levels...' },
+    { label: 'Class Levels', name: 'grade_levels', type: 'multiselect', options: GRADE_LEVELS, placeholder: 'Select class levels...' },
     { label: 'Bio', name: 'bio', placeholder: 'About your center...', type: 'textarea' },
     { label: 'Website (optional)', name: 'website', placeholder: 'https://yourcenter.com' },
   ]

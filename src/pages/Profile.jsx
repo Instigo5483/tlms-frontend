@@ -288,7 +288,7 @@ export default function Profile() {
               borderRadius: '16px', padding: '1.5rem', marginBottom: '1.2rem'
             }}
           >
-            <h2 style={{ color: 'rgba(255,255,255,0.5)', fontWeight: 600, fontSize: '0.72rem', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1rem' }}>Subjects & Grades</h2>
+            <h2 style={{ color: 'rgba(255,255,255,0.5)', fontWeight: 600, fontSize: '0.72rem', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1rem' }}>Subjects & Classes</h2>
             {profile.subjects?.length > 0 && (
               <div style={{ marginBottom: '1rem' }}>
                 <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: '0.72rem', marginBottom: '8px', letterSpacing: '0.06em' }}>SUBJECTS</p>

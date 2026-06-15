@@ -296,7 +296,7 @@ export default function Landing() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px', position: 'relative' }}>
             {[
-              { step: '01', icon: '👤', title: 'Create Your Profile', desc: 'Sign up as a Student, Tutor, or Tuition Center. Fill in your details — subjects, grades, location, and rates.', color: '#a855f7' },
+              { step: '01', icon: '👤', title: 'Create Your Profile', desc: 'Sign up as a Student, Tutor, or Tuition Center. Fill in your details — subjects, classes, location, and rates.', color: '#a855f7' },
               { step: '02', icon: '🔍', title: 'Discover & Connect', desc: 'Students browse and filter tutors by subject, grade, and location. Tutors receive join requests from interested students. Centers list their programs and start getting discovered.', color: '#06b6d4' },
               { step: '03', icon: '📚', title: 'Learn & Grow', desc: 'Get connected with your tutor or center, start learning right away, and easily handle your tuition fees — all from one place.', color: '#ec4899' },
             ].map((s, i) => (
@@ -327,9 +327,9 @@ export default function Landing() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '14px' }}>
             {[
-              { icon: '🇮🇳', title: 'Built for India', desc: 'Covers all 36 states and UTs. Supports India-specific grades, subjects, and competitive exams like JEE, NEET, UPSC, and more.', color: '#a855f7' },
+              { icon: '🇮🇳', title: 'Built for India', desc: 'Covers all 36 states and UTs. Supports India-specific classes, subjects, and competitive exams like JEE, NEET, UPSC, and more.', color: '#a855f7' },
               { icon: '📍', title: 'Find Tutors Near You', desc: 'Share your location and instantly see tutors and coaching centers available in your area — no guessing, no calls.', color: '#06b6d4' },
-              { icon: '✅', title: 'Verified Educators', desc: 'Every tutor and tuition center maintains a public profile with bio, subjects, grades, rates, and contact — fully transparent.', color: '#10b981' },
+              { icon: '✅', title: 'Verified Educators', desc: 'Every tutor and tuition center maintains a public profile with bio, subjects, classes, rates, and contact — fully transparent.', color: '#10b981' },
               { icon: '💸', title: 'Transparent Pricing', desc: 'Filter by monthly rate. See exactly what a tutor charges before reaching out — no hidden fees, no surprises.', color: '#f97316' },
               { icon: '🗂️', title: 'All-in-One Management', desc: 'Tutors and centers manage their students, track enrollment requests, and handle payments from a single dashboard.', color: '#ec4899' },
               { icon: '👛', title: 'Easy Fee Management', desc: 'A simple system for managing tuition fees between students and educators — no outside apps or spreadsheets needed.', color: '#a855f7' },
@@ -395,9 +395,9 @@ export default function Landing() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(420px, 1fr))', gap: '16px' }}>
             {[
-              { icon: '🎓', title: 'Any Grade, Any Subject', desc: 'From Nursery to Class 12, JEE, NEET, UPSC and beyond — find specialists for every stage of your academic journey.' },
+              { icon: '🎓', title: 'Any Class, Any Subject', desc: 'From Nursery to Class 12, JEE, NEET, UPSC and beyond — find specialists for every stage of your academic journey.' },
               { icon: '📍', title: 'Near You or Anywhere', desc: 'Use your location to find tutors close to where you live, or connect with educators from anywhere in India.' },
-              { icon: '💬', title: 'Compare & Choose', desc: 'View detailed profiles including bio, subjects, grade levels, and monthly rates before sending a single request.' },
+              { icon: '💬', title: 'Compare & Choose', desc: 'View detailed profiles including bio, subjects, class levels, and monthly rates before sending a single request.' },
               { icon: '📋', title: 'Manage Your Learning', desc: 'Your student dashboard keeps all enrolled tutors and centers in one place — no more scattered contacts.' },
             ].map((b, i) => (
               <motion.div key={b.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} whileHover={{ y: -4, transition: { duration: 0.2 } }} style={{ padding: '1.6rem', background: 'rgba(168,85,247,0.07)', border: '1px solid rgba(168,85,247,0.18)', borderRadius: '18px', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
@@ -436,7 +436,7 @@ export default function Landing() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(420px, 1fr))', gap: '16px' }}>
             {[
-              { icon: '🌟', title: 'Get Discovered by Students', desc: 'Create a public profile with your subjects, grades, rates, and bio. Students searching in your area will find you instantly.' },
+              { icon: '🌟', title: 'Get Discovered by Students', desc: 'Create a public profile with your subjects, classes, rates, and bio. Students searching in your area will find you instantly.' },
               { icon: '📥', title: 'Receive Join Requests', desc: 'When a student is interested, they send you a request. Simply accept or decline it from your dashboard.' },
               { icon: '🧑‍🎓', title: 'Manage Your Students', desc: 'See all your active students in one organised list. Remove students who are no longer enrolled — changes reflect instantly.' },
               { icon: '💳', title: 'Track Your Earnings', desc: 'Log monthly payments per student and keep a clear record of all your earnings — all from your dashboard, no extra tools needed.' },
@@ -476,7 +476,7 @@ export default function Landing() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(420px, 1fr))', gap: '16px' }}>
             {[
-              { icon: '🏫', title: 'Professional Center Profile', desc: 'List your center with name, address, subjects, grade levels, monthly rate, bio, and website — a complete public listing for students to find you.' },
+              { icon: '🏫', title: 'Professional Center Profile', desc: 'List your center with name, address, subjects, class levels, monthly rate, bio, and website — a complete public listing for students to find you.' },
               { icon: '🗺️', title: 'Local & Regional Reach', desc: 'Be discoverable by students and parents searching for coaching centers in your district, area, or state.' },
               { icon: '👥', title: 'Student Enrollment System', desc: 'Manage incoming requests and your enrolled student base directly from your center dashboard — no spreadsheets needed.' },
               { icon: '📈', title: 'Payment & Financial Tracking', desc: 'Track monthly fees per student, maintain payment records, and use the built-in wallet to manage your center\'s finances.' },

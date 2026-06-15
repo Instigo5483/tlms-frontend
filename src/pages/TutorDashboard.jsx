@@ -371,7 +371,7 @@ export default function TutorDashboard() {
   const fields = [
     { label: 'Bio', name: 'bio', placeholder: 'Tell students about yourself...', type: 'textarea' },
     { label: 'Subjects', name: 'subjects', type: 'multiselect', options: INDIA_SUBJECTS, placeholder: 'Select subjects you teach...' },
-    { label: 'Grade Levels', name: 'grade_levels', type: 'multiselect', options: GRADE_LEVELS, placeholder: 'Select grade levels...' },
+    { label: 'Class Levels', name: 'grade_levels', type: 'multiselect', options: GRADE_LEVELS, placeholder: 'Select class levels...' },
     { label: 'Monthly Rate (₹)', name: 'monthly_rate', placeholder: '2000', type: 'number' },
     { label: 'Phone', name: 'phone', placeholder: '+91 98765 43210' },
     { label: 'Country', name: 'country', type: 'select', options: ['India'] },
