@@ -1,5 +1,27 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+html {
+  overflow-x: hidden;
+  width: 100%;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #050508;
+  color: #ffffff;
+  min-height: 100vh;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
 :root {
   --bg: #050508;
   --bg-1: #0a0a0f;
@@ -17,19 +39,7 @@
   --green: #10b981;
 }
 
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--bg);
-  color: var(--text-1);
-  min-height: 100vh;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-}
-
 ::placeholder { color: rgba(255,255,255,0.2); }
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
 
 .glass {
   background: rgba(255,255,255,0.04);
@@ -59,7 +69,6 @@ body {
   background-clip: text;
 }
 
-/* Page background with ambient blobs */
 .page-bg {
   position: fixed;
   inset: 0;
@@ -103,12 +112,4 @@ input, textarea, select {
 input:focus, textarea:focus, select:focus {
   border-color: rgba(168,85,247,0.4) !important;
   box-shadow: 0 0 0 3px rgba(168,85,247,0.08) !important;
-}
-
-@media (max-width: 768px) {
-  nav { width: 92% !important; }
-}
-
-@media (max-width: 480px) {
-  nav { width: 95% !important; }
 }

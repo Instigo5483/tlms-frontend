@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'motion/react'
 import Navbar from '../components/Navbar'
+import ConfirmModal from '../components/ConfirmModal'
 import { useAuth } from '../hooks/useAuth'
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL
@@ -15,6 +16,8 @@ export default function Profile() {
   const [enrollStatus, setEnrollStatus] = useState(null)
   const [enrolling, setEnrolling] = useState(false)
   const [error, setError] = useState('')
+  const [removeModal, setRemoveModal] = useState(false)
+  const [alertMsg, setAlertMsg] = useState(null)
 
   useEffect(() => {
     async function load() {
@@ -56,22 +59,27 @@ export default function Profile() {
         body: JSON.stringify({ tutor_id: id })
       })
       const data = await res.json()
-      if (!res.ok) { alert(data.error || 'Failed to send request'); return }
+      if (!res.ok) { setAlertMsg(data.error || 'Failed to send request'); return }
       setEnrollStatus(data)
-    } catch { alert('Failed to send request. Try again.') }
+    } catch { setAlertMsg('Failed to send request. Try again.') }
     finally { setEnrolling(false) }
   }
 
-  async function handleRemove() {
+  function handleRemove() {
     if (!enrollStatus?.id) return
-    if (!confirm('Remove this connection?')) return
+    setRemoveModal(true)
+  }
+
+  async function confirmRemove() {
+    setRemoveModal(false)
     try {
-      await fetch(`${BACKEND}/api/enrollments/${enrollStatus.id}`, {
+      const res = await fetch(`${BACKEND}/api/enrollments/${enrollStatus.id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       })
+      if (!res.ok) { setAlertMsg('Failed to remove. Try again.'); return }
       setEnrollStatus(null)
-    } catch { alert('Failed to remove. Try again.') }
+    } catch { setAlertMsg('Failed to remove. Try again.') }
   }
 
   function EnrollButton() {
@@ -382,6 +390,27 @@ export default function Profile() {
           </motion.div>
         )}
       </main>
+
+      <ConfirmModal
+        open={removeModal}
+        title="Remove Connection"
+        message="This will cancel your enrollment. You can send a new request in the future."
+        confirmLabel="Remove"
+        onConfirm={confirmRemove}
+        onCancel={() => setRemoveModal(false)}
+        accentColor="#f87171"
+      />
+
+      <ConfirmModal
+        open={!!alertMsg}
+        title="Something went wrong"
+        message={alertMsg}
+        confirmLabel="OK"
+        onConfirm={() => setAlertMsg(null)}
+        onCancel={() => setAlertMsg(null)}
+        hideCancel
+        accentColor="#f87171"
+      />
     </div>
   )
 }

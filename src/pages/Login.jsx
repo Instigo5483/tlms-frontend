@@ -107,7 +107,7 @@ export default function Login() {
           {/* Logo */}
           <div style={{ textAlign: 'center', marginBottom: '1.8rem' }}>
             <img
-              src="/tlms-frontend/logo.jpeg"
+              src="/logo.jpeg"
               alt="TLMS"
               style={{ width: '52px', height: '52px', borderRadius: '14px', objectFit: 'cover', marginBottom: '0.8rem' }}
             />

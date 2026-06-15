@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import Navbar from '../components/Navbar'
+import ConfirmModal from '../components/ConfirmModal'
+import InputModal from '../components/InputModal'
 import { useAuth } from '../hooks/useAuth'
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'
@@ -18,6 +20,9 @@ export default function TutorDashboard() {
   const [loadedProfile, setLoadedProfile] = useState(null)
   const [students, setStudents] = useState([])
   const [studentsLoading, setStudentsLoading] = useState(false)
+  const [modal, setModal] = useState(null)
+  const [feeModal, setFeeModal] = useState(null)
+  const [alertMsg, setAlertMsg] = useState(null)
   const [profile, setProfile] = useState({
     bio: '', monthly_rate: '', subjects: '', grade_levels: '',
     phone: '', country: '', state: '', district: '', area: ''
@@ -74,7 +79,7 @@ export default function TutorDashboard() {
         })
       })
       const data = await res.json()
-      if (!res.ok) { alert(data.error || 'Failed to save'); return }
+      if (!res.ok) { setAlertMsg(data.error || 'Failed to save'); return }
       setLoadedProfile(prev => ({
         ...prev, bio: profile.bio,
         monthly_rate: Number(profile.monthly_rate),
@@ -84,47 +89,68 @@ export default function TutorDashboard() {
         state: profile.state, district: profile.district, area: profile.area,
       }))
       setEditing(false)
-    } catch { alert('Failed to save. Try again.') }
+    } catch { setAlertMsg('Failed to save. Try again.') }
     finally { setSaving(false) }
   }
 
-  async function handleAccept(enrollmentId) {
-    const fee = prompt('Set monthly fee (₹) for this student (enter 0 for free):')
-    if (fee === null) return
+  function handleAccept(enrollmentId) {
+    setFeeModal(enrollmentId)
+  }
+
+  async function submitAccept(fee) {
+    const enrollmentId = feeModal
+    setFeeModal(null)
     try {
-      await fetch(`${BACKEND}/api/enrollments/${enrollmentId}/accept`, {
+      const res = await fetch(`${BACKEND}/api/enrollments/${enrollmentId}/accept`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ monthly_fee: Number(fee), fee_day: 1 })
       })
+      if (!res.ok) { setAlertMsg('Failed to accept the request. Please try again.'); return }
       setStudents(prev => prev.map(s =>
         s.id === enrollmentId ? { ...s, status: 'accepted', monthly_fee: Number(fee) } : s
       ))
-    } catch { alert('Failed. Try again.') }
+    } catch { setAlertMsg('Failed to accept the request. Please try again.') }
   }
 
-  async function handleReject(enrollmentId) {
-    if (!confirm('Decline this request?')) return
-    try {
-      await fetch(`${BACKEND}/api/enrollments/${enrollmentId}/reject`, {
-        method: 'PUT',
-        headers: { 'Authorization': `Bearer ${token}` }
-      })
-      setStudents(prev => prev.map(s =>
-        s.id === enrollmentId ? { ...s, status: 'rejected' } : s
-      ))
-    } catch { alert('Failed. Try again.') }
+  function handleReject(enrollmentId) {
+    setModal({
+      title: 'Decline Request',
+      message: 'This enrollment request will be declined. The student can send a new request later.',
+      confirmLabel: 'Decline',
+      onConfirm: async () => {
+        setModal(null)
+        try {
+          const res = await fetch(`${BACKEND}/api/enrollments/${enrollmentId}/reject`, {
+            method: 'PUT',
+            headers: { 'Authorization': `Bearer ${token}` }
+          })
+          if (!res.ok) { setAlertMsg('Failed to decline. Try again.'); return }
+          setStudents(prev => prev.map(s =>
+            s.id === enrollmentId ? { ...s, status: 'rejected' } : s
+          ))
+        } catch { setAlertMsg('Failed. Try again.') }
+      }
+    })
   }
 
-  async function handleRemoveStudent(enrollmentId) {
-    if (!confirm('Remove this student?')) return
-    try {
-      await fetch(`${BACKEND}/api/enrollments/${enrollmentId}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      })
-      setStudents(prev => prev.filter(s => s.id !== enrollmentId))
-    } catch { alert('Failed. Try again.') }
+  function handleRemoveStudent(enrollmentId) {
+    setModal({
+      title: 'Remove Student',
+      message: 'This will end the enrollment. The student can re-apply in the future.',
+      confirmLabel: 'Remove',
+      onConfirm: async () => {
+        setModal(null)
+        try {
+          const res = await fetch(`${BACKEND}/api/enrollments/${enrollmentId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+          })
+          if (!res.ok) { setAlertMsg('Failed to remove student. Try again.'); return }
+          setStudents(prev => prev.filter(s => s.id !== enrollmentId))
+        } catch { setAlertMsg('Failed. Try again.') }
+      }
+    })
   }
 
   const pending = students.filter(s => s.status === 'pending')
@@ -465,6 +491,41 @@ export default function TutorDashboard() {
           )}
         </AnimatePresence>
       </main>
+
+      <InputModal
+        open={feeModal !== null}
+        title="Set Monthly Fee"
+        message="Enter the monthly fee for this student. Set to 0 for a free enrollment."
+        label="Monthly Fee"
+        placeholder="e.g. 2000"
+        type="number"
+        prefix="₹"
+        confirmLabel="Accept Student"
+        onConfirm={submitAccept}
+        onCancel={() => setFeeModal(null)}
+        accentColor="#06b6d4"
+      />
+
+      <ConfirmModal
+        open={!!modal}
+        title={modal?.title}
+        message={modal?.message}
+        confirmLabel={modal?.confirmLabel}
+        onConfirm={modal?.onConfirm}
+        onCancel={() => setModal(null)}
+        accentColor="#f87171"
+      />
+
+      <ConfirmModal
+        open={!!alertMsg}
+        title="Something went wrong"
+        message={alertMsg}
+        confirmLabel="OK"
+        onConfirm={() => setAlertMsg(null)}
+        onCancel={() => setAlertMsg(null)}
+        hideCancel
+        accentColor="#f87171"
+      />
     </div>
   )
 }

@@ -7,7 +7,7 @@ export default function Landing() {
   const navigate = useNavigate()
   const containerRef = useRef(null)
   const { scrollYProgress } = useScroll({ target: containerRef })
-  const opacity = useTransform(scrollYProgress, [0, 0.3], [1, 0])
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
   const [search, setSearch] = useState('')
 
   function handleSearch(e) {
@@ -25,7 +25,7 @@ export default function Landing() {
         position: 'relative', minHeight: '100vh',
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
-        padding: '0 1.5rem', textAlign: 'center',
+        padding: '0 1.5rem', textAlign: 'center', paddingTop: '80px',
         overflow: 'hidden'
       }}>
 
@@ -397,7 +397,7 @@ export default function Landing() {
         color: 'rgba(255,255,255,0.15)', fontSize: '0.82rem'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '0.4rem' }}>
-          <img src="/tlms-frontend/logo.jpeg" alt="TLMS" style={{ width: '20px', height: '20px', borderRadius: '6px', objectFit: 'cover' }} />
+          <img src="/logo.jpeg" alt="TLMS" style={{ width: '20px', height: '20px', borderRadius: '6px', objectFit: 'cover' }} />
           <span style={{
             fontWeight: 700,
             background: 'linear-gradient(135deg, #a855f7, #06b6d4)',

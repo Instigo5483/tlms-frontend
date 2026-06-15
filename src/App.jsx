@@ -22,7 +22,7 @@ function ProtectedRoute({ children, role }) {
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter basename="/tlms-frontend">
+      <BrowserRouter basename="/">
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/discover" element={<Discover />} />
