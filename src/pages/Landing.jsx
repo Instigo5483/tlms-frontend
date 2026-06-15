@@ -255,7 +255,7 @@ export default function Landing() {
             <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '1rem', maxWidth: '520px', lineHeight: 1.7 }}>Stop wasting time searching. TLMS puts the right educator right in front of you — local, affordable, and perfectly matched to your needs.</p>
           </motion.div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(420px, 1fr))', gap: '16px' }}>
             {[
               { icon: '🎓', title: 'Any Grade, Any Subject', desc: 'From Nursery to Class 12, JEE, NEET, UPSC and beyond — find specialists for every stage of your academic journey.' },
               { icon: '📍', title: 'Near You or Anywhere', desc: 'Use your location to find tutors close to where you live, or connect with educators from anywhere in India.' },
@@ -296,7 +296,7 @@ export default function Landing() {
             <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '1rem', maxWidth: '520px', lineHeight: 1.7, marginLeft: 'auto' }}>Whether you are just starting out or already teaching, TLMS gives you the tools to find students, manage your work, and get paid — all in one place.</p>
           </motion.div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(420px, 1fr))', gap: '16px' }}>
             {[
               { icon: '🌟', title: 'Get Discovered by Students', desc: 'Create a public profile with your subjects, grades, rates, and bio. Students searching in your area will find you instantly.' },
               { icon: '📥', title: 'Receive Join Requests', desc: 'When a student is interested, they send you a request. Simply accept or decline it from your dashboard.' },
@@ -336,7 +336,7 @@ export default function Landing() {
             <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '1rem', maxWidth: '540px', lineHeight: 1.7 }}>TLMS gives coaching centers a professional presence online and the management tools to operate efficiently — from new enrollments to payment tracking.</p>
           </motion.div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(420px, 1fr))', gap: '16px' }}>
             {[
               { icon: '🏫', title: 'Professional Center Profile', desc: 'List your center with name, address, subjects, grade levels, monthly rate, bio, and website — a complete public listing for students to find you.' },
               { icon: '🗺️', title: 'Local & Regional Reach', desc: 'Be discoverable by students and parents searching for coaching centers in your district, area, or state.' },
