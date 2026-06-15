@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import Navbar from '../components/Navbar'
 import ConfirmModal from '../components/ConfirmModal'
@@ -6,6 +6,14 @@ import InputModal from '../components/InputModal'
 import { useAuth } from '../hooks/useAuth'
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'
+
+const INDIA_SUBJECTS = [
+  'Accountancy','Arts / Drawing','Bengali','Biology','Business Studies','Chemistry',
+  'Computer Science','Economics','English','Geography','Gujarati','Hindi','History',
+  'Kannada','Malayalam','Marathi','Mathematics','Music','Physical Education',
+  'Physics','Political Science','Punjabi','Sanskrit','Social Science',
+  'Tamil','Telugu','Urdu',
+]
 
 const INDIA_STATES = [
   'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat',
@@ -23,6 +31,99 @@ const GRADE_LEVELS = [
   'Class 11','Class 12',
   'JEE','NEET','UPSC','APSC','WBJEE','CEE',
 ]
+
+function DropdownMulti({ value, onChange, options, placeholder, accentColor = '#06b6d4' }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+  const selected = value ? value.split(',').map(s => s.trim()).filter(Boolean) : []
+
+  useEffect(() => {
+    function onOut(e) { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
+    if (open) document.addEventListener('mousedown', onOut)
+    return () => document.removeEventListener('mousedown', onOut)
+  }, [open])
+
+  function toggle(o) {
+    const next = selected.includes(o) ? selected.filter(x => x !== o) : [...selected, o]
+    onChange(next.join(', '))
+  }
+
+  return (
+    <div ref={ref} style={{ position: 'relative' }}>
+      <motion.button
+        type="button"
+        onClick={() => setOpen(v => !v)}
+        whileTap={{ scale: 0.99 }}
+        style={{
+          width: '100%', minHeight: '42px', padding: '6px 14px',
+          background: 'rgba(255,255,255,0.04)',
+          border: `1px solid ${open ? accentColor + '55' : 'rgba(255,255,255,0.08)'}`,
+          borderRadius: '10px', color: '#fff',
+          display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '5px',
+          cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.2s',
+        }}
+      >
+        {selected.length === 0 ? (
+          <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.9rem', flex: 1 }}>{placeholder}</span>
+        ) : selected.map(s => (
+          <span key={s} style={{
+            background: accentColor + '1a', border: `1px solid ${accentColor}40`,
+            color: accentColor, borderRadius: '6px', padding: '1px 8px',
+            fontSize: '0.75rem', fontWeight: 600,
+          }}>{s}</span>
+        ))}
+        <motion.span
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+          style={{ marginLeft: 'auto', opacity: 0.4, fontSize: '0.7rem', flexShrink: 0, paddingLeft: '4px' }}
+        >▾</motion.span>
+      </motion.button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, scaleY: 0.94 }}
+            animate={{ opacity: 1, y: 0, scaleY: 1 }}
+            exit={{ opacity: 0, y: -8, scaleY: 0.94 }}
+            transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+            style={{
+              position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, zIndex: 300,
+              background: '#0d0d16',
+              border: `1px solid ${accentColor}28`,
+              borderRadius: '12px',
+              boxShadow: `0 24px 60px rgba(0,0,0,0.7), 0 0 0 1px ${accentColor}10`,
+              transformOrigin: 'top',
+            }}
+          >
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', padding: '12px' }}>
+              {options.map(o => {
+                const active = selected.includes(o)
+                return (
+                  <motion.button
+                    key={o} type="button"
+                    whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
+                    onClick={() => toggle(o)}
+                    animate={{
+                      background: active ? accentColor + '22' : 'rgba(255,255,255,0.04)',
+                      borderColor: active ? accentColor + '60' : 'rgba(255,255,255,0.1)',
+                      color: active ? accentColor : 'rgba(255,255,255,0.45)',
+                    }}
+                    transition={{ duration: 0.12 }}
+                    style={{
+                      padding: '5px 13px', borderRadius: '8px',
+                      fontSize: '0.82rem', fontWeight: active ? 600 : 400,
+                      border: '1px solid', cursor: 'pointer',
+                    }}
+                  >{o}</motion.button>
+                )
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
 
 export default function TutorDashboard() {
   const { user, token } = useAuth()
@@ -175,8 +276,8 @@ export default function TutorDashboard() {
 
   const fields = [
     { label: 'Bio', name: 'bio', placeholder: 'Tell students about yourself...', type: 'textarea' },
-    { label: 'Subjects (comma separated)', name: 'subjects', placeholder: 'Math, Physics, Chemistry' },
-    { label: 'Grade Levels (select multiple)', name: 'grade_levels', type: 'multiselect', options: GRADE_LEVELS },
+    { label: 'Subjects', name: 'subjects', type: 'multiselect', options: INDIA_SUBJECTS, placeholder: 'Select subjects you teach...' },
+    { label: 'Grade Levels', name: 'grade_levels', type: 'multiselect', options: GRADE_LEVELS, placeholder: 'Select grade levels...' },
     { label: 'Monthly Rate (₹)', name: 'monthly_rate', placeholder: '2000', type: 'number' },
     { label: 'Phone', name: 'phone', placeholder: '+91 98765 43210' },
     { label: 'Country', name: 'country', type: 'select', options: ['India'] },
@@ -335,33 +436,13 @@ export default function TutorDashboard() {
                               {f.options.map(o => <option key={o} value={o}>{o}</option>)}
                             </select>
                           ) : f.type === 'multiselect' ? (
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', paddingTop: '2px' }}>
-                              {f.options.map(o => {
-                                const active = (profile[f.name] || '').split(',').map(s => s.trim()).filter(Boolean).includes(o)
-                                return (
-                                  <motion.button
-                                    key={o} type="button"
-                                    whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
-                                    onClick={() => {
-                                      const curr = (profile[f.name] || '').split(',').map(s => s.trim()).filter(Boolean)
-                                      const next = curr.includes(o) ? curr.filter(x => x !== o) : [...curr, o]
-                                      setProfile(p => ({ ...p, [f.name]: next.join(', ') }))
-                                    }}
-                                    animate={{
-                                      background: active ? 'rgba(6,182,212,0.18)' : 'rgba(255,255,255,0.04)',
-                                      borderColor: active ? 'rgba(6,182,212,0.5)' : 'rgba(255,255,255,0.1)',
-                                      color: active ? '#06b6d4' : 'rgba(255,255,255,0.4)',
-                                    }}
-                                    transition={{ duration: 0.15 }}
-                                    style={{
-                                      padding: '5px 12px', borderRadius: '8px',
-                                      fontSize: '0.8rem', fontWeight: 600,
-                                      border: '1px solid', cursor: 'pointer',
-                                    }}
-                                  >{o}</motion.button>
-                                )
-                              })}
-                            </div>
+                            <DropdownMulti
+                              value={profile[f.name]}
+                              onChange={val => setProfile(p => ({ ...p, [f.name]: val }))}
+                              options={f.options}
+                              placeholder={f.placeholder}
+                              accentColor="#06b6d4"
+                            />
                           ) : (
                             <input type={f.type || 'text'} placeholder={f.placeholder}
                               value={profile[f.name]}
