@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/jpeg" href="/tlms-frontend/logo.jpeg" />
+    <link rel="icon" type="image/jpeg" href="/logo.jpeg" />
     <script>
       (function() {
         var p = window.location.search.match(/[?&]p=([^&]*)/);
@@ -10,7 +10,7 @@
           var path = decodeURIComponent(p[1]);
           var q = window.location.search.match(/[?&]q=([^&]*)/);
           var query = q ? decodeURIComponent(q[1]) : '';
-          window.history.replaceState(null, null, '/tlms-frontend' + path + query);
+          window.history.replaceState(null, null, path + query);
         }
       })();
     </script>
@@ -18,8 +18,8 @@
     <meta name="description" content="TLMS — Tuition Locate & Management Service. Find verified tutors and tuition centers near you." />
     <title>TLMS — Connect. Learn. Succeed.</title>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script type="module" crossorigin src="/tlms-frontend/assets/index-CJuxHtMO.js"></script>
-    <link rel="stylesheet" crossorigin href="/tlms-frontend/assets/index-DRbxtyQn.css">
+    <script type="module" crossorigin src="/assets/index-DflvWbSk.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DRbxtyQn.css">
   </head>
   <body>
     <div id="root"></div>
