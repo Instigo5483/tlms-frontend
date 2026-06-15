@@ -22,7 +22,7 @@ function ProtectedRoute({ children, role }) {
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter basename="/">
+      <BrowserRouter>
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/discover" element={<Discover />} />

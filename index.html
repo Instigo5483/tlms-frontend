@@ -3,6 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/jpeg" href="/logo.jpeg" />
+    <script>
+      (function() {
+        var p = window.location.search.match(/[?&]p=([^&]*)/);
+        if (p) {
+          var path = decodeURIComponent(p[1]);
+          var q = window.location.search.match(/[?&]q=([^&]*)/);
+          var query = q ? decodeURIComponent(q[1]) : '';
+          window.history.replaceState(null, null, path + query);
+        }
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="TLMS — Tuition Locate & Management Service. Find verified tutors and tuition centers near you." />
     <title>TLMS — Connect. Learn. Succeed.</title>
