@@ -32,6 +32,85 @@ const GRADE_LEVELS = [
   'JEE','NEET','UPSC','APSC','WBJEE','CEE',
 ]
 
+function DropdownSingle({ value, onChange, options, placeholder, accentColor = '#ec4899' }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+
+  useEffect(() => {
+    function onOut(e) { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
+    if (open) document.addEventListener('mousedown', onOut)
+    return () => document.removeEventListener('mousedown', onOut)
+  }, [open])
+
+  return (
+    <div ref={ref} style={{ position: 'relative' }}>
+      <motion.button
+        type="button"
+        onClick={() => setOpen(v => !v)}
+        whileTap={{ scale: 0.99 }}
+        style={{
+          width: '100%', height: '42px', padding: '0 14px',
+          background: 'rgba(255,255,255,0.04)',
+          border: `1px solid ${open ? accentColor + '55' : 'rgba(255,255,255,0.08)'}`,
+          borderRadius: '10px',
+          display: 'flex', alignItems: 'center',
+          cursor: 'pointer', fontSize: '0.9rem',
+          transition: 'border-color 0.2s',
+        }}
+      >
+        <span style={{ flex: 1, color: value ? '#fff' : 'rgba(255,255,255,0.2)', textAlign: 'left' }}>
+          {value || placeholder}
+        </span>
+        <motion.span
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+          style={{ opacity: 0.4, fontSize: '0.7rem', flexShrink: 0 }}
+        >▾</motion.span>
+      </motion.button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, scaleY: 0.94 }}
+            animate={{ opacity: 1, y: 0, scaleY: 1 }}
+            exit={{ opacity: 0, y: -8, scaleY: 0.94 }}
+            transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+            style={{
+              position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, zIndex: 300,
+              background: '#0d0d16',
+              border: `1px solid ${accentColor}28`,
+              borderRadius: '12px',
+              boxShadow: `0 24px 60px rgba(0,0,0,0.7), 0 0 0 1px ${accentColor}10`,
+              transformOrigin: 'top',
+            }}
+          >
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', padding: '12px' }}>
+              {options.map(o => (
+                <motion.button
+                  key={o} type="button"
+                  whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
+                  onClick={() => { onChange(o); setOpen(false) }}
+                  animate={{
+                    background: value === o ? accentColor + '22' : 'rgba(255,255,255,0.04)',
+                    borderColor: value === o ? accentColor + '60' : 'rgba(255,255,255,0.1)',
+                    color: value === o ? accentColor : 'rgba(255,255,255,0.45)',
+                  }}
+                  transition={{ duration: 0.12 }}
+                  style={{
+                    padding: '5px 13px', borderRadius: '8px',
+                    fontSize: '0.82rem', fontWeight: value === o ? 600 : 400,
+                    border: '1px solid', cursor: 'pointer',
+                  }}
+                >{o}</motion.button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
 function DropdownMulti({ value, onChange, options, placeholder, accentColor = '#ec4899' }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
@@ -419,14 +498,13 @@ export default function CenterDashboard() {
                               style={{ width: '100%', padding: '10px 14px', background: 'rgba(255,255,255,0.04) !important', border: '1px solid rgba(236,72,153,0.15) !important', borderRadius: '10px !important', color: '#fff !important', fontSize: '0.9rem', resize: 'vertical' }}
                             />
                           ) : f.type === 'select' ? (
-                            <select
+                            <DropdownSingle
                               value={profile[f.name] || ''}
-                              onChange={e => setProfile(p => ({ ...p, [f.name]: e.target.value }))}
-                              style={{ width: '100%', height: '42px', padding: '0 14px', background: 'rgba(255,255,255,0.04) !important', border: '1px solid rgba(236,72,153,0.15) !important', borderRadius: '10px !important', color: '#fff !important', fontSize: '0.9rem' }}
-                            >
-                              <option value="">— Select —</option>
-                              {f.options.map(o => <option key={o} value={o}>{o}</option>)}
-                            </select>
+                              onChange={val => setProfile(p => ({ ...p, [f.name]: val }))}
+                              options={f.options}
+                              placeholder={`Select ${f.label.toLowerCase()}...`}
+                              accentColor="#ec4899"
+                            />
                           ) : f.type === 'multiselect' ? (
                             <DropdownMulti
                               value={profile[f.name]}

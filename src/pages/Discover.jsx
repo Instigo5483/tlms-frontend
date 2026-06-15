@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'motion/react'
 import Navbar from '../components/Navbar'
@@ -29,6 +29,85 @@ const INDIA_GRADES = [
   'Class 11','Class 12',
   'JEE','NEET','UPSC','APSC','WBJEE','CEE',
 ]
+
+function DropdownSingle({ value, onChange, options, placeholder }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+
+  useEffect(() => {
+    function onOut(e) { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
+    if (open) document.addEventListener('mousedown', onOut)
+    return () => document.removeEventListener('mousedown', onOut)
+  }, [open])
+
+  return (
+    <div ref={ref} style={{ position: 'relative' }}>
+      <motion.button
+        type="button"
+        onClick={() => setOpen(v => !v)}
+        whileTap={{ scale: 0.99 }}
+        style={{
+          width: '100%', height: '38px', padding: '0 12px',
+          background: '#0a0a0a',
+          border: `1px solid ${open ? 'rgba(168,85,247,0.4)' : 'rgba(255,255,255,0.08)'}`,
+          borderRadius: '10px',
+          display: 'flex', alignItems: 'center',
+          cursor: 'pointer', fontSize: '0.85rem',
+          transition: 'border-color 0.2s',
+        }}
+      >
+        <span style={{ flex: 1, color: value ? '#fff' : 'rgba(255,255,255,0.25)', textAlign: 'left' }}>
+          {value || placeholder}
+        </span>
+        <motion.span
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+          style={{ opacity: 0.4, fontSize: '0.65rem', flexShrink: 0 }}
+        >▾</motion.span>
+      </motion.button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, scaleY: 0.94 }}
+            animate={{ opacity: 1, y: 0, scaleY: 1 }}
+            exit={{ opacity: 0, y: -8, scaleY: 0.94 }}
+            transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+            style={{
+              position: 'absolute', top: 'calc(100% + 5px)', left: 0, right: 0, zIndex: 300,
+              background: '#0d0d16',
+              border: '1px solid rgba(168,85,247,0.2)',
+              borderRadius: '12px',
+              boxShadow: '0 24px 60px rgba(0,0,0,0.7)',
+              transformOrigin: 'top',
+            }}
+          >
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', padding: '10px' }}>
+              {options.map(o => (
+                <motion.button
+                  key={o} type="button"
+                  whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
+                  onClick={() => { onChange(o === value ? '' : o); setOpen(false) }}
+                  animate={{
+                    background: value === o ? 'rgba(168,85,247,0.2)' : 'rgba(255,255,255,0.04)',
+                    borderColor: value === o ? 'rgba(168,85,247,0.5)' : 'rgba(255,255,255,0.1)',
+                    color: value === o ? '#a855f7' : 'rgba(255,255,255,0.45)',
+                  }}
+                  transition={{ duration: 0.12 }}
+                  style={{
+                    padding: '4px 11px', borderRadius: '7px',
+                    fontSize: '0.79rem', fontWeight: value === o ? 600 : 400,
+                    border: '1px solid', cursor: 'pointer',
+                  }}
+                >{o}</motion.button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
 
 export default function Discover() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -227,17 +306,21 @@ export default function Discover() {
               }}>
                 <div style={{ flex: '1 1 140px' }}>
                   <label style={filterLabelStyle}>Subject</label>
-                  <select value={filters.subject} onChange={e => handleFilter('subject', e.target.value)} style={filterSelectStyle}>
-                    <option value="">All</option>
-                    {INDIA_SUBJECTS.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
+                  <DropdownSingle
+                    value={filters.subject}
+                    onChange={val => handleFilter('subject', val)}
+                    options={INDIA_SUBJECTS}
+                    placeholder="All"
+                  />
                 </div>
                 <div style={{ flex: '1 1 140px' }}>
                   <label style={filterLabelStyle}>Grade</label>
-                  <select value={filters.grade} onChange={e => handleFilter('grade', e.target.value)} style={filterSelectStyle}>
-                    <option value="">All</option>
-                    {INDIA_GRADES.map(g => <option key={g} value={g}>{g}</option>)}
-                  </select>
+                  <DropdownSingle
+                    value={filters.grade}
+                    onChange={val => handleFilter('grade', val)}
+                    options={INDIA_GRADES}
+                    placeholder="All"
+                  />
                 </div>
                 <div style={{ flex: '1 1 140px' }}>
                   <label style={filterLabelStyle}>Max Monthly Rate</label>
@@ -251,17 +334,21 @@ export default function Discover() {
                 </div>
                 <div style={{ flex: '1 1 120px' }}>
                   <label style={filterLabelStyle}>Country</label>
-                  <select value={filters.country} onChange={e => handleFilter('country', e.target.value)} style={filterSelectStyle}>
-                    <option value="">All</option>
-                    <option value="India">India</option>
-                  </select>
+                  <DropdownSingle
+                    value={filters.country}
+                    onChange={val => handleFilter('country', val)}
+                    options={['India']}
+                    placeholder="All"
+                  />
                 </div>
                 <div style={{ flex: '1 1 120px' }}>
                   <label style={filterLabelStyle}>State</label>
-                  <select value={filters.state} onChange={e => handleFilter('state', e.target.value)} style={filterSelectStyle}>
-                    <option value="">All</option>
-                    {INDIA_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
+                  <DropdownSingle
+                    value={filters.state}
+                    onChange={val => handleFilter('state', val)}
+                    options={INDIA_STATES}
+                    placeholder="All"
+                  />
                 </div>
                 <div style={{ flex: '1 1 120px' }}>
                   <label style={filterLabelStyle}>District</label>
