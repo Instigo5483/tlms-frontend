@@ -66,7 +66,16 @@ export default function Wallet() {
     finally { setWithdrawing(false) }
   }
 
-  const platformFee = form.amount ? Math.round(Number(form.amount) * 0.01 * 100) / 100 : 0
+  const totalEarned = Number(wallet?.total_earned) || 0
+  const feeRate = totalEarned < 50000 ? 0.01
+    : totalEarned < 100000 ? 0.0075
+    : totalEarned < 500000 ? 0.005
+    : 0.0025
+  const feeLabel = totalEarned < 50000 ? '1%'
+    : totalEarned < 100000 ? '0.75%'
+    : totalEarned < 500000 ? '0.5%'
+    : '0.25%'
+  const platformFee = form.amount ? Math.round(Number(form.amount) * feeRate * 100) / 100 : 0
   const netAmount = form.amount ? Math.round((Number(form.amount) - platformFee) * 100) / 100 : 0
 
   return (
@@ -227,7 +236,7 @@ export default function Wallet() {
                           }}
                         >
                           <div style={{ display: 'flex', justifyContent: 'space-between', color: 'rgba(255,255,255,0.35)', marginBottom: '6px' }}>
-                            <span>Platform fee (1%)</span>
+                            <span>Platform fee ({feeLabel})</span>
                             <span>− ₹{platformFee}</span>
                           </div>
                           <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700 }}>

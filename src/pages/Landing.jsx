@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { motion, useScroll, useTransform } from 'motion/react'
+import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react'
 import { useRef, useState } from 'react'
 import Navbar from '../components/Navbar'
 
@@ -25,6 +25,123 @@ function SectionBadge({ label, color = '#a855f7' }) {
 
 function Blob({ style }) {
   return <div style={{ position: 'absolute', pointerEvents: 'none', filter: 'blur(70px)', ...style }} />
+}
+
+function getFeeRate(earned) {
+  if (earned < 50000)  return { rate: 0.01,   label: '1%',     tier: 'Starter' }
+  if (earned < 100000) return { rate: 0.0075,  label: '0.75%',  tier: 'Growing' }
+  if (earned < 500000) return { rate: 0.005,   label: '0.5%',   tier: 'Established' }
+  return                      { rate: 0.0025,  label: '0.25%',  tier: 'Top Earner' }
+}
+
+function FeeCalculator() {
+  const trackRef = useRef(null)
+  const dragging = useRef(false)
+  const MAX = 1000000
+  const [earned, setEarned] = useState(0)
+  const [withdrawStr, setWithdrawStr] = useState('')
+
+  const pct = (earned / MAX) * 100
+  const { rate, label, tier } = getFeeRate(earned)
+  const withdrawNum = Math.max(0, Number(withdrawStr) || 0)
+  const fee = Math.round(withdrawNum * rate * 100) / 100
+  const net = Math.round((withdrawNum - fee) * 100) / 100
+
+  const fmt = v => `₹${Number(v).toLocaleString('en-IN')}`
+
+  function valFromX(clientX) {
+    const rect = trackRef.current?.getBoundingClientRect()
+    if (!rect) return null
+    return Math.round(Math.max(0, Math.min(1, (clientX - rect.left) / rect.width)) * MAX / 5000) * 5000
+  }
+
+  function onPointerDown(e) {
+    dragging.current = true
+    trackRef.current?.setPointerCapture(e.pointerId)
+    const v = valFromX(e.clientX); if (v !== null) setEarned(v)
+  }
+  function onPointerMove(e) {
+    if (!dragging.current) return
+    const v = valFromX(e.clientX); if (v !== null) setEarned(v)
+  }
+  function onPointerUp() { dragging.current = false }
+
+  const tierColor = tier === 'Starter' ? '#a855f7' : tier === 'Growing' ? '#06b6d4' : tier === 'Established' ? '#10b981' : '#f97316'
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.15 }}
+      style={{ background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.18)', borderRadius: '24px', padding: '2rem', position: 'relative', overflow: 'hidden' }}
+    >
+      <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '60%', height: '1px', background: 'linear-gradient(90deg, transparent, rgba(16,185,129,0.5), transparent)' }} />
+
+      <h3 style={{ fontWeight: 800, fontSize: '1.1rem', color: '#fff', marginBottom: '0.3rem' }}>Fee Calculator</h3>
+      <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.8rem', marginBottom: '1.6rem' }}>Drag the slider to see your fee tier</p>
+
+      {/* Earned slider */}
+      <div style={{ marginBottom: '1.4rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '0.8rem' }}>
+          <span style={{ color: 'rgba(255,255,255,0.4)' }}>Total earned so far</span>
+          <span style={{ color: '#10b981', fontWeight: 700 }}>{fmt(earned)}</span>
+        </div>
+        <div
+          ref={trackRef}
+          onPointerDown={onPointerDown} onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp} onPointerCancel={onPointerUp}
+          style={{ position: 'relative', height: '5px', background: 'rgba(255,255,255,0.08)', borderRadius: '3px', cursor: 'pointer', margin: '8px 0' }}
+        >
+          <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', width: `${pct}%`, background: 'linear-gradient(90deg, #a855f7, #10b981)', borderRadius: '3px', pointerEvents: 'none' }} />
+          <motion.div
+            whileHover={{ scale: 1.25 }} whileTap={{ scale: 1.05 }}
+            onPointerDown={onPointerDown}
+            style={{ position: 'absolute', top: 'calc(50% - 8px)', left: `calc(${pct}% - 8px)`, width: '16px', height: '16px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 0 3px rgba(16,185,129,0.3), 0 2px 8px rgba(0,0,0,0.6)', cursor: 'grab', touchAction: 'none' }}
+          />
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.68rem', color: 'rgba(255,255,255,0.18)', marginTop: '4px' }}>
+          <span>₹0</span><span>₹10 Lakh+</span>
+        </div>
+      </div>
+
+      {/* Tier badge */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: `${tierColor}12`, border: `1px solid ${tierColor}30`, borderRadius: '10px', marginBottom: '1.4rem' }}>
+        <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>{tier} tier</span>
+        <span style={{ fontWeight: 800, fontSize: '1rem', color: tierColor }}>{label} withdrawal fee</span>
+      </div>
+
+      {/* Withdraw input */}
+      <div style={{ marginBottom: '1.2rem' }}>
+        <label style={{ display: 'block', fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)', marginBottom: '6px', fontWeight: 500 }}>Amount to withdraw (₹)</label>
+        <input
+          type="number" placeholder="e.g. 5000"
+          value={withdrawStr} onChange={e => setWithdrawStr(e.target.value)}
+          style={{ width: '100%', height: '42px', padding: '0 14px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(16,185,129,0.18)', borderRadius: '10px', color: '#fff', fontSize: '0.9rem' }}
+        />
+      </div>
+
+      {/* Result */}
+      <AnimatePresence>
+        {withdrawNum > 0 && (
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} style={{ overflow: 'hidden' }}>
+            <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.83rem' }}>
+                <span style={{ color: 'rgba(255,255,255,0.35)' }}>Withdraw amount</span>
+                <span style={{ color: '#fff', fontWeight: 600 }}>{fmt(withdrawNum)}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.83rem' }}>
+                <span style={{ color: 'rgba(255,255,255,0.35)' }}>Platform fee ({label})</span>
+                <span style={{ color: '#f87171', fontWeight: 600 }}>− {fmt(fee)}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.95rem', paddingTop: '6px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                <span style={{ color: '#fff', fontWeight: 700 }}>You receive</span>
+                <span style={{ fontWeight: 800, background: 'linear-gradient(135deg, #10b981, #06b6d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{fmt(net)}</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  )
 }
 
 export default function Landing() {
@@ -358,6 +475,42 @@ export default function Landing() {
               Register Your Center →
             </motion.button>
           </motion.div>
+        </div>
+      </section>
+
+      {/* ── Fee Structure ── */}
+      <section style={{ padding: 'clamp(4rem,10vw,8rem) 1.5rem', position: 'relative', overflow: 'hidden' }}>
+        <Blob style={{ top: '30%', right: '-5%', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 70%)' }} />
+        <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '4rem', alignItems: 'center' }}>
+
+          {/* Left: tier breakdown */}
+          <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: 0.8 }}>
+            <SectionBadge label="Pricing" color="#10b981" />
+            <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 900, letterSpacing: '-0.03em', color: '#fff', marginBottom: '0.8rem', lineHeight: 1.1 }}>
+              The more you earn,{' '}
+              <span style={{ background: 'linear-gradient(135deg, #10b981, #06b6d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>the less you pay</span>
+            </h2>
+            <p style={{ color: 'rgba(255,255,255,0.4)', lineHeight: 1.8, fontSize: '0.95rem', marginBottom: '2rem' }}>
+              We use a tiered fee system for withdrawals. As your total earnings grow, your withdrawal fee goes down — rewarding educators who use TLMS long-term.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {[
+                { range: 'Under ₹50,000 earned',          fee: '1%',     color: '#a855f7' },
+                { range: '₹50,000 – ₹1,00,000 earned',   fee: '0.75%',  color: '#06b6d4' },
+                { range: '₹1,00,000 – ₹5,00,000 earned', fee: '0.5%',   color: '#10b981' },
+                { range: 'Above ₹5,00,000 earned',        fee: '0.25%',  color: '#f97316' },
+              ].map((t, i) => (
+                <motion.div key={t.range} initial={{ opacity: 0, x: -15 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 + i * 0.08 }}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: `${t.color}0a`, border: `1px solid ${t.color}20`, borderRadius: '12px' }}>
+                  <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem' }}>{t.range}</span>
+                  <span style={{ fontWeight: 800, fontSize: '1rem', color: t.color }}>{t.fee}</span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Right: calculator */}
+          <FeeCalculator />
         </div>
       </section>
 
