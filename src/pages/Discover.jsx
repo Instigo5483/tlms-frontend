@@ -122,6 +122,7 @@ export default function Discover() {
   const [filterData, setFilterData] = useState({ subjects: [], grades: [], locations: [] })
   const [gpsLoading, setGpsLoading] = useState(false)
   const [showFilters, setShowFilters] = useState(false)
+  const [filterAnimDone, setFilterAnimDone] = useState(false)
 
   const [filters, setFilters] = useState({
     q: searchParams.get('q') || '',
@@ -260,7 +261,7 @@ export default function Discover() {
             ))}
           </div>
 
-          <button onClick={() => setShowFilters(!showFilters)} style={{
+          <button onClick={() => { setShowFilters(v => !v); setFilterAnimDone(false) }} style={{
             height: '44px', padding: '0 16px',
             background: showFilters ? 'rgba(255,255,255,0.1)' : '#0a0a0a',
             border: '1px solid rgba(255,255,255,0.08)',
@@ -299,7 +300,8 @@ export default function Discover() {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              style={{ overflow: 'hidden', marginBottom: '1.5rem' }}
+              onAnimationComplete={() => { if (showFilters) setFilterAnimDone(true) }}
+              style={{ overflow: filterAnimDone ? 'visible' : 'hidden', marginBottom: '1.5rem' }}
             >
               <div style={{
                 padding: '1.5rem', background: '#0a0a0a',
