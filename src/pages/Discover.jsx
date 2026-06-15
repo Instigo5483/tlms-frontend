@@ -30,6 +30,123 @@ const INDIA_GRADES = [
   'JEE','NEET','UPSC','APSC','WBJEE','CEE',
 ]
 
+const PRICE_MAX = 10000
+const PRICE_STEP = 500
+
+function PriceRangeSlider({ minVal, maxVal, onChange }) {
+  const trackRef = useRef(null)
+  const activeHandle = useRef(null)
+  const [localMin, setLocalMin] = useState(minVal)
+  const [localMax, setLocalMax] = useState(maxVal)
+
+  const minPct = (localMin / PRICE_MAX) * 100
+  const maxPct = (localMax / PRICE_MAX) * 100
+
+  function valFromX(clientX) {
+    const rect = trackRef.current?.getBoundingClientRect()
+    if (!rect) return null
+    const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
+    return Math.round((pct * PRICE_MAX) / PRICE_STEP) * PRICE_STEP
+  }
+
+  function onHandleDown(e, handle) {
+    e.stopPropagation()
+    activeHandle.current = handle
+    trackRef.current?.setPointerCapture(e.pointerId)
+  }
+
+  function onTrackMove(e) {
+    if (!activeHandle.current) return
+    const val = valFromX(e.clientX)
+    if (val === null) return
+    if (activeHandle.current === 'min') {
+      setLocalMin(Math.max(0, Math.min(val, localMax - PRICE_STEP)))
+    } else {
+      setLocalMax(Math.min(PRICE_MAX, Math.max(val, localMin + PRICE_STEP)))
+    }
+  }
+
+  function onTrackUp() {
+    if (!activeHandle.current) return
+    activeHandle.current = null
+    onChange(localMin, localMax)
+  }
+
+  function onTrackClick(e) {
+    if (activeHandle.current) return
+    const val = valFromX(e.clientX)
+    if (val === null) return
+    const distMin = Math.abs(val - localMin)
+    const distMax = Math.abs(val - localMax)
+    if (distMin <= distMax) {
+      const n = Math.max(0, Math.min(val, localMax - PRICE_STEP))
+      setLocalMin(n); onChange(n, localMax)
+    } else {
+      const n = Math.min(PRICE_MAX, Math.max(val, localMin + PRICE_STEP))
+      setLocalMax(n); onChange(localMin, n)
+    }
+  }
+
+  const fmt = (v) => v === 0 ? '₹0' : `₹${v.toLocaleString('en-IN')}`
+
+  return (
+    <div style={{ padding: '4px 2px 0' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '14px', fontSize: '0.8rem' }}>
+        <span style={{ color: '#a855f7', fontWeight: 600 }}>{fmt(localMin)}</span>
+        <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: '0.72rem', alignSelf: 'center' }}>Monthly Rate</span>
+        <span style={{ color: '#06b6d4', fontWeight: 600 }}>{localMax >= PRICE_MAX ? '₹10,000+' : fmt(localMax)}</span>
+      </div>
+
+      <div
+        ref={trackRef}
+        onClick={onTrackClick}
+        onPointerMove={onTrackMove}
+        onPointerUp={onTrackUp}
+        onPointerCancel={onTrackUp}
+        style={{ position: 'relative', height: '5px', background: 'rgba(255,255,255,0.08)', borderRadius: '3px', margin: '8px 0 6px', cursor: 'pointer' }}
+      >
+        <div style={{
+          position: 'absolute', top: 0, height: '100%',
+          left: `${minPct}%`, width: `${maxPct - minPct}%`,
+          background: 'linear-gradient(90deg, #a855f7, #06b6d4)',
+          borderRadius: '3px', pointerEvents: 'none',
+        }} />
+
+        {/* Min handle */}
+        <motion.div
+          onPointerDown={e => onHandleDown(e, 'min')}
+          whileHover={{ scale: 1.3 }} whileTap={{ scale: 1.1 }}
+          style={{
+            position: 'absolute', top: '50%', left: `${minPct}%`,
+            width: '17px', height: '17px', borderRadius: '50%',
+            background: '#a855f7', transform: 'translate(-50%, -50%)',
+            boxShadow: '0 0 0 3px rgba(168,85,247,0.3), 0 2px 8px rgba(0,0,0,0.6)',
+            cursor: 'grab', touchAction: 'none',
+          }}
+        />
+
+        {/* Max handle */}
+        <motion.div
+          onPointerDown={e => onHandleDown(e, 'max')}
+          whileHover={{ scale: 1.3 }} whileTap={{ scale: 1.1 }}
+          style={{
+            position: 'absolute', top: '50%', left: `${maxPct}%`,
+            width: '17px', height: '17px', borderRadius: '50%',
+            background: '#06b6d4', transform: 'translate(-50%, -50%)',
+            boxShadow: '0 0 0 3px rgba(6,182,212,0.3), 0 2px 8px rgba(0,0,0,0.6)',
+            cursor: 'grab', touchAction: 'none',
+          }}
+        />
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.68rem', color: 'rgba(255,255,255,0.18)', marginTop: '2px' }}>
+        <span>₹0</span>
+        <span>₹10,000+</span>
+      </div>
+    </div>
+  )
+}
+
 function DropdownSingle({ value, onChange, options, placeholder }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
@@ -128,6 +245,7 @@ export default function Discover() {
     q: searchParams.get('q') || '',
     subject: searchParams.get('subject') || '',
     grade: searchParams.get('grade') || '',
+    minPrice: searchParams.get('minPrice') || '',
     maxPrice: searchParams.get('maxPrice') || '',
     country: searchParams.get('country') || '',
     state: searchParams.get('state') || '',
@@ -191,7 +309,7 @@ export default function Discover() {
   }
 
   function clearFilters() {
-    const cleared = { q: '', subject: '', grade: '', maxPrice: '', country: '', state: '', district: '', area: '', type: '' }
+    const cleared = { q: '', subject: '', grade: '', minPrice: '', maxPrice: '', country: '', state: '', district: '', area: '', type: '' }
     setFilters(cleared)
     fetchTutors(cleared)
   }
@@ -328,15 +446,21 @@ export default function Discover() {
                     placeholder="All"
                   />
                 </div>
-                <div style={{ flex: '1 1 140px' }}>
-                  <label style={filterLabelStyle}>Max Monthly Rate</label>
-                  <select value={filters.maxPrice} onChange={e => handleFilter('maxPrice', e.target.value)} style={filterSelectStyle}>
-                    <option value="">Any</option>
-                    <option value="500">Up to ₹500</option>
-                    <option value="1000">Up to ₹1000</option>
-                    <option value="2000">Up to ₹2000</option>
-                    <option value="5000">Up to ₹5000</option>
-                  </select>
+                <div style={{ flex: '2 1 220px' }}>
+                  <label style={filterLabelStyle}>Monthly Rate</label>
+                  <PriceRangeSlider
+                    minVal={filters.minPrice ? parseInt(filters.minPrice) : 0}
+                    maxVal={filters.maxPrice ? parseInt(filters.maxPrice) : PRICE_MAX}
+                    onChange={(min, max) => {
+                      const updated = {
+                        ...filters,
+                        minPrice: min > 0 ? String(min) : '',
+                        maxPrice: max < PRICE_MAX ? String(max) : '',
+                      }
+                      setFilters(updated)
+                      fetchTutors(updated)
+                    }}
+                  />
                 </div>
                 <div style={{ flex: '1 1 120px' }}>
                   <label style={filterLabelStyle}>Country</label>
