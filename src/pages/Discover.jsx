@@ -5,6 +5,31 @@ import Navbar from '../components/Navbar'
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL
 
+const INDIA_STATES = [
+  'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat',
+  'Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh',
+  'Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Punjab','Rajasthan',
+  'Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand','West Bengal',
+  'Andaman and Nicobar Islands','Chandigarh','Dadra and Nagar Haveli and Daman and Diu',
+  'Delhi','Jammu and Kashmir','Ladakh','Lakshadweep','Puducherry',
+]
+
+const INDIA_SUBJECTS = [
+  'Accountancy','Arts / Drawing','Bengali','Biology','Business Studies','Chemistry',
+  'Computer Science','Economics','English','Geography','Gujarati','Hindi','History',
+  'Kannada','Malayalam','Marathi','Mathematics','Music','Physical Education',
+  'Physics','Political Science','Punjabi','Sanskrit','Social Science',
+  'Tamil','Telugu','Urdu',
+]
+
+const INDIA_GRADES = [
+  'Nursery','LKG','UKG',
+  'Class 1','Class 2','Class 3','Class 4','Class 5',
+  'Class 6','Class 7','Class 8','Class 9','Class 10',
+  'Class 11','Class 12',
+  'Competitive Exams','College / University',
+]
+
 export default function Discover() {
   const [searchParams, setSearchParams] = useSearchParams()
   const navigate = useNavigate()
@@ -204,14 +229,14 @@ export default function Discover() {
                   <label style={filterLabelStyle}>Subject</label>
                   <select value={filters.subject} onChange={e => handleFilter('subject', e.target.value)} style={filterSelectStyle}>
                     <option value="">All</option>
-                    {filterData.subjects.map(s => <option key={s} value={s}>{s}</option>)}
+                    {INDIA_SUBJECTS.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
                 <div style={{ flex: '1 1 140px' }}>
                   <label style={filterLabelStyle}>Grade</label>
                   <select value={filters.grade} onChange={e => handleFilter('grade', e.target.value)} style={filterSelectStyle}>
                     <option value="">All</option>
-                    {filterData.grades.map(g => <option key={g} value={g}>{g}</option>)}
+                    {INDIA_GRADES.map(g => <option key={g} value={g}>{g}</option>)}
                   </select>
                 </div>
                 <div style={{ flex: '1 1 140px' }}>
@@ -226,17 +251,17 @@ export default function Discover() {
                 </div>
                 <div style={{ flex: '1 1 120px' }}>
                   <label style={filterLabelStyle}>Country</label>
-                  <input type="text" placeholder="India" value={filters.country}
-                    onChange={e => handleFilter('country', e.target.value)}
-                    list="country-list" style={filterInputStyle} />
-                  <datalist id="country-list">{countries.map(c => <option key={c} value={c} />)}</datalist>
+                  <select value={filters.country} onChange={e => handleFilter('country', e.target.value)} style={filterSelectStyle}>
+                    <option value="">All</option>
+                    <option value="India">India</option>
+                  </select>
                 </div>
                 <div style={{ flex: '1 1 120px' }}>
                   <label style={filterLabelStyle}>State</label>
-                  <input type="text" placeholder="Assam" value={filters.state}
-                    onChange={e => handleFilter('state', e.target.value)}
-                    list="state-list" style={filterInputStyle} />
-                  <datalist id="state-list">{states.map(s => <option key={s} value={s} />)}</datalist>
+                  <select value={filters.state} onChange={e => handleFilter('state', e.target.value)} style={filterSelectStyle}>
+                    <option value="">All</option>
+                    {INDIA_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
                 </div>
                 <div style={{ flex: '1 1 120px' }}>
                   <label style={filterLabelStyle}>District</label>

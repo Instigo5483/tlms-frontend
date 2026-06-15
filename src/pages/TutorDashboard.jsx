@@ -7,6 +7,23 @@ import { useAuth } from '../hooks/useAuth'
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'
 
+const INDIA_STATES = [
+  'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat',
+  'Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh',
+  'Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Punjab','Rajasthan',
+  'Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand','West Bengal',
+  'Andaman and Nicobar Islands','Chandigarh','Dadra and Nagar Haveli and Daman and Diu',
+  'Delhi','Jammu and Kashmir','Ladakh','Lakshadweep','Puducherry',
+]
+
+const GRADE_LEVELS = [
+  'Nursery','LKG','UKG',
+  'Class 1','Class 2','Class 3','Class 4','Class 5',
+  'Class 6','Class 7','Class 8','Class 9','Class 10',
+  'Class 11','Class 12',
+  'Competitive Exams','College / University',
+]
+
 export default function TutorDashboard() {
   const { user, token } = useAuth()
 
@@ -159,11 +176,11 @@ export default function TutorDashboard() {
   const fields = [
     { label: 'Bio', name: 'bio', placeholder: 'Tell students about yourself...', type: 'textarea' },
     { label: 'Subjects (comma separated)', name: 'subjects', placeholder: 'Math, Physics, Chemistry' },
-    { label: 'Grade Levels (comma separated)', name: 'grade_levels', placeholder: 'Grade 9, Grade 10, A-Level' },
+    { label: 'Grade Levels (select multiple)', name: 'grade_levels', type: 'multiselect', options: GRADE_LEVELS },
     { label: 'Monthly Rate (₹)', name: 'monthly_rate', placeholder: '2000', type: 'number' },
     { label: 'Phone', name: 'phone', placeholder: '+91 98765 43210' },
-    { label: 'Country', name: 'country', placeholder: 'India' },
-    { label: 'State', name: 'state', placeholder: 'Assam' },
+    { label: 'Country', name: 'country', type: 'select', options: ['India'] },
+    { label: 'State', name: 'state', type: 'select', options: INDIA_STATES },
     { label: 'District', name: 'district', placeholder: 'Kamrup' },
     { label: 'Area (optional)', name: 'area', placeholder: 'Guwahati' },
   ]
@@ -308,6 +325,27 @@ export default function TutorDashboard() {
                               onChange={e => setProfile(p => ({ ...p, [f.name]: e.target.value }))}
                               style={{ width: '100%', padding: '10px 14px', background: 'rgba(255,255,255,0.04) !important', border: '1px solid rgba(6,182,212,0.15) !important', borderRadius: '10px !important', color: '#fff !important', fontSize: '0.9rem', resize: 'vertical' }}
                             />
+                          ) : f.type === 'select' ? (
+                            <select
+                              value={profile[f.name] || ''}
+                              onChange={e => setProfile(p => ({ ...p, [f.name]: e.target.value }))}
+                              style={{ width: '100%', height: '42px', padding: '0 14px', background: 'rgba(255,255,255,0.04) !important', border: '1px solid rgba(6,182,212,0.15) !important', borderRadius: '10px !important', color: '#fff !important', fontSize: '0.9rem' }}
+                            >
+                              <option value="">— Select —</option>
+                              {f.options.map(o => <option key={o} value={o}>{o}</option>)}
+                            </select>
+                          ) : f.type === 'multiselect' ? (
+                            <select
+                              multiple size={7}
+                              value={profile[f.name] ? profile[f.name].split(',').map(s => s.trim()).filter(Boolean) : []}
+                              onChange={e => {
+                                const selected = Array.from(e.target.selectedOptions, o => o.value)
+                                setProfile(p => ({ ...p, [f.name]: selected.join(', ') }))
+                              }}
+                              style={{ width: '100%', padding: '4px 0', background: 'rgba(255,255,255,0.04) !important', border: '1px solid rgba(6,182,212,0.15) !important', borderRadius: '10px !important', color: '#fff !important', fontSize: '0.9rem' }}
+                            >
+                              {f.options.map(o => <option key={o} value={o} style={{ padding: '5px 14px' }}>{o}</option>)}
+                            </select>
                           ) : (
                             <input type={f.type || 'text'} placeholder={f.placeholder}
                               value={profile[f.name]}
