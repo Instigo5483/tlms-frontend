@@ -107,13 +107,14 @@ body {
 }
 
 input, textarea, select {
-  background: rgba(255,255,255,0.04) !important;
+  background: #0a0a0a !important;
   border: 1px solid rgba(255,255,255,0.08) !important;
   color: #fff !important;
   border-radius: var(--radius) !important;
   outline: none !important;
   transition: border-color 0.2s, box-shadow 0.2s !important;
   font-family: inherit !important;
+  font-size: 0.85rem !important;
 }
 
 input:focus, textarea:focus, select:focus {

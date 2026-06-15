@@ -674,17 +674,17 @@ const filterLabelStyle = {
 }
 
 const filterSelectStyle = {
-  width: '100%', height: '38px', padding: '0 10px',
-  background: '#111 !important',
-  border: '1px solid rgba(255,255,255,0.08) !important',
-  borderRadius: '10px !important', color: '#fff !important',
-  fontSize: '0.82rem', cursor: 'pointer'
+  width: '100%', height: '38px', padding: '0 12px',
+  background: '#0a0a0a',
+  border: '1px solid rgba(255,255,255,0.08)',
+  borderRadius: '10px', color: '#fff',
+  fontSize: '0.85rem', cursor: 'pointer'
 }
 
 const filterInputStyle = {
-  width: '100%', height: '38px', padding: '0 10px',
-  background: '#111 !important',
-  border: '1px solid rgba(255,255,255,0.08) !important',
-  borderRadius: '10px !important', color: '#fff !important',
-  fontSize: '0.82rem'
+  width: '100%', height: '38px', padding: '0 12px',
+  background: '#0a0a0a',
+  border: '1px solid rgba(255,255,255,0.08)',
+  borderRadius: '10px', color: '#fff',
+  fontSize: '0.85rem'
 }
