@@ -159,8 +159,8 @@ export default function Landing() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px', position: 'relative' }}>
             {[
               { step: '01', icon: '👤', title: 'Create Your Profile', desc: 'Sign up as a Student, Tutor, or Tuition Center. Fill in your details — subjects, grades, location, and rates.', color: '#a855f7' },
-              { step: '02', icon: '🔍', title: 'Discover & Connect', desc: 'Students browse and filter tutors. Tutors receive enrollment requests. Centers list their programs and attract students.', color: '#06b6d4' },
-              { step: '03', icon: '📚', title: 'Learn & Grow', desc: 'Start sessions, track progress, manage payments through the built-in wallet, and grow your educational journey.', color: '#ec4899' },
+              { step: '02', icon: '🔍', title: 'Discover & Connect', desc: 'Students browse and filter tutors by subject, grade, and location. Tutors receive join requests from interested students. Centers list their programs and start getting discovered.', color: '#06b6d4' },
+              { step: '03', icon: '📚', title: 'Learn & Grow', desc: 'Get connected with your tutor or center, start learning right away, and easily handle your tuition fees — all from one place.', color: '#ec4899' },
             ].map((s, i) => (
               <motion.div key={s.step} initial={{ opacity: 0, y: 25 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.12 }} whileHover={{ y: -5, transition: { duration: 0.2 } }} style={{ position: 'relative', padding: '2rem', background: `${s.color}08`, border: `1px solid ${s.color}22`, borderRadius: '20px', overflow: 'hidden' }}>
                 <div style={{ position: 'absolute', top: '1rem', right: '1.2rem', fontSize: '3.5rem', fontWeight: 900, color: `${s.color}12`, letterSpacing: '-0.05em', lineHeight: 1 }}>{s.step}</div>
@@ -190,11 +190,11 @@ export default function Landing() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '14px' }}>
             {[
               { icon: '🇮🇳', title: 'Built for India', desc: 'Covers all 36 states and UTs. Supports India-specific grades, subjects, and competitive exams like JEE, NEET, UPSC, and more.', color: '#a855f7' },
-              { icon: '📍', title: 'Location-Aware Discovery', desc: 'GPS-powered search helps students find tutors and coaching centers in their neighbourhood instantly.', color: '#06b6d4' },
+              { icon: '📍', title: 'Find Tutors Near You', desc: 'Share your location and instantly see tutors and coaching centers available in your area — no guessing, no calls.', color: '#06b6d4' },
               { icon: '✅', title: 'Verified Educators', desc: 'Every tutor and tuition center maintains a public profile with bio, subjects, grades, rates, and contact — fully transparent.', color: '#10b981' },
               { icon: '💸', title: 'Transparent Pricing', desc: 'Filter by monthly rate. See exactly what a tutor charges before reaching out — no hidden fees, no surprises.', color: '#f97316' },
               { icon: '🗂️', title: 'All-in-One Management', desc: 'Tutors and centers manage their students, track enrollment requests, and handle payments from a single dashboard.', color: '#ec4899' },
-              { icon: '👛', title: 'Built-in Wallet & Payments', desc: 'A dedicated wallet system for tracking payments between students and educators, all within the platform.', color: '#a855f7' },
+              { icon: '👛', title: 'Easy Fee Management', desc: 'A simple system for managing tuition fees between students and educators — no outside apps or spreadsheets needed.', color: '#a855f7' },
             ].map((r, i) => (
               <motion.div key={r.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.07 }} whileHover={{ y: -4, transition: { duration: 0.2 } }} style={{ padding: '1.6rem', background: `${r.color}08`, border: `1px solid ${r.color}1a`, borderRadius: '18px' }}>
                 <div style={{ fontSize: '1.6rem', marginBottom: '0.8rem' }}>{r.icon}</div>
@@ -219,16 +219,16 @@ export default function Landing() {
             <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '1rem', maxWidth: '400px', margin: '0 auto' }}>Powerful tools designed for students, tutors, and centers</p>
           </motion.div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: '12px' }}>
             {[
               { icon: '🔎', title: 'Smart Search & Filter', desc: 'Filter by subject, grade, location, and budget to find your perfect match.', color: '#a855f7' },
               { icon: '🧑‍💼', title: 'Rich Educator Profiles', desc: 'Tutors and centers showcase their specialties, rates, bio, and contact info.', color: '#06b6d4' },
-              { icon: '📩', title: 'Enrollment Requests', desc: 'Students send requests; tutors and centers accept or manage them from a clean dashboard.', color: '#10b981' },
+              { icon: '📩', title: 'Join Requests', desc: 'Students send a join request to any tutor or center they like. Tutors and centers can then accept or decline with a single tap.', color: '#10b981' },
               { icon: '📊', title: 'Student Dashboard', desc: 'Students track their enrolled tutors and centers and manage all connections in one view.', color: '#f97316' },
               { icon: '💰', title: 'Payment Tracking', desc: 'Log and track payments per student. Full payment history for tutors and centers.', color: '#ec4899' },
-              { icon: '👛', title: 'Wallet System', desc: 'A digital wallet for receiving and sending tuition fees directly on TLMS.', color: '#a855f7' },
+              { icon: '👛', title: 'Wallet & Fees', desc: 'Keep all your tuition payments in one place. Send or receive fees without needing any outside app.', color: '#a855f7' },
               { icon: '📱', title: 'Fully Responsive', desc: 'Works beautifully on mobile, tablet, and desktop — learn on the go.', color: '#06b6d4' },
-              { icon: '🔒', title: 'Secure & Private', desc: 'JWT-secured accounts with role-based access — your data stays protected.', color: '#10b981' },
+              { icon: '🔒', title: 'Safe & Private', desc: 'Your account is protected — only you can see and manage your profile and personal information.', color: '#10b981' },
             ].map((f, i) => (
               <motion.div key={f.title} initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} whileHover={{ y: -3, transition: { duration: 0.15 } }} style={{ padding: '1.4rem', background: `${f.color}07`, border: `1px solid ${f.color}18`, borderRadius: '16px' }}>
                 <div style={{ fontSize: '1.4rem', marginBottom: '0.7rem' }}>{f.icon}</div>
@@ -258,7 +258,7 @@ export default function Landing() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
             {[
               { icon: '🎓', title: 'Any Grade, Any Subject', desc: 'From Nursery to Class 12, JEE, NEET, UPSC and beyond — find specialists for every stage of your academic journey.' },
-              { icon: '📍', title: 'Near You or Online', desc: 'Use GPS-powered search to find tutors in your area, or connect with top educators from anywhere in India.' },
+              { icon: '📍', title: 'Near You or Anywhere', desc: 'Use your location to find tutors close to where you live, or connect with educators from anywhere in India.' },
               { icon: '💬', title: 'Compare & Choose', desc: 'View detailed profiles including bio, subjects, grade levels, and monthly rates before sending a single request.' },
               { icon: '📋', title: 'Manage Your Learning', desc: 'Your student dashboard keeps all enrolled tutors and centers in one place — no more scattered contacts.' },
             ].map((b, i) => (
@@ -299,9 +299,9 @@ export default function Landing() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
             {[
               { icon: '🌟', title: 'Get Discovered by Students', desc: 'Create a public profile with your subjects, grades, rates, and bio. Students searching in your area will find you instantly.' },
-              { icon: '📥', title: 'Receive Enrollment Requests', desc: 'Students send you requests directly. Accept or decline from your dashboard with a single click.' },
+              { icon: '📥', title: 'Receive Join Requests', desc: 'When a student is interested, they send you a request. Simply accept or decline it from your dashboard.' },
               { icon: '🧑‍🎓', title: 'Manage Your Students', desc: 'See all your active students in one organised list. Remove students who are no longer enrolled — changes reflect instantly.' },
-              { icon: '💳', title: 'Track & Receive Payments', desc: 'Log monthly payments per student and track your full earnings history through the integrated payment and wallet system.' },
+              { icon: '💳', title: 'Track Your Earnings', desc: 'Log monthly payments per student and keep a clear record of all your earnings — all from your dashboard, no extra tools needed.' },
             ].map((b, i) => (
               <motion.div key={b.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} whileHover={{ y: -4, transition: { duration: 0.2 } }} style={{ padding: '1.6rem', background: 'rgba(6,182,212,0.07)', border: '1px solid rgba(6,182,212,0.18)', borderRadius: '18px', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
                 <span style={{ fontSize: '1.5rem', flexShrink: 0 }}>{b.icon}</span>
