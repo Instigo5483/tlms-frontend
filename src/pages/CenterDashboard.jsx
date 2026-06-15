@@ -361,6 +361,7 @@ export default function CenterDashboard() {
 
   const fields = [
     { label: 'Center Name', name: 'center_name', placeholder: 'ABC Tuition Center' },
+    { label: 'Monthly Rate (₹)', name: 'monthly_rate', placeholder: 'e.g. 2000', type: 'number' },
     { label: 'Phone', name: 'phone', placeholder: '+91 98765 43210' },
     { label: 'Address', name: 'address', placeholder: 'Full address', type: 'textarea' },
     { label: 'Country', name: 'country', type: 'select', options: ['India'] },
@@ -529,8 +530,8 @@ export default function CenterDashboard() {
                               accentColor="#ec4899"
                             />
                           ) : (
-                            <input type="text" placeholder={f.placeholder}
-                              value={profile[f.name]}
+                            <input type={f.type === 'number' ? 'number' : 'text'} placeholder={f.placeholder}
+                              value={profile[f.name] ?? ''}
                               onChange={e => setProfile(p => ({ ...p, [f.name]: e.target.value }))}
                               style={{ width: '100%', height: '42px', padding: '0 14px', background: 'rgba(255,255,255,0.04) !important', border: '1px solid rgba(236,72,153,0.15) !important', borderRadius: '10px !important', color: '#fff !important', fontSize: '0.9rem' }}
                             />
