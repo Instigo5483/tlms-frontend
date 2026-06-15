@@ -89,22 +89,9 @@ export default function Payments() {
   const current = tab === 'pending' ? pending : tab === 'paid' ? paid : overdue
 
   return (
-    <div style={{ minHeight: '100vh', background: '#050508', position: 'relative', overflow: 'hidden' }}>
-
-      {/* Ambient blobs */}
-      <div style={{
-        position: 'fixed', top: '-10%', right: '-10%', width: '500px', height: '500px',
-        background: 'radial-gradient(circle, rgba(168,85,247,0.1) 0%, transparent 70%)',
-        pointerEvents: 'none', filter: 'blur(60px)', zIndex: 0
-      }} />
-      <div style={{
-        position: 'fixed', bottom: '-10%', left: '-10%', width: '500px', height: '500px',
-        background: 'radial-gradient(circle, rgba(6,182,212,0.07) 0%, transparent 70%)',
-        pointerEvents: 'none', filter: 'blur(60px)', zIndex: 0
-      }} />
-
+    <div style={{ minHeight: '100vh', position: 'relative' }}>
       <Navbar />
-      <main style={{ padding: '80px 1.5rem 3rem', maxWidth: '900px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+      <main style={{ padding: '88px 2.5rem 3rem', maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
 
         {/* Header */}
         <motion.div

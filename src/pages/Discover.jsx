@@ -94,7 +94,7 @@ export default function Discover() {
   const activeFilters = Object.values(filters).filter(Boolean).length
 
   return (
-    <div style={{ minHeight: '100vh', background: '#000' }}>
+    <div style={{ minHeight: '100vh' }}>
       <Navbar />
       <main style={{ padding: '80px 1.5rem 3rem', maxWidth: '1200px', margin: '0 auto' }}>
 

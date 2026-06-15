@@ -162,22 +162,9 @@ export default function CenterDashboard() {
   ]
 
   return (
-    <div style={{ minHeight: '100vh', background: '#050508', position: 'relative', overflow: 'hidden' }}>
-
-      {/* Ambient blobs */}
-      <div style={{
-        position: 'fixed', top: '-10%', right: '-10%', width: '500px', height: '500px',
-        background: 'radial-gradient(circle, rgba(236,72,153,0.1) 0%, transparent 70%)',
-        pointerEvents: 'none', filter: 'blur(60px)', zIndex: 0
-      }} />
-      <div style={{
-        position: 'fixed', bottom: '-10%', left: '-10%', width: '500px', height: '500px',
-        background: 'radial-gradient(circle, rgba(168,85,247,0.08) 0%, transparent 70%)',
-        pointerEvents: 'none', filter: 'blur(60px)', zIndex: 0
-      }} />
-
+    <div style={{ minHeight: '100vh', position: 'relative' }}>
       <Navbar />
-      <main style={{ padding: '80px 1.5rem 3rem', maxWidth: '1000px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+      <main style={{ padding: '88px 2.5rem 3rem', maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
 
         {/* Header */}
         <motion.div
@@ -383,7 +370,7 @@ export default function CenterDashboard() {
             <motion.div key="requests"
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}
-              style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
+              style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '10px' }}
             >
               {studentsLoading ? (
                 [1,2,3].map(i => (
@@ -442,7 +429,7 @@ export default function CenterDashboard() {
             <motion.div key="students"
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}
-              style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
+              style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '10px' }}
             >
               {accepted.length === 0 ? (
                 <EmptyState text="No students yet" sub="Accept connection requests to add students" color="#ec4899" />

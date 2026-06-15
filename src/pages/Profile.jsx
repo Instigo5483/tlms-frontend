@@ -143,12 +143,7 @@ export default function Profile() {
   }
 
   if (loading) return (
-    <div style={{ minHeight: '100vh', background: '#050508' }}>
-      <div style={{
-        position: 'fixed', top: '-20%', right: '-10%', width: '500px', height: '500px',
-        background: 'radial-gradient(circle, rgba(168,85,247,0.1) 0%, transparent 70%)',
-        pointerEvents: 'none', filter: 'blur(60px)'
-      }} />
+    <div style={{ minHeight: '100vh' }}>
       <Navbar />
       <main style={{ padding: '120px 1.5rem', textAlign: 'center' }}>
         <motion.div
@@ -161,7 +156,7 @@ export default function Profile() {
   )
 
   if (error || !profile) return (
-    <div style={{ minHeight: '100vh', background: '#050508' }}>
+    <div style={{ minHeight: '100vh' }}>
       <Navbar />
       <main style={{ padding: '120px 1.5rem', textAlign: 'center' }}>
         <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.3 }}>◎</div>
@@ -185,20 +180,7 @@ export default function Profile() {
   const displayName = isCenter ? profile.center_name : profile.full_name
 
   return (
-    <div style={{ minHeight: '100vh', background: '#050508', position: 'relative', overflow: 'hidden' }}>
-
-      {/* Ambient blobs */}
-      <div style={{
-        position: 'fixed', top: '-10%', right: '-10%', width: '500px', height: '500px',
-        background: 'radial-gradient(circle, rgba(168,85,247,0.1) 0%, transparent 70%)',
-        pointerEvents: 'none', filter: 'blur(60px)', zIndex: 0
-      }} />
-      <div style={{
-        position: 'fixed', bottom: '-10%', left: '-10%', width: '500px', height: '500px',
-        background: 'radial-gradient(circle, rgba(6,182,212,0.07) 0%, transparent 70%)',
-        pointerEvents: 'none', filter: 'blur(60px)', zIndex: 0
-      }} />
-
+    <div style={{ minHeight: '100vh', position: 'relative' }}>
       <Navbar />
 
       <main style={{

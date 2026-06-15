@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'motion/react'
 import Navbar from '../components/Navbar'
+import ConfirmModal from '../components/ConfirmModal'
 import { useAuth } from '../hooks/useAuth'
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL
@@ -12,6 +13,8 @@ export default function StudentDashboard() {
   const [tab, setTab] = useState('connected')
   const [enrollments, setEnrollments] = useState([])
   const [loading, setLoading] = useState(true)
+  const [removeModal, setRemoveModal] = useState(null)
+  const [alertMsg, setAlertMsg] = useState(null)
 
   const initials = user?.full_name
     ? user.full_name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
@@ -30,15 +33,21 @@ export default function StudentDashboard() {
     finally { setLoading(false) }
   }
 
-  async function handleRemove(enrollmentId) {
-    if (!confirm('Remove this connection?')) return
+  function handleRemove(enrollmentId) {
+    setRemoveModal(enrollmentId)
+  }
+
+  async function confirmRemove() {
+    const enrollmentId = removeModal
+    setRemoveModal(null)
     try {
-      await fetch(`${BACKEND}/api/enrollments/${enrollmentId}`, {
+      const res = await fetch(`${BACKEND}/api/enrollments/${enrollmentId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       })
+      if (!res.ok) { setAlertMsg('Failed to remove. Try again.'); return }
       setEnrollments(prev => prev.filter(e => e.id !== enrollmentId))
-    } catch { alert('Failed to remove. Try again.') }
+    } catch { setAlertMsg('Failed to remove. Try again.') }
   }
 
   const connected = enrollments.filter(e => e.status === 'accepted')
@@ -51,22 +60,9 @@ export default function StudentDashboard() {
   ]
 
   return (
-    <div style={{ minHeight: '100vh', background: '#050508', position: 'relative', overflow: 'hidden' }}>
-
-      {/* Ambient blobs */}
-      <div style={{
-        position: 'fixed', top: '-10%', right: '-10%', width: '500px', height: '500px',
-        background: 'radial-gradient(circle, rgba(168,85,247,0.1) 0%, transparent 70%)',
-        pointerEvents: 'none', filter: 'blur(60px)', zIndex: 0
-      }} />
-      <div style={{
-        position: 'fixed', bottom: '-10%', left: '-10%', width: '500px', height: '500px',
-        background: 'radial-gradient(circle, rgba(6,182,212,0.07) 0%, transparent 70%)',
-        pointerEvents: 'none', filter: 'blur(60px)', zIndex: 0
-      }} />
-
+    <div style={{ minHeight: '100vh', position: 'relative' }}>
       <Navbar />
-      <main style={{ padding: '80px 1.5rem 3rem', maxWidth: '1000px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+      <main style={{ padding: '88px 2.5rem 3rem', maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
 
         {/* Header */}
         <motion.div
@@ -183,7 +179,7 @@ export default function StudentDashboard() {
               {connected.length === 0 ? (
                 <EmptyState text="No connections yet" sub="Find a tutor or center to get started" action={() => navigate('/discover')} actionLabel="Browse Tutors" />
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '10px' }}>
                   {connected.map((e, i) => (
                     <EnrollmentCard key={e.id} enrollment={e} index={i}
                       onRemove={() => handleRemove(e.id)}
@@ -201,7 +197,7 @@ export default function StudentDashboard() {
               {pending.length === 0 ? (
                 <EmptyState text="No pending requests" sub="Your connection requests will appear here" />
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '10px' }}>
                   {pending.map((e, i) => (
                     <EnrollmentCard key={e.id} enrollment={e} index={i}
                       onRemove={() => handleRemove(e.id)}
@@ -244,6 +240,27 @@ export default function StudentDashboard() {
           )}
         </AnimatePresence>
       </main>
+
+      <ConfirmModal
+        open={!!removeModal}
+        title="Remove Connection"
+        message="This will end the enrollment. You can re-apply in the future."
+        confirmLabel="Remove"
+        onConfirm={confirmRemove}
+        onCancel={() => setRemoveModal(null)}
+        accentColor="#f87171"
+      />
+
+      <ConfirmModal
+        open={!!alertMsg}
+        title="Something went wrong"
+        message={alertMsg}
+        confirmLabel="OK"
+        onConfirm={() => setAlertMsg(null)}
+        onCancel={() => setAlertMsg(null)}
+        hideCancel
+        accentColor="#f87171"
+      />
     </div>
   )
 }

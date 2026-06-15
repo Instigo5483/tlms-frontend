@@ -54,29 +54,7 @@ export default function Login() {
   ]
 
   return (
-    <div style={{ minHeight: '100vh', background: '#050508', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
-
-      {/* Ambient blobs */}
-      <div style={{
-        position: 'fixed', top: '-20%', right: '-10%',
-        width: '600px', height: '600px',
-        background: 'radial-gradient(circle, rgba(168,85,247,0.12) 0%, transparent 70%)',
-        pointerEvents: 'none', filter: 'blur(60px)', zIndex: 0
-      }} />
-      <div style={{
-        position: 'fixed', bottom: '-20%', left: '-10%',
-        width: '600px', height: '600px',
-        background: 'radial-gradient(circle, rgba(6,182,212,0.08) 0%, transparent 70%)',
-        pointerEvents: 'none', filter: 'blur(60px)', zIndex: 0
-      }} />
-      <div style={{
-        position: 'fixed', top: '50%', left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '400px', height: '400px',
-        background: 'radial-gradient(circle, rgba(236,72,153,0.06) 0%, transparent 70%)',
-        pointerEvents: 'none', filter: 'blur(50px)', zIndex: 0
-      }} />
-
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
       <Navbar />
 
       <div style={{
