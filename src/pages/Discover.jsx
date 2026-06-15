@@ -82,24 +82,28 @@ function DropdownSingle({ value, onChange, options, placeholder }) {
               transformOrigin: 'top',
             }}
           >
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', padding: '10px' }}>
-              {options.map(o => (
+            <div className="no-scrollbar" style={{ maxHeight: '240px', overflowY: 'auto', borderRadius: '12px' }}>
+              {options.map((o, i) => (
                 <motion.button
                   key={o} type="button"
-                  whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
+                  whileHover={{ x: 4, background: 'rgba(168,85,247,0.1)' }}
+                  whileTap={{ scale: 0.99 }}
                   onClick={() => { onChange(o === value ? '' : o); setOpen(false) }}
-                  animate={{
-                    background: value === o ? 'rgba(168,85,247,0.2)' : 'rgba(255,255,255,0.04)',
-                    borderColor: value === o ? 'rgba(168,85,247,0.5)' : 'rgba(255,255,255,0.1)',
-                    color: value === o ? '#a855f7' : 'rgba(255,255,255,0.45)',
-                  }}
-                  transition={{ duration: 0.12 }}
                   style={{
-                    padding: '4px 11px', borderRadius: '7px',
-                    fontSize: '0.79rem', fontWeight: value === o ? 600 : 400,
-                    border: '1px solid', cursor: 'pointer',
+                    width: '100%', padding: '9px 14px',
+                    background: value === o ? 'rgba(168,85,247,0.15)' : 'transparent',
+                    border: 'none',
+                    borderBottom: i < options.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                    cursor: 'pointer', textAlign: 'left',
+                    color: value === o ? '#a855f7' : 'rgba(255,255,255,0.6)',
+                    fontSize: '0.85rem', fontWeight: value === o ? 600 : 400,
+                    display: 'flex', alignItems: 'center', gap: '9px',
+                    transition: 'background 0.15s, color 0.15s',
                   }}
-                >{o}</motion.button>
+                >
+                  <span style={{ width: '13px', flexShrink: 0, color: '#a855f7', fontSize: '0.7rem', fontWeight: 800, opacity: value === o ? 1 : 0 }}>✓</span>
+                  {o}
+                </motion.button>
               ))}
             </div>
           </motion.div>

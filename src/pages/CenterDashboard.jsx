@@ -84,24 +84,28 @@ function DropdownSingle({ value, onChange, options, placeholder, accentColor = '
               transformOrigin: 'top',
             }}
           >
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', padding: '12px' }}>
-              {options.map(o => (
+            <div className="no-scrollbar" style={{ maxHeight: '260px', overflowY: 'auto', borderRadius: '12px' }}>
+              {options.map((o, i) => (
                 <motion.button
                   key={o} type="button"
-                  whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
+                  whileHover={{ x: 4, background: accentColor + '12' }}
+                  whileTap={{ scale: 0.99 }}
                   onClick={() => { onChange(o); setOpen(false) }}
-                  animate={{
-                    background: value === o ? accentColor + '22' : 'rgba(255,255,255,0.04)',
-                    borderColor: value === o ? accentColor + '60' : 'rgba(255,255,255,0.1)',
-                    color: value === o ? accentColor : 'rgba(255,255,255,0.45)',
-                  }}
-                  transition={{ duration: 0.12 }}
                   style={{
-                    padding: '5px 13px', borderRadius: '8px',
-                    fontSize: '0.82rem', fontWeight: value === o ? 600 : 400,
-                    border: '1px solid', cursor: 'pointer',
+                    width: '100%', padding: '10px 16px',
+                    background: value === o ? accentColor + '18' : 'transparent',
+                    border: 'none',
+                    borderBottom: i < options.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                    cursor: 'pointer', textAlign: 'left',
+                    color: value === o ? accentColor : 'rgba(255,255,255,0.6)',
+                    fontSize: '0.88rem', fontWeight: value === o ? 600 : 400,
+                    display: 'flex', alignItems: 'center', gap: '10px',
+                    transition: 'background 0.15s, color 0.15s',
                   }}
-                >{o}</motion.button>
+                >
+                  <span style={{ width: '14px', flexShrink: 0, color: accentColor, fontSize: '0.72rem', fontWeight: 800, opacity: value === o ? 1 : 0 }}>✓</span>
+                  {o}
+                </motion.button>
               ))}
             </div>
           </motion.div>
@@ -174,26 +178,37 @@ function DropdownMulti({ value, onChange, options, placeholder, accentColor = '#
               transformOrigin: 'top',
             }}
           >
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', padding: '12px' }}>
-              {options.map(o => {
+            <div className="no-scrollbar" style={{ maxHeight: '260px', overflowY: 'auto', borderRadius: '12px' }}>
+              {options.map((o, i) => {
                 const active = selected.includes(o)
                 return (
                   <motion.button
                     key={o} type="button"
-                    whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
+                    whileHover={{ x: 4, background: active ? accentColor + '22' : 'rgba(255,255,255,0.06)' }}
+                    whileTap={{ scale: 0.99 }}
                     onClick={() => toggle(o)}
-                    animate={{
-                      background: active ? accentColor + '22' : 'rgba(255,255,255,0.04)',
-                      borderColor: active ? accentColor + '60' : 'rgba(255,255,255,0.1)',
-                      color: active ? accentColor : 'rgba(255,255,255,0.45)',
-                    }}
-                    transition={{ duration: 0.12 }}
                     style={{
-                      padding: '5px 13px', borderRadius: '8px',
-                      fontSize: '0.82rem', fontWeight: active ? 600 : 400,
-                      border: '1px solid', cursor: 'pointer',
+                      width: '100%', padding: '10px 16px',
+                      background: active ? accentColor + '15' : 'transparent',
+                      border: 'none',
+                      borderBottom: i < options.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                      cursor: 'pointer', textAlign: 'left',
+                      color: active ? accentColor : 'rgba(255,255,255,0.6)',
+                      fontSize: '0.88rem', fontWeight: active ? 600 : 400,
+                      display: 'flex', alignItems: 'center', gap: '10px',
+                      transition: 'background 0.15s, color 0.15s',
                     }}
-                  >{o}</motion.button>
+                  >
+                    <span style={{
+                      width: '15px', height: '15px', borderRadius: '4px', flexShrink: 0,
+                      border: `1.5px solid ${active ? accentColor : 'rgba(255,255,255,0.2)'}`,
+                      background: active ? accentColor : 'transparent',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '9px', color: '#050508', fontWeight: 900,
+                      transition: 'all 0.15s',
+                    }}>{active ? '✓' : ''}</span>
+                    {o}
+                  </motion.button>
                 )
               })}
             </div>

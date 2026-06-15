@@ -45,6 +45,9 @@ body {
 
 ::placeholder { color: rgba(255,255,255,0.2); }
 
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
 .glass {
   background: rgba(255,255,255,0.04);
   border: 1px solid var(--border);
