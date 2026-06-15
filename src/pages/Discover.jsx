@@ -87,38 +87,39 @@ function PriceRangeSlider({ minVal, maxVal, onChange }) {
     }
   }
 
-  const fmt = (v) => v === 0 ? '₹0' : `₹${v.toLocaleString('en-IN')}`
-
   return (
-    <div style={{ padding: '4px 2px 0' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '14px', fontSize: '0.8rem' }}>
-        <span style={{ color: '#a855f7', fontWeight: 600 }}>{fmt(localMin)}</span>
-        <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: '0.72rem', alignSelf: 'center' }}>Monthly Rate</span>
-        <span style={{ color: '#06b6d4', fontWeight: 600 }}>{localMax >= PRICE_MAX ? '₹10,000+' : fmt(localMax)}</span>
-      </div>
-
-      <div
-        ref={trackRef}
-        onClick={onTrackClick}
-        onPointerMove={onTrackMove}
-        onPointerUp={onTrackUp}
-        onPointerCancel={onTrackUp}
-        style={{ position: 'relative', height: '5px', background: 'rgba(255,255,255,0.08)', borderRadius: '3px', margin: '8px 0 6px', cursor: 'pointer' }}
-      >
+    <div
+      ref={trackRef}
+      onClick={onTrackClick}
+      onPointerMove={onTrackMove}
+      onPointerUp={onTrackUp}
+      onPointerCancel={onTrackUp}
+      style={{
+        position: 'relative', height: '38px',
+        background: '#0a0a0a',
+        border: '1px solid rgba(255,255,255,0.08)',
+        borderRadius: '10px',
+        display: 'flex', alignItems: 'center',
+        padding: '0 10px', cursor: 'pointer',
+      }}
+    >
+      {/* Track line */}
+      <div style={{ position: 'relative', width: '100%', height: '4px', background: 'rgba(255,255,255,0.08)', borderRadius: '2px' }}>
+        {/* Filled range */}
         <div style={{
           position: 'absolute', top: 0, height: '100%',
           left: `${minPct}%`, width: `${maxPct - minPct}%`,
           background: 'linear-gradient(90deg, #a855f7, #06b6d4)',
-          borderRadius: '3px', pointerEvents: 'none',
+          borderRadius: '2px', pointerEvents: 'none',
         }} />
 
         {/* Min handle */}
         <motion.div
           onPointerDown={e => onHandleDown(e, 'min')}
-          whileHover={{ scale: 1.3 }} whileTap={{ scale: 1.1 }}
+          whileHover={{ scale: 1.25 }} whileTap={{ scale: 1.05 }}
           style={{
             position: 'absolute', top: '50%', left: `${minPct}%`,
-            width: '17px', height: '17px', borderRadius: '50%',
+            width: '16px', height: '16px', borderRadius: '50%',
             background: '#a855f7', transform: 'translate(-50%, -50%)',
             boxShadow: '0 0 0 3px rgba(168,85,247,0.3), 0 2px 8px rgba(0,0,0,0.6)',
             cursor: 'grab', touchAction: 'none',
@@ -128,20 +129,15 @@ function PriceRangeSlider({ minVal, maxVal, onChange }) {
         {/* Max handle */}
         <motion.div
           onPointerDown={e => onHandleDown(e, 'max')}
-          whileHover={{ scale: 1.3 }} whileTap={{ scale: 1.1 }}
+          whileHover={{ scale: 1.25 }} whileTap={{ scale: 1.05 }}
           style={{
             position: 'absolute', top: '50%', left: `${maxPct}%`,
-            width: '17px', height: '17px', borderRadius: '50%',
+            width: '16px', height: '16px', borderRadius: '50%',
             background: '#06b6d4', transform: 'translate(-50%, -50%)',
             boxShadow: '0 0 0 3px rgba(6,182,212,0.3), 0 2px 8px rgba(0,0,0,0.6)',
             cursor: 'grab', touchAction: 'none',
           }}
         />
-      </div>
-
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.68rem', color: 'rgba(255,255,255,0.18)', marginTop: '2px' }}>
-        <span>₹0</span>
-        <span>₹10,000+</span>
       </div>
     </div>
   )
@@ -447,7 +443,16 @@ export default function Discover() {
                   />
                 </div>
                 <div style={{ flex: '2 1 220px' }}>
-                  <label style={filterLabelStyle}>Monthly Rate</label>
+                  <label style={filterLabelStyle}>
+                    Monthly Rate
+                    <span style={{ marginLeft: '6px', color: '#a855f7', fontWeight: 600 }}>
+                      {filters.minPrice ? `₹${Number(filters.minPrice).toLocaleString('en-IN')}` : '₹0'}
+                    </span>
+                    <span style={{ color: 'rgba(255,255,255,0.2)', margin: '0 3px' }}>—</span>
+                    <span style={{ color: '#06b6d4', fontWeight: 600 }}>
+                      {!filters.maxPrice || Number(filters.maxPrice) >= PRICE_MAX ? '₹10k+' : `₹${Number(filters.maxPrice).toLocaleString('en-IN')}`}
+                    </span>
+                  </label>
                   <PriceRangeSlider
                     minVal={filters.minPrice ? parseInt(filters.minPrice) : 0}
                     maxVal={filters.maxPrice ? parseInt(filters.maxPrice) : PRICE_MAX}
