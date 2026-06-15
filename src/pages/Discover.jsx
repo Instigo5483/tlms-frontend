@@ -27,7 +27,7 @@ const INDIA_GRADES = [
   'Class 1','Class 2','Class 3','Class 4','Class 5',
   'Class 6','Class 7','Class 8','Class 9','Class 10',
   'Class 11','Class 12',
-  'Competitive Exams','College / University',
+  'JEE','NEET','UPSC','APSC','WBJEE','CEE',
 ]
 
 export default function Discover() {
@@ -121,7 +121,7 @@ export default function Discover() {
   return (
     <div style={{ minHeight: '100vh' }}>
       <Navbar />
-      <main style={{ padding: '80px 1.5rem 3rem', maxWidth: '1200px', margin: '0 auto' }}>
+      <main style={{ padding: '88px 2.5rem 3rem', maxWidth: '1400px', margin: '0 auto' }}>
 
         {/* Header */}
         <motion.div

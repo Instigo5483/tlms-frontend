@@ -21,7 +21,7 @@ const GRADE_LEVELS = [
   'Class 1','Class 2','Class 3','Class 4','Class 5',
   'Class 6','Class 7','Class 8','Class 9','Class 10',
   'Class 11','Class 12',
-  'Competitive Exams','College / University',
+  'JEE','NEET','UPSC','APSC','WBJEE','CEE',
 ]
 
 export default function CenterDashboard() {
@@ -327,17 +327,33 @@ export default function CenterDashboard() {
                               {f.options.map(o => <option key={o} value={o}>{o}</option>)}
                             </select>
                           ) : f.type === 'multiselect' ? (
-                            <select
-                              multiple size={7}
-                              value={profile[f.name] ? profile[f.name].split(',').map(s => s.trim()).filter(Boolean) : []}
-                              onChange={e => {
-                                const selected = Array.from(e.target.selectedOptions, o => o.value)
-                                setProfile(p => ({ ...p, [f.name]: selected.join(', ') }))
-                              }}
-                              style={{ width: '100%', padding: '4px 0', background: 'rgba(255,255,255,0.04) !important', border: '1px solid rgba(236,72,153,0.15) !important', borderRadius: '10px !important', color: '#fff !important', fontSize: '0.9rem' }}
-                            >
-                              {f.options.map(o => <option key={o} value={o} style={{ padding: '5px 14px' }}>{o}</option>)}
-                            </select>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', paddingTop: '2px' }}>
+                              {f.options.map(o => {
+                                const active = (profile[f.name] || '').split(',').map(s => s.trim()).filter(Boolean).includes(o)
+                                return (
+                                  <motion.button
+                                    key={o} type="button"
+                                    whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
+                                    onClick={() => {
+                                      const curr = (profile[f.name] || '').split(',').map(s => s.trim()).filter(Boolean)
+                                      const next = curr.includes(o) ? curr.filter(x => x !== o) : [...curr, o]
+                                      setProfile(p => ({ ...p, [f.name]: next.join(', ') }))
+                                    }}
+                                    animate={{
+                                      background: active ? 'rgba(236,72,153,0.18)' : 'rgba(255,255,255,0.04)',
+                                      borderColor: active ? 'rgba(236,72,153,0.5)' : 'rgba(255,255,255,0.1)',
+                                      color: active ? '#ec4899' : 'rgba(255,255,255,0.4)',
+                                    }}
+                                    transition={{ duration: 0.15 }}
+                                    style={{
+                                      padding: '5px 12px', borderRadius: '8px',
+                                      fontSize: '0.8rem', fontWeight: 600,
+                                      border: '1px solid', cursor: 'pointer',
+                                    }}
+                                  >{o}</motion.button>
+                                )
+                              })}
+                            </div>
                           ) : (
                             <input type="text" placeholder={f.placeholder}
                               value={profile[f.name]}
