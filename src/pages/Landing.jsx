@@ -44,8 +44,10 @@ function FeeCalculator() {
   const pct = (earned / MAX) * 100
   const { rate, label, tier } = getFeeRate(earned)
   const withdrawNum = Math.max(0, Number(withdrawStr) || 0)
-  const fee = Math.round(withdrawNum * rate * 100) / 100
-  const net = Math.round((withdrawNum - fee) * 100) / 100
+  const exceedsEarned = withdrawNum > earned && withdrawNum > 0
+  const effectiveWithdraw = exceedsEarned ? earned : withdrawNum
+  const fee = Math.round(effectiveWithdraw * rate * 100) / 100
+  const net = Math.round((effectiveWithdraw - fee) * 100) / 100
 
   const fmt = v => `₹${Number(v).toLocaleString('en-IN')}`
 
@@ -110,14 +112,33 @@ function FeeCalculator() {
       </div>
 
       {/* Withdraw input */}
-      <div style={{ marginBottom: '1.2rem' }}>
-        <label style={{ display: 'block', fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)', marginBottom: '6px', fontWeight: 500 }}>Amount to withdraw (₹)</label>
+      <div style={{ marginBottom: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+          <label style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)', fontWeight: 500 }}>Amount to withdraw (₹)</label>
+          {earned > 0 && (
+            <button type="button" onClick={() => setWithdrawStr(String(earned))}
+              style={{ fontSize: '0.68rem', color: '#10b981', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: '6px', padding: '2px 8px', cursor: 'pointer', fontWeight: 600 }}>
+              Max
+            </button>
+          )}
+        </div>
         <input
           type="number" placeholder="e.g. 5000"
           value={withdrawStr} onChange={e => setWithdrawStr(e.target.value)}
-          style={{ width: '100%', height: '42px', padding: '0 14px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(16,185,129,0.18)', borderRadius: '10px', color: '#fff', fontSize: '0.9rem' }}
+          style={{ width: '100%', height: '42px', padding: '0 14px', background: 'rgba(255,255,255,0.04)', border: `1px solid ${exceedsEarned ? 'rgba(248,113,113,0.35)' : 'rgba(16,185,129,0.18)'}`, borderRadius: '10px', color: '#fff', fontSize: '0.9rem' }}
         />
       </div>
+
+      {/* Exceeds warning */}
+      <AnimatePresence>
+        {exceedsEarned && (
+          <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '9px 12px', background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: '10px', marginBottom: '1rem', fontSize: '0.78rem', color: '#fca5a5' }}>
+            <span>⚠</span>
+            <span>Cannot exceed total earned. Calculating for{' '}<strong style={{ color: '#f87171' }}>{fmt(earned)}</strong> instead.</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Result */}
       <AnimatePresence>
@@ -126,7 +147,7 @@ function FeeCalculator() {
             <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.83rem' }}>
                 <span style={{ color: 'rgba(255,255,255,0.35)' }}>Withdraw amount</span>
-                <span style={{ color: '#fff', fontWeight: 600 }}>{fmt(withdrawNum)}</span>
+                <span style={{ color: exceedsEarned ? '#f87171' : '#fff', fontWeight: 600 }}>{fmt(effectiveWithdraw)}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.83rem' }}>
                 <span style={{ color: 'rgba(255,255,255,0.35)' }}>Platform fee ({label})</span>
