@@ -384,9 +384,9 @@ export default function Discover() {
               onClick={clearFilters}
               style={{
                 height: '44px', padding: '0 16px',
-                background: '#fef2f2',
-                border: '1px solid #fecaca',
-                borderRadius: '12px', color: '#dc2626',
+                background: '#f4f4f5',
+                border: '1px solid #d4d4d8',
+                borderRadius: '12px', color: '#18181b',
                 cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600,
                 whiteSpace: 'nowrap'
               }}

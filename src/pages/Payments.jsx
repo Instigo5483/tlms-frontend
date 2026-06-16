@@ -116,8 +116,8 @@ export default function Payments() {
         >
           {[
             { label: 'Pending', value: pending.length, color: ACCENT },
-            { label: 'Paid', value: paid.length, color: '#059669' },
-            { label: 'Overdue', value: overdue.length, color: '#dc2626' },
+            { label: 'Paid', value: paid.length, color: '#2563eb' },
+            { label: 'Overdue', value: overdue.length, color: '#18181b' },
           ].map(s => (
             <div key={s.label} style={{ padding: '1.2rem', background: '#fff', border: '1px solid #e4e4e7', borderRadius: '16px', textAlign: 'center', boxShadow: '0 1px 2px rgba(24,24,27,0.04)' }}>
               <div className="font-display" style={{ fontSize: '1.8rem', fontWeight: 700, letterSpacing: '-0.02em', color: s.color }}>{s.value}</div>
@@ -230,10 +230,10 @@ export default function Payments() {
                 transition={{ delay: 0.2, duration: 0.6, type: 'spring', stiffness: 180 }}
                 style={{
                   width: '76px', height: '76px', borderRadius: '50%',
-                  background: '#ecfdf5',
-                  border: '2px solid #a7f3d0',
+                  background: '#eff6ff',
+                  border: '2px solid #bfdbfe',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  margin: '0 auto 1.5rem', fontSize: '2rem', color: '#059669',
+                  margin: '0 auto 1.5rem', fontSize: '2rem', color: '#2563eb',
                 }}
               >
                 ✓
@@ -263,10 +263,10 @@ export default function Payments() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '16px', padding: '1.4rem', marginBottom: '1rem' }}
+                style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '16px', padding: '1.4rem', marginBottom: '1rem' }}
               >
                 <p style={{ color: '#a1a1aa', fontSize: '0.7rem', letterSpacing: '0.12em', marginBottom: '0.5rem', textTransform: 'uppercase' }}>Amount Paid</p>
-                <p className="font-display" style={{ fontWeight: 700, fontSize: '2.2rem', letterSpacing: '-0.03em', color: '#059669', marginBottom: '0.4rem' }}>₹{successData.amount}</p>
+                <p className="font-display" style={{ fontWeight: 700, fontSize: '2.2rem', letterSpacing: '-0.03em', color: '#2563eb', marginBottom: '0.4rem' }}>₹{successData.amount}</p>
                 <p style={{ color: '#a1a1aa', fontSize: '0.82rem' }}>
                   to <span style={{ color: '#52525b', fontWeight: 600 }}>{successData.name}</span>
                 </p>
@@ -294,7 +294,7 @@ export default function Payments() {
                 onClick={() => setSuccessData(null)}
                 style={{
                   width: '100%', height: '48px',
-                  background: '#059669',
+                  background: '#2563eb',
                   color: '#fff', border: 'none', borderRadius: '999px',
                   fontWeight: 700, fontSize: '0.95rem',
                   cursor: 'pointer',
@@ -316,9 +316,9 @@ function BillCard({ bill, userRole, onPay, paying, index }) {
   const isPending = bill.status === 'pending'
   const name = userRole === 'student' ? bill.tutor_name : bill.student_name
 
-  const statusColor = isPaid ? '#059669' : isOverdue ? '#dc2626' : ACCENT
-  const bgColor = isPaid ? '#ecfdf5' : isOverdue ? '#fef2f2' : '#eef2ff'
-  const borderColor = isPaid ? '#a7f3d0' : isOverdue ? '#fecaca' : '#e0e7ff'
+  const statusColor = isPaid ? '#2563eb' : isOverdue ? '#18181b' : ACCENT
+  const bgColor = isPaid ? '#eff6ff' : isOverdue ? '#f4f4f5' : '#eef2ff'
+  const borderColor = isPaid ? '#bfdbfe' : isOverdue ? '#d4d4d8' : '#e0e7ff'
 
   return (
     <motion.div

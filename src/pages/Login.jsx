@@ -209,9 +209,9 @@ export default function Login() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   style={{
-                    color: '#dc2626', fontSize: '0.82rem',
-                    background: '#fef2f2',
-                    border: '1px solid #fecaca',
+                    color: '#18181b', fontSize: '0.82rem',
+                    background: '#f4f4f5',
+                    border: '1px solid #d4d4d8',
                     padding: '10px 12px', borderRadius: '10px'
                   }}
                 >{error}</motion.p>

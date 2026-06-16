@@ -48,10 +48,10 @@ h1, h2, h3, h4, .font-display {
   --accent-700: #4338ca;
   --accent-900: #312e81;
   --accent-soft: #eef2ff;
-  --cyan: #0891b2;
-  --pink: #db2777;
-  --green: #059669;
-  --orange: #ea580c;
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-600: #475569;
+  --slate-700: #334155;
   --radius-sm: 10px;
   --radius-md: 16px;
   --radius-lg: 24px;

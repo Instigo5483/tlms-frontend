@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'motion/react'
 
-export default function ConfirmModal({ open, title, message, confirmLabel = 'Confirm', onConfirm, onCancel, accentColor = '#dc2626', hideCancel = false }) {
+export default function ConfirmModal({ open, title, message, confirmLabel = 'Confirm', onConfirm, onCancel, accentColor = '#3f3f46', hideCancel = false }) {
   return (
     <AnimatePresence>
       {open && (

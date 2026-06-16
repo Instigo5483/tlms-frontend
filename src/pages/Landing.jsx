@@ -5,11 +5,11 @@ import Navbar from '../components/Navbar'
 
 const C = {
   indigo: '#4f46e5',
-  purple: '#7c3aed',
-  cyan:   '#0891b2',
-  pink:   '#db2777',
-  green:  '#059669',
-  orange: '#ea580c',
+  purple: '#1d4ed8',
+  cyan:   '#3b82f6',
+  pink:   '#475569',
+  green:  '#2563eb',
+  orange: '#64748b',
 }
 
 const cardBase = {
@@ -149,7 +149,7 @@ function FeeCalculator() {
         <input
           type="number" placeholder="e.g. 5000"
           value={withdrawStr} onChange={e => setWithdrawStr(e.target.value)}
-          style={{ width: '100%', height: '44px', padding: '0 14px', borderColor: exceedsEarned ? '#fca5a5' : undefined }}
+          style={{ width: '100%', height: '44px', padding: '0 14px', borderColor: exceedsEarned ? '#a1a1aa' : undefined }}
         />
       </div>
 
@@ -157,7 +157,7 @@ function FeeCalculator() {
       <AnimatePresence>
         {exceedsEarned && (
           <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '9px 12px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '10px', marginBottom: '1rem', fontSize: '0.8rem', color: '#dc2626' }}>
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '9px 12px', background: '#f4f4f5', border: '1px solid #d4d4d8', borderRadius: '10px', marginBottom: '1rem', fontSize: '0.8rem', color: '#18181b' }}>
             <span>⚠</span>
             <span>Cannot exceed total earned. Calculating for{' '}<strong>{fmt(earned)}</strong> instead.</span>
           </motion.div>
@@ -171,11 +171,11 @@ function FeeCalculator() {
             <div style={{ borderTop: '1px solid #f0f0f1', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
                 <span style={{ color: '#71717a' }}>Withdraw amount</span>
-                <span style={{ color: exceedsEarned ? '#dc2626' : '#18181b', fontWeight: 600 }}>{fmt(effectiveWithdraw)}</span>
+                <span style={{ color: '#18181b', fontWeight: 600 }}>{fmt(effectiveWithdraw)}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
                 <span style={{ color: '#71717a' }}>Platform fee ({label})</span>
-                <span style={{ color: '#dc2626', fontWeight: 600 }}>− {fmt(fee)}</span>
+                <span style={{ color: '#52525b', fontWeight: 600 }}>− {fmt(fee)}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.98rem', paddingTop: '6px', borderTop: '1px solid #f0f0f1' }}>
                 <span style={{ color: '#18181b', fontWeight: 700 }}>You receive</span>
@@ -219,8 +219,8 @@ export default function Landing() {
         }} />
 
         <motion.div initial={{ opacity: 0, y: -10, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          style={{ position: 'relative', zIndex: 1, marginBottom: '2rem', width: '84px', height: '84px', borderRadius: '22px', background: '#fff', border: '1px solid #e4e4e7', boxShadow: '0 16px 32px rgba(79,70,229,0.18), 0 2px 6px rgba(24,24,27,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px' }}>
-          <img src="/logo.jpeg" alt="TLMS" style={{ width: '100%', height: '100%', borderRadius: '14px', objectFit: 'cover' }} />
+          style={{ position: 'relative', zIndex: 1, marginBottom: '2rem', width: '84px', height: '84px', borderRadius: '22px', boxShadow: '0 16px 32px rgba(37,99,235,0.18), 0 2px 6px rgba(24,24,27,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+          <img src="/logo.jpeg" alt="TLMS" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }} style={{ position: 'relative', zIndex: 1, maxWidth: '860px', marginBottom: '1.4rem' }}>
@@ -524,7 +524,7 @@ export default function Landing() {
       {/* ── CTA ── */}
       <section style={{ padding: 'clamp(4rem,10vw,7rem) 1.5rem', textAlign: 'center', background: '#fafafa' }}>
         <motion.div initial={{ opacity: 0, scale: 0.96 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          style={{ maxWidth: '640px', margin: '0 auto', padding: 'clamp(2.5rem,6vw,3.6rem) 2rem', borderRadius: '28px', background: 'linear-gradient(135deg, #312e81, #4f46e5)', boxShadow: '0 24px 60px rgba(49,46,129,0.35)' }}>
+          style={{ maxWidth: '640px', margin: '0 auto', padding: 'clamp(2.5rem,6vw,3.6rem) 2rem', borderRadius: '28px', background: 'linear-gradient(135deg, #4338ca, #4f46e5)', boxShadow: '0 24px 60px rgba(67,56,202,0.3)' }}>
           <h2 className="font-display" style={{ fontSize: 'clamp(1.7rem, 4vw, 2.3rem)', fontWeight: 700, letterSpacing: '-0.02em', color: '#fff', marginBottom: '0.9rem' }}>
             Ready to get started?
           </h2>

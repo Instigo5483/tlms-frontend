@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar'
 import { useAuth } from '../hooks/useAuth'
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL
-const ACCENT = '#059669'
+const ACCENT = '#2563eb'
 
 export default function Wallet() {
   const { user, token } = useAuth()
@@ -173,7 +173,7 @@ export default function Wallet() {
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: 'auto' }}
                           exit={{ opacity: 0, height: 0 }}
-                          style={{ marginTop: '8px', padding: '12px 14px', background: '#ecfdf5', borderRadius: '10px', border: '1px solid #a7f3d0', fontSize: '0.82rem', overflow: 'hidden' }}
+                          style={{ marginTop: '8px', padding: '12px 14px', background: '#eff6ff', borderRadius: '10px', border: '1px solid #bfdbfe', fontSize: '0.82rem', overflow: 'hidden' }}
                         >
                           <div style={{ display: 'flex', justifyContent: 'space-between', color: '#71717a', marginBottom: '6px' }}>
                             <span>Platform fee ({feeLabel})</span>
@@ -216,13 +216,13 @@ export default function Wallet() {
                     {error && (
                       <motion.p
                         initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                        style={{ color: '#dc2626', fontSize: '0.82rem', background: '#fef2f2', border: '1px solid #fecaca', padding: '10px 12px', borderRadius: '10px' }}
+                        style={{ color: '#18181b', fontSize: '0.82rem', background: '#f4f4f5', border: '1px solid #d4d4d8', padding: '10px 12px', borderRadius: '10px' }}
                       >{error}</motion.p>
                     )}
                     {success && (
                       <motion.p
                         initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                        style={{ color: ACCENT, fontSize: '0.82rem', background: '#ecfdf5', border: '1px solid #a7f3d0', padding: '10px 12px', borderRadius: '10px' }}
+                        style={{ color: ACCENT, fontSize: '0.82rem', background: '#eff6ff', border: '1px solid #bfdbfe', padding: '10px 12px', borderRadius: '10px' }}
                       >{success}</motion.p>
                     )}
                   </AnimatePresence>
@@ -263,9 +263,9 @@ export default function Wallet() {
                   <p style={{ color: '#52525b', fontWeight: 600 }}>No withdrawals yet</p>
                 </motion.div>
               ) : withdrawals.map((w, i) => {
-                const statusColor = w.status === 'completed' ? ACCENT : w.status === 'processing' ? '#0891b2' : '#dc2626'
-                const statusBg = w.status === 'completed' ? '#ecfdf5' : w.status === 'processing' ? '#ecfeff' : '#fef2f2'
-                const statusBorder = w.status === 'completed' ? '#a7f3d0' : w.status === 'processing' ? '#a5f3fc' : '#fecaca'
+                const statusColor = w.status === 'completed' ? ACCENT : w.status === 'processing' ? '#475569' : '#18181b'
+                const statusBg = w.status === 'completed' ? '#eff6ff' : w.status === 'processing' ? '#f1f5f9' : '#f4f4f5'
+                const statusBorder = w.status === 'completed' ? '#bfdbfe' : w.status === 'processing' ? '#e2e8f0' : '#d4d4d8'
                 return (
                   <motion.div key={w.id}
                     initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}

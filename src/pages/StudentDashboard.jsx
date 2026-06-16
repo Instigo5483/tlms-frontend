@@ -99,8 +99,8 @@ export default function StudentDashboard() {
         >
           {[
             { label: 'Connected', value: connected.length, color: ACCENT },
-            { label: 'Pending', value: pending.length, color: '#db2777' },
-            { label: 'Total', value: enrollments.length, color: '#059669' },
+            { label: 'Pending', value: pending.length, color: '#475569' },
+            { label: 'Total', value: enrollments.length, color: '#1d4ed8' },
           ].map(s => (
             <div key={s.label} style={{ padding: '1.4rem', background: '#fff', border: '1px solid #e4e4e7', borderRadius: '16px', textAlign: 'center', boxShadow: '0 1px 2px rgba(24,24,27,0.04)' }}>
               <div className="font-display" style={{ fontSize: '2rem', fontWeight: 700, letterSpacing: '-0.02em', color: s.color }}>{s.value}</div>
@@ -208,7 +208,7 @@ export default function StudentDashboard() {
         confirmLabel="Remove"
         onConfirm={confirmRemove}
         onCancel={() => setRemoveModal(null)}
-        accentColor="#dc2626"
+        accentColor="#3f3f46"
       />
 
       <ConfirmModal
@@ -219,7 +219,7 @@ export default function StudentDashboard() {
         onConfirm={() => setAlertMsg(null)}
         onCancel={() => setAlertMsg(null)}
         hideCancel
-        accentColor="#dc2626"
+        accentColor="#3f3f46"
       />
     </div>
   )
@@ -228,9 +228,9 @@ export default function StudentDashboard() {
 function EnrollmentCard({ enrollment, onRemove, onView, label, index }) {
   const isCenter = enrollment.role === 'center'
   const initials = enrollment.name?.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '??'
-  const color = isCenter ? '#db2777' : ACCENT
-  const bg = isCenter ? '#fdf2f8' : '#eef2ff'
-  const border = isCenter ? '#fbcfe8' : '#e0e7ff'
+  const color = isCenter ? '#334155' : ACCENT
+  const bg = isCenter ? '#f1f5f9' : '#eef2ff'
+  const border = isCenter ? '#e2e8f0' : '#e0e7ff'
 
   return (
     <motion.div
@@ -264,7 +264,7 @@ function EnrollmentCard({ enrollment, onRemove, onView, label, index }) {
       </div>
       <div style={{ display: 'flex', gap: '8px' }}>
         <button onClick={onView} style={{ padding: '6px 14px', background: '#fff', border: '1px solid #e4e4e7', borderRadius: '8px', color: '#52525b', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 500 }}>View</button>
-        <button onClick={onRemove} style={{ padding: '6px 14px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', color: '#dc2626', cursor: 'pointer', fontSize: '0.78rem' }}>{label || 'Remove'}</button>
+        <button onClick={onRemove} style={{ padding: '6px 14px', background: '#f4f4f5', border: '1px solid #d4d4d8', borderRadius: '8px', color: '#18181b', cursor: 'pointer', fontSize: '0.78rem' }}>{label || 'Remove'}</button>
       </div>
     </motion.div>
   )

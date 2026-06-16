@@ -6,7 +6,7 @@ import InputModal from '../components/InputModal'
 import { useAuth } from '../hooks/useAuth'
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL
-const ACCENT = '#db2777'
+const ACCENT = '#334155'
 
 const INDIA_SUBJECTS = [
   'Accountancy','Arts / Drawing','Bengali','Biology','Business Studies','Chemistry',
@@ -441,12 +441,12 @@ export default function CenterDashboard() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2.5rem', paddingTop: '1rem', flexWrap: 'wrap' }}
         >
-          <div style={{ width: '48px', height: '48px', borderRadius: '14px', flexShrink: 0, background: '#fdf2f8', border: '1px solid #fbcfe8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1rem', color: ACCENT }}>{initials}</div>
+          <div style={{ width: '48px', height: '48px', borderRadius: '14px', flexShrink: 0, background: '#f1f5f9', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1rem', color: ACCENT }}>{initials}</div>
           <div>
             <h1 className="font-display" style={{ fontWeight: 700, fontSize: 'clamp(1.2rem, 3vw, 1.5rem)', letterSpacing: '-0.02em', color: '#18181b' }}>{loaded?.center_name || user?.full_name || 'Center'}</h1>
             <p style={{ color: '#a1a1aa', fontSize: '0.82rem', marginTop: '2px' }}>{user?.email}</p>
           </div>
-          <span style={{ marginLeft: 'auto', fontSize: '0.72rem', fontWeight: 600, padding: '4px 12px', borderRadius: '999px', background: '#fdf2f8', border: '1px solid #fbcfe8', color: ACCENT, whiteSpace: 'nowrap' }}>Tuition Center</span>
+          <span style={{ marginLeft: 'auto', fontSize: '0.72rem', fontWeight: 600, padding: '4px 12px', borderRadius: '999px', background: '#f1f5f9', border: '1px solid #e2e8f0', color: ACCENT, whiteSpace: 'nowrap' }}>Tuition Center</span>
         </motion.div>
 
         {/* Stats */}
@@ -459,7 +459,7 @@ export default function CenterDashboard() {
           {[
             { label: 'Students', value: accepted.length, color: ACCENT },
             { label: 'Requests', value: pending.length, color: '#4f46e5' },
-            { label: 'Subjects', value: loaded?.subjects?.length || 0, color: '#059669' },
+            { label: 'Subjects', value: loaded?.subjects?.length || 0, color: '#1d4ed8' },
           ].map(s => (
             <div key={s.label} style={{ padding: '1.2rem', background: '#fff', border: '1px solid #e4e4e7', borderRadius: '16px', textAlign: 'center', boxShadow: '0 1px 2px rgba(24,24,27,0.04)' }}>
               <div className="font-display" style={{ fontSize: '1.8rem', fontWeight: 700, letterSpacing: '-0.02em', color: s.color }}>{s.value}</div>
@@ -583,7 +583,7 @@ export default function CenterDashboard() {
                       {loaded.subjects?.length > 0 && (
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                           {loaded.subjects.map(s => (
-                            <span key={s} style={{ background: '#fdf2f8', border: '1px solid #fbcfe8', color: ACCENT, fontSize: '0.78rem', padding: '3px 10px', borderRadius: '6px' }}>{s}</span>
+                            <span key={s} style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', color: ACCENT, fontSize: '0.78rem', padding: '3px 10px', borderRadius: '6px' }}>{s}</span>
                           ))}
                         </div>
                       )}
@@ -640,7 +640,7 @@ export default function CenterDashboard() {
                     <motion.button
                       whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
                       onClick={() => handleAccept(s.id)} style={{ padding: '7px 16px', background: ACCENT, border: 'none', borderRadius: '999px', color: '#fff', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 600 }}>Accept</motion.button>
-                    <button onClick={() => handleReject(s.id)} style={{ padding: '7px 16px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '999px', color: '#dc2626', cursor: 'pointer', fontSize: '0.78rem' }}>Decline</button>
+                    <button onClick={() => handleReject(s.id)} style={{ padding: '7px 16px', background: '#f4f4f5', border: '1px solid #d4d4d8', borderRadius: '999px', color: '#18181b', cursor: 'pointer', fontSize: '0.78rem' }}>Decline</button>
                   </div>
                 </motion.div>
               ))}
@@ -669,7 +669,7 @@ export default function CenterDashboard() {
                       <p style={{ fontSize: '0.75rem', marginTop: '3px', fontWeight: 600, color: ACCENT }}>₹{s.monthly_fee}/month · due day {s.fee_day || 1}</p>
                     )}
                   </div>
-                  <button onClick={() => handleRemoveStudent(s.id)} style={{ padding: '7px 14px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '999px', color: '#dc2626', cursor: 'pointer', fontSize: '0.78rem' }}>Remove</button>
+                  <button onClick={() => handleRemoveStudent(s.id)} style={{ padding: '7px 14px', background: '#f4f4f5', border: '1px solid #d4d4d8', borderRadius: '999px', color: '#18181b', cursor: 'pointer', fontSize: '0.78rem' }}>Remove</button>
                 </motion.div>
               ))}
             </motion.div>
@@ -698,7 +698,7 @@ export default function CenterDashboard() {
         confirmLabel={modal?.confirmLabel}
         onConfirm={modal?.onConfirm}
         onCancel={() => setModal(null)}
-        accentColor="#dc2626"
+        accentColor="#3f3f46"
       />
 
       <ConfirmModal
@@ -709,7 +709,7 @@ export default function CenterDashboard() {
         onConfirm={() => setAlertMsg(null)}
         onCancel={() => setAlertMsg(null)}
         hideCancel
-        accentColor="#dc2626"
+        accentColor="#3f3f46"
       />
     </div>
   )

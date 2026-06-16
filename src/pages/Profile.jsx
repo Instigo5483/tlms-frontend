@@ -102,18 +102,18 @@ export default function Profile() {
     )
     if (enrollStatus.status === 'pending') return (
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-        <span style={{ padding: '8px 16px', borderRadius: '10px', background: '#fffbeb', border: '1px solid #fde68a', color: '#b45309', fontSize: '0.82rem', fontWeight: 600 }}>⏳ Request Pending</span>
-        <button onClick={handleRemove} style={{ padding: '8px 14px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', color: '#dc2626', cursor: 'pointer', fontSize: '0.78rem' }}>Cancel</button>
+        <span style={{ padding: '8px 16px', borderRadius: '10px', background: '#f4f4f5', border: '1px solid #e4e4e7', color: '#52525b', fontSize: '0.82rem', fontWeight: 600 }}>⏳ Request Pending</span>
+        <button onClick={handleRemove} style={{ padding: '8px 14px', background: '#f4f4f5', border: '1px solid #d4d4d8', borderRadius: '8px', color: '#18181b', cursor: 'pointer', fontSize: '0.78rem' }}>Cancel</button>
       </div>
     )
     if (enrollStatus.status === 'accepted') return (
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-        <span style={{ padding: '8px 16px', borderRadius: '10px', background: '#ecfdf5', border: '1px solid #a7f3d0', color: '#059669', fontSize: '0.82rem', fontWeight: 600 }}>✓ Connected</span>
-        <button onClick={handleRemove} style={{ padding: '8px 14px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', color: '#dc2626', cursor: 'pointer', fontSize: '0.78rem' }}>Remove</button>
+        <span style={{ padding: '8px 16px', borderRadius: '10px', background: '#eef2ff', border: '1px solid #e0e7ff', color: ACCENT, fontSize: '0.82rem', fontWeight: 600 }}>✓ Connected</span>
+        <button onClick={handleRemove} style={{ padding: '8px 14px', background: '#f4f4f5', border: '1px solid #d4d4d8', borderRadius: '8px', color: '#18181b', cursor: 'pointer', fontSize: '0.78rem' }}>Remove</button>
       </div>
     )
     if (enrollStatus.status === 'rejected') return (
-      <span style={{ padding: '8px 16px', borderRadius: '10px', background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', fontSize: '0.82rem', fontWeight: 600 }}>Request Declined</span>
+      <span style={{ padding: '8px 16px', borderRadius: '10px', background: '#f4f4f5', border: '1px solid #d4d4d8', color: '#18181b', fontSize: '0.82rem', fontWeight: 600 }}>Request Declined</span>
     )
     return null
   }
@@ -145,9 +145,9 @@ export default function Profile() {
   const initials = (isCenter ? profile.center_name : profile.full_name)
     ?.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '??'
   const displayName = isCenter ? profile.center_name : profile.full_name
-  const roleColor = isCenter ? '#db2777' : ACCENT
-  const roleBg = isCenter ? '#fdf2f8' : '#eef2ff'
-  const roleBorder = isCenter ? '#fbcfe8' : '#e0e7ff'
+  const roleColor = isCenter ? '#334155' : ACCENT
+  const roleBg = isCenter ? '#f1f5f9' : '#eef2ff'
+  const roleBorder = isCenter ? '#e2e8f0' : '#e0e7ff'
 
   return (
     <div style={{ minHeight: '100vh', background: '#fff' }}>
@@ -233,7 +233,7 @@ export default function Profile() {
                 <p style={{ color: '#a1a1aa', fontSize: '0.72rem', marginBottom: '8px', letterSpacing: '0.06em' }}>CLASS LEVELS</p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                   {profile.grade_levels.map(g => (
-                    <span key={g} style={{ background: '#ecfeff', border: '1px solid #a5f3fc', color: '#0891b2', fontSize: '0.82rem', padding: '5px 14px', borderRadius: '8px' }}>{g}</span>
+                    <span key={g} style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', color: '#334155', fontSize: '0.82rem', padding: '5px 14px', borderRadius: '8px' }}>{g}</span>
                   ))}
                 </div>
               </div>
@@ -272,7 +272,7 @@ export default function Profile() {
               {isCenter && profile.website && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <span style={{ width: '20px' }}>🌐</span>
-                  <a href={profile.website} target="_blank" rel="noreferrer" style={{ fontSize: '0.88rem', color: '#db2777' }}>{profile.website}</a>
+                  <a href={profile.website} target="_blank" rel="noreferrer" style={{ fontSize: '0.88rem', color: '#334155' }}>{profile.website}</a>
                 </div>
               )}
             </div>
@@ -287,7 +287,7 @@ export default function Profile() {
         confirmLabel="Remove"
         onConfirm={confirmRemove}
         onCancel={() => setRemoveModal(false)}
-        accentColor="#dc2626"
+        accentColor="#3f3f46"
       />
 
       <ConfirmModal
@@ -298,7 +298,7 @@ export default function Profile() {
         onConfirm={() => setAlertMsg(null)}
         onCancel={() => setAlertMsg(null)}
         hideCancel
-        accentColor="#dc2626"
+        accentColor="#3f3f46"
       />
     </div>
   )
