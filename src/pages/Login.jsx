@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'motion/react'
 import Navbar from '../components/Navbar'
 import { useAuth } from '../hooks/useAuth'
@@ -7,14 +7,38 @@ import { useAuth } from '../hooks/useAuth'
 const BACKEND = import.meta.env.VITE_BACKEND_URL
 const ACCENT = '#4f46e5'
 
+function GoogleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18">
+      <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84c-.21 1.13-.85 2.08-1.81 2.72v2.26h2.92C16.46 14.2 17.64 11.96 17.64 9.2z"/>
+      <path fill="#34A853" d="M9 18c2.43 0 4.47-.81 5.96-2.18l-2.92-2.26c-.81.54-1.85.87-3.04.87-2.34 0-4.32-1.58-5.03-3.7H.96v2.33C2.44 15.98 5.48 18 9 18z"/>
+      <path fill="#FBBC05" d="M3.97 10.73c-.18-.54-.28-1.12-.28-1.73s.1-1.19.28-1.73V4.94H.96A8.99 8.99 0 000 9c0 1.45.35 2.83.96 4.06l3.01-2.33z"/>
+      <path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.59-2.59C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.94l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z"/>
+    </svg>
+  )
+}
+
+function DiscordIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="#5865F2">
+      <path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.418 2.157-2.418 1.21 0 2.176 1.094 2.157 2.418 0 1.334-.956 2.419-2.157 2.419zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.418 2.157-2.418 1.21 0 2.176 1.094 2.157 2.418 0 1.334-.946 2.419-2.157 2.419z"/>
+    </svg>
+  )
+}
+
 export default function Login() {
   const navigate = useNavigate()
   const { login } = useAuth()
+  const [searchParams] = useSearchParams()
   const [mode, setMode] = useState('login')
   const [role, setRole] = useState('student')
-  const [error, setError] = useState('')
+  const [error, setError] = useState(searchParams.get('error') === 'oauth_failed' ? 'That sign-in attempt failed. Please try again.' : '')
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({ full_name: '', email: '', password: '', center_name: '' })
+
+  function startOAuth(provider) {
+    window.location.href = `${BACKEND}/api/auth/${provider}`
+  }
 
   function handleChange(e) {
     setForm(f => ({ ...f, [e.target.name]: e.target.value }))
@@ -127,6 +151,38 @@ export default function Login() {
               </p>
             </motion.div>
           </AnimatePresence>
+
+          {/* OAuth buttons */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '1.4rem' }}>
+            <motion.button
+              type="button" onClick={() => startOAuth('google')}
+              whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
+              style={{
+                height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+                background: '#fff', border: '1px solid #e4e4e7', borderRadius: '999px',
+                fontWeight: 600, fontSize: '0.88rem', color: '#18181b', cursor: 'pointer',
+              }}
+            >
+              <GoogleIcon /> Continue with Google
+            </motion.button>
+            <motion.button
+              type="button" onClick={() => startOAuth('discord')}
+              whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
+              style={{
+                height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+                background: '#fff', border: '1px solid #e4e4e7', borderRadius: '999px',
+                fontWeight: 600, fontSize: '0.88rem', color: '#18181b', cursor: 'pointer',
+              }}
+            >
+              <DiscordIcon /> Continue with Discord
+            </motion.button>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.4rem' }}>
+            <div style={{ flex: 1, height: '1px', background: '#e4e4e7' }} />
+            <span style={{ fontSize: '0.72rem', color: '#a1a1aa', letterSpacing: '0.05em' }}>OR</span>
+            <div style={{ flex: 1, height: '1px', background: '#e4e4e7' }} />
+          </div>
 
           {/* Role tabs — signup only */}
           <AnimatePresence>

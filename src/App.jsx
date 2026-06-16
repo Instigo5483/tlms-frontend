@@ -4,6 +4,8 @@ import { useAuth } from './hooks/useAuth'
 import Landing from './pages/Landing'
 import Discover from './pages/Discover'
 import Login from './pages/Login'
+import OAuthCallback from './pages/OAuthCallback'
+import ChooseRole from './pages/ChooseRole'
 import StudentDashboard from './pages/StudentDashboard'
 import TutorDashboard from './pages/TutorDashboard'
 import CenterDashboard from './pages/CenterDashboard'
@@ -15,7 +17,18 @@ function ProtectedRoute({ children, role }) {
   const { user, loading } = useAuth()
   if (loading) return null
   if (!user) return <Navigate to="/login" replace />
+  if (!user.role) return <Navigate to="/choose-role" replace />
   if (role && user.role !== role) return <Navigate to="/" replace />
+  return children
+}
+
+function ProtectedRoleRoute({ children }) {
+  const { user, loading } = useAuth()
+  if (loading) return null
+  if (!user) return <Navigate to="/login" replace />
+  if (user.role === 'student') return <Navigate to="/dashboard/student" replace />
+  if (user.role === 'tutor') return <Navigate to="/dashboard/tutor" replace />
+  if (user.role === 'center') return <Navigate to="/dashboard/center" replace />
   return children
 }
 
@@ -27,6 +40,10 @@ export default function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/discover" element={<Discover />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/oauth/callback" element={<OAuthCallback />} />
+          <Route path="/choose-role" element={
+            <ProtectedRoleRoute><ChooseRole /></ProtectedRoleRoute>
+          } />
           <Route path="/profile/:type/:id" element={<Profile />} />
           <Route path="/wallet" element={
             <ProtectedRoute><Wallet /></ProtectedRoute>
