@@ -99,8 +99,8 @@ export default function StudentDashboard() {
         >
           {[
             { label: 'Connected', value: connected.length, color: ACCENT },
-            { label: 'Pending', value: pending.length, color: '#475569' },
-            { label: 'Total', value: enrollments.length, color: '#1d4ed8' },
+            { label: 'Pending', value: pending.length, color: ACCENT },
+            { label: 'Total', value: enrollments.length, color: ACCENT },
           ].map(s => (
             <div key={s.label} style={{ padding: '1.4rem', background: '#fff', border: '1px solid #e4e4e7', borderRadius: '16px', textAlign: 'center', boxShadow: '0 1px 2px rgba(24,24,27,0.04)' }}>
               <div className="font-display" style={{ fontSize: '2rem', fontWeight: 700, letterSpacing: '-0.02em', color: s.color }}>{s.value}</div>

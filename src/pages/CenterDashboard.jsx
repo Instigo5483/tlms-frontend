@@ -458,8 +458,8 @@ export default function CenterDashboard() {
         >
           {[
             { label: 'Students', value: accepted.length, color: ACCENT },
-            { label: 'Requests', value: pending.length, color: '#4f46e5' },
-            { label: 'Subjects', value: loaded?.subjects?.length || 0, color: '#1d4ed8' },
+            { label: 'Requests', value: pending.length, color: ACCENT },
+            { label: 'Subjects', value: loaded?.subjects?.length || 0, color: ACCENT },
           ].map(s => (
             <div key={s.label} style={{ padding: '1.2rem', background: '#fff', border: '1px solid #e4e4e7', borderRadius: '16px', textAlign: 'center', boxShadow: '0 1px 2px rgba(24,24,27,0.04)' }}>
               <div className="font-display" style={{ fontSize: '1.8rem', fontWeight: 700, letterSpacing: '-0.02em', color: s.color }}>{s.value}</div>

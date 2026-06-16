@@ -460,9 +460,9 @@ export default function TutorDashboard() {
           style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px', marginBottom: '2rem' }}
         >
           {[
-            { label: 'Students', value: accepted.length, color: '#4f46e5' },
-            { label: 'Requests', value: pending.length, color: '#475569' },
-            { label: 'Subjects', value: loadedProfile?.subjects?.length || 0, color: '#1d4ed8' },
+            { label: 'Students', value: accepted.length, color: ACCENT },
+            { label: 'Requests', value: pending.length, color: ACCENT },
+            { label: 'Subjects', value: loadedProfile?.subjects?.length || 0, color: ACCENT },
             { label: 'Rate', value: loadedProfile?.monthly_rate ? `₹${loadedProfile.monthly_rate}` : '—', color: ACCENT },
           ].map(s => (
             <div key={s.label} style={{ padding: '1.2rem', background: '#fff', border: '1px solid #e4e4e7', borderRadius: '16px', textAlign: 'center', boxShadow: '0 1px 2px rgba(24,24,27,0.04)' }}>

@@ -94,7 +94,7 @@ function FeeCalculator() {
   }
   function onPointerUp() { dragging.current = false }
 
-  const tierColor = tier === 'Starter' ? C.purple : tier === 'Growing' ? C.cyan : tier === 'Established' ? C.green : C.orange
+  const tierColor = C.indigo
 
   return (
     <motion.div
@@ -246,10 +246,10 @@ export default function Landing() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.5 }}
           style={{ position: 'relative', zIndex: 1, display: 'flex', gap: 'clamp(1.6rem, 4vw, 3.2rem)', flexWrap: 'wrap', justifyContent: 'center' }}>
           {[
-            { value: '1000+', label: 'Students',        color: C.cyan },
+            { value: '1000+', label: 'Students',        color: C.indigo },
             { value: '500+',  label: 'Verified Tutors', color: C.indigo },
-            { value: '20+',   label: 'Subjects',        color: C.pink },
-            { value: '50+',   label: 'Centers',         color: C.green },
+            { value: '20+',   label: 'Subjects',        color: C.indigo },
+            { value: '50+',   label: 'Centers',         color: C.indigo },
           ].map((stat, i) => (
             <AnimatedStat key={stat.label} value={stat.value} label={stat.label} color={stat.color} delay={0.5 + i * 0.1} />
           ))}
@@ -503,10 +503,10 @@ export default function Landing() {
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {[
-                { range: 'Under ₹50,000 earned',          fee: '1%',     color: C.purple },
-                { range: '₹50,000 – ₹1,00,000 earned',   fee: '0.75%',  color: C.cyan },
-                { range: '₹1,00,000 – ₹5,00,000 earned', fee: '0.5%',   color: C.green },
-                { range: 'Above ₹5,00,000 earned',        fee: '0.25%',  color: C.orange },
+                { range: 'Under ₹50,000 earned',          fee: '1%',     color: C.indigo },
+                { range: '₹50,000 – ₹1,00,000 earned',   fee: '0.75%',  color: C.indigo },
+                { range: '₹1,00,000 – ₹5,00,000 earned', fee: '0.5%',   color: C.indigo },
+                { range: 'Above ₹5,00,000 earned',        fee: '0.25%',  color: C.indigo },
               ].map((t, i) => (
                 <motion.div key={t.range} initial={{ opacity: 0, x: -15 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 + i * 0.08 }}
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: `${t.color}0a`, border: `1px solid ${t.color}25`, borderRadius: '14px' }}>
