@@ -583,8 +583,12 @@ function TutorCard({ tutor, index, onClick }) {
           background: '#eef2ff',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontWeight: 700, fontSize: '0.85rem', color: ACCENT,
-          border: '1px solid #e0e7ff'
-        }}>{initials}</div>
+          border: '1px solid #e0e7ff', overflow: 'hidden'
+        }}>
+          {tutor.avatar_url
+            ? <img src={tutor.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            : initials}
+        </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontWeight: 700, color: '#18181b', fontSize: '0.95rem', marginBottom: '3px' }}>
             {tutor.full_name}
