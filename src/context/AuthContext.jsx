@@ -29,8 +29,16 @@ export function AuthProvider({ children }) {
     setUser(null)
   }
 
+  function updateUser(partial) {
+    setUser(prev => {
+      const merged = { ...prev, ...partial }
+      localStorage.setItem('tlms_user', JSON.stringify(merged))
+      return merged
+    })
+  }
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, updateUser, loading }}>
       {children}
     </AuthContext.Provider>
   )

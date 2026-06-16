@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar'
 import ConfirmModal from '../components/ConfirmModal'
 import InputModal from '../components/InputModal'
 import StudentInfoModal from '../components/StudentInfoModal'
+import AvatarUpload from '../components/AvatarUpload'
 import { useAuth } from '../hooks/useAuth'
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL
@@ -447,7 +448,7 @@ export default function CenterDashboard() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2.5rem', paddingTop: '1rem', flexWrap: 'wrap' }}
         >
-          <div style={{ width: '48px', height: '48px', borderRadius: '14px', flexShrink: 0, background: '#eff6ff', border: '1px solid #bfdbfe', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1rem', color: ACCENT }}>{initials}</div>
+          <AvatarUpload avatarUrl={user?.avatar_url} initials={initials} accentColor={ACCENT} size={48} />
           <div>
             <h1 className="font-display" style={{ fontWeight: 700, fontSize: 'clamp(1.2rem, 3vw, 1.5rem)', letterSpacing: '-0.02em', color: '#18181b' }}>{loaded?.center_name || user?.full_name || 'Center'}</h1>
             <p style={{ color: '#a1a1aa', fontSize: '0.82rem', marginTop: '2px' }}>{user?.email}</p>

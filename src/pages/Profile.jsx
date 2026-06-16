@@ -172,8 +172,12 @@ export default function Profile() {
               width: '72px', height: '72px', borderRadius: '18px', flexShrink: 0,
               background: roleBg, border: `1px solid ${roleBorder}`,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontWeight: 800, fontSize: '1.4rem', color: roleColor
-            }}>{initials}</div>
+              fontWeight: 800, fontSize: '1.4rem', color: roleColor, overflow: 'hidden'
+            }}>
+              {profile.avatar_url
+                ? <img src={profile.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                : initials}
+            </div>
 
             <div style={{ flex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '8px' }}>
