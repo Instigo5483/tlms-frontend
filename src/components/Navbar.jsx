@@ -138,7 +138,8 @@ export default function Navbar() {
             ) : (
               <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                 <Link to="/login" style={{
-                  background: '#18181b',
+                  background: '#4f46e5',
+                  boxShadow: '0 6px 16px rgba(79,70,229,0.3)',
                   color: '#fff', padding: '8px 20px', borderRadius: '999px',
                   textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600,
                   whiteSpace: 'nowrap', display: 'block'
@@ -164,17 +165,17 @@ export default function Navbar() {
             <motion.div
               animate={{ rotate: menuOpen ? 45 : 0, y: menuOpen ? 6 : 0 }}
               transition={{ duration: 0.2 }}
-              style={{ width: '16px', height: '2px', background: '#18181b', borderRadius: '2px' }}
+              style={{ width: '16px', height: '2px', background: '#4f46e5', borderRadius: '2px' }}
             />
             <motion.div
               animate={{ opacity: menuOpen ? 0 : 1, scaleX: menuOpen ? 0 : 1 }}
               transition={{ duration: 0.2 }}
-              style={{ width: '16px', height: '2px', background: '#18181b', borderRadius: '2px' }}
+              style={{ width: '16px', height: '2px', background: '#4f46e5', borderRadius: '2px' }}
             />
             <motion.div
               animate={{ rotate: menuOpen ? -45 : 0, y: menuOpen ? -6 : 0 }}
               transition={{ duration: 0.2 }}
-              style={{ width: '16px', height: '2px', background: '#18181b', borderRadius: '2px' }}
+              style={{ width: '16px', height: '2px', background: '#4f46e5', borderRadius: '2px' }}
             />
           </motion.button>
         </motion.nav>
@@ -269,7 +270,8 @@ export default function Navbar() {
                       onClick={() => setMenuOpen(false)}
                       style={{
                         flex: 1, textAlign: 'center',
-                        background: '#18181b',
+                        background: '#4f46e5',
+                        boxShadow: '0 6px 16px rgba(79,70,229,0.3)',
                         color: '#fff', padding: '10px',
                         borderRadius: '12px', textDecoration: 'none',
                         fontSize: '0.9rem', fontWeight: 700, display: 'block'

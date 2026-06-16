@@ -366,9 +366,10 @@ export default function Discover() {
 
           <button onClick={() => { setShowFilters(v => !v); setFilterAnimDone(false) }} style={{
             height: '44px', padding: '0 16px',
-            background: showFilters ? '#18181b' : '#fff',
-            border: `1px solid ${showFilters ? '#18181b' : '#e4e4e7'}`,
+            background: showFilters ? ACCENT : '#fff',
+            border: `1px solid ${showFilters ? ACCENT : '#e4e4e7'}`,
             borderRadius: '12px', color: showFilters ? '#fff' : '#18181b',
+            boxShadow: showFilters ? '0 6px 16px rgba(79,70,229,0.25)' : 'none',
             cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600,
             display: 'flex', alignItems: 'center', gap: '6px',
             transition: 'all 0.2s', whiteSpace: 'nowrap'
@@ -528,7 +529,8 @@ export default function Discover() {
             <p style={{ color: '#52525b', marginBottom: '0.5rem', fontWeight: 600 }}>No results found</p>
             <p style={{ color: '#a1a1aa', fontSize: '0.85rem', marginBottom: '1.5rem' }}>Try adjusting your filters</p>
             <button onClick={clearFilters} style={{
-              padding: '10px 24px', background: '#18181b', color: '#fff',
+              padding: '10px 24px', background: ACCENT, color: '#fff',
+              boxShadow: '0 8px 20px rgba(79,70,229,0.25)',
               border: 'none', borderRadius: '999px', fontWeight: 600,
               cursor: 'pointer', fontSize: '0.9rem'
             }}>Clear filters</button>

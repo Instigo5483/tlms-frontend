@@ -219,8 +219,8 @@ export default function Landing() {
         }} />
 
         <motion.div initial={{ opacity: 0, y: -10, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          style={{ position: 'relative', zIndex: 1, marginBottom: '2rem', width: '84px', height: '84px', borderRadius: '22px', background: C.indigo, boxShadow: '0 16px 32px rgba(79,70,229,0.28)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <img src="/logo.jpeg" alt="TLMS" style={{ width: '52px', height: '52px', borderRadius: '12px', objectFit: 'cover' }} />
+          style={{ position: 'relative', zIndex: 1, marginBottom: '2rem', width: '84px', height: '84px', borderRadius: '22px', background: '#fff', border: '1px solid #e4e4e7', boxShadow: '0 16px 32px rgba(79,70,229,0.18), 0 2px 6px rgba(24,24,27,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px' }}>
+          <img src="/logo.jpeg" alt="TLMS" style={{ width: '100%', height: '100%', borderRadius: '14px', objectFit: 'cover' }} />
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }} style={{ position: 'relative', zIndex: 1, maxWidth: '860px', marginBottom: '1.4rem' }}>
@@ -238,7 +238,7 @@ export default function Landing() {
           <input type="text" placeholder="Search by subject, name, or class..." value={search} onChange={e => setSearch(e.target.value)}
             style={{ flex: 1, height: '52px', padding: '0 1.2rem', borderRadius: '999px', fontSize: '0.95rem', boxShadow: '0 1px 2px rgba(24,24,27,0.04)' }} />
           <motion.button type="submit" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-            style={{ height: '52px', padding: '0 1.8rem', background: '#18181b', color: '#fff', border: 'none', borderRadius: '999px', fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+            style={{ height: '52px', padding: '0 1.8rem', background: C.indigo, color: '#fff', border: 'none', borderRadius: '999px', fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer', whiteSpace: 'nowrap', boxShadow: '0 8px 20px rgba(79,70,229,0.3)' }}>
             Search
           </motion.button>
         </motion.form>
@@ -524,7 +524,7 @@ export default function Landing() {
       {/* ── CTA ── */}
       <section style={{ padding: 'clamp(4rem,10vw,7rem) 1.5rem', textAlign: 'center', background: '#fafafa' }}>
         <motion.div initial={{ opacity: 0, scale: 0.96 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          style={{ maxWidth: '640px', margin: '0 auto', padding: 'clamp(2.5rem,6vw,3.6rem) 2rem', borderRadius: '28px', background: '#18181b', boxShadow: '0 24px 60px rgba(24,24,27,0.25)' }}>
+          style={{ maxWidth: '640px', margin: '0 auto', padding: 'clamp(2.5rem,6vw,3.6rem) 2rem', borderRadius: '28px', background: 'linear-gradient(135deg, #312e81, #4f46e5)', boxShadow: '0 24px 60px rgba(49,46,129,0.35)' }}>
           <h2 className="font-display" style={{ fontSize: 'clamp(1.7rem, 4vw, 2.3rem)', fontWeight: 700, letterSpacing: '-0.02em', color: '#fff', marginBottom: '0.9rem' }}>
             Ready to get started?
           </h2>

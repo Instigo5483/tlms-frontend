@@ -224,7 +224,8 @@ export default function Login() {
               whileTap={{ scale: loading ? 1 : 0.98 }}
               style={{
                 marginTop: '4px', height: '46px',
-                background: loading ? '#e4e4e7' : '#18181b',
+                background: loading ? '#e4e4e7' : ACCENT,
+                boxShadow: loading ? 'none' : '0 8px 20px rgba(79,70,229,0.28)',
                 color: loading ? '#a1a1aa' : '#fff',
                 border: 'none', borderRadius: '999px',
                 fontWeight: 700, fontSize: '0.95rem',
