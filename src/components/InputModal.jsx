@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react'
 
 export default function InputModal({
   open, title, message, label, placeholder, type = 'number',
-  prefix, confirmLabel = 'Confirm', onConfirm, onCancel, accentColor = '#06b6d4'
+  prefix, confirmLabel = 'Confirm', onConfirm, onCancel, accentColor = '#4f46e5'
 }) {
   const [value, setValue] = useState('')
 
@@ -29,8 +29,8 @@ export default function InputModal({
             position: 'fixed', inset: 0, zIndex: 1000,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             padding: '1rem',
-            background: 'rgba(0,0,0,0.55)',
-            backdropFilter: 'blur(10px)',
+            background: 'rgba(24,24,27,0.4)',
+            backdropFilter: 'blur(6px)',
           }}
         >
           <motion.div
@@ -41,46 +41,24 @@ export default function InputModal({
             onClick={e => e.stopPropagation()}
             style={{
               width: '100%', maxWidth: '400px',
-              background: '#0d0d14',
-              border: `1px solid ${accentColor}28`,
+              background: '#fff',
+              border: '1px solid #e4e4e7',
               borderRadius: '20px',
               padding: '1.8rem',
-              boxShadow: `0 0 0 1px rgba(255,255,255,0.03), 0 32px 64px rgba(0,0,0,0.7), 0 0 80px ${accentColor}12`,
-              position: 'relative',
-              overflow: 'hidden',
+              boxShadow: '0 24px 60px rgba(24,24,27,0.18)',
             }}
           >
-            {/* Top shimmer line */}
-            <div style={{
-              position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
-              width: '45%', height: '1px',
-              background: `linear-gradient(90deg, transparent, ${accentColor}55, transparent)`
-            }} />
+            <h3 style={{ color: '#18181b', fontWeight: 700, fontSize: '0.98rem', letterSpacing: '-0.01em', marginBottom: '0.45rem' }}>{title}</h3>
 
-            <h3 style={{
-              color: '#fff', fontWeight: 700, fontSize: '0.98rem',
-              letterSpacing: '-0.01em', marginBottom: '0.45rem'
-            }}>{title}</h3>
-
-            <p style={{
-              color: 'rgba(255,255,255,0.38)', fontSize: '0.85rem',
-              lineHeight: 1.65, marginBottom: '1.3rem'
-            }}>{message}</p>
+            <p style={{ color: '#71717a', fontSize: '0.85rem', lineHeight: 1.65, marginBottom: '1.3rem' }}>{message}</p>
 
             <div style={{ marginBottom: '1.6rem' }}>
               {label && (
-                <label style={{
-                  display: 'block', fontSize: '0.75rem', fontWeight: 500,
-                  color: 'rgba(255,255,255,0.35)', marginBottom: '7px'
-                }}>{label}</label>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 500, color: '#71717a', marginBottom: '7px' }}>{label}</label>
               )}
               <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                 {prefix && (
-                  <span style={{
-                    position: 'absolute', left: '13px', zIndex: 1,
-                    color: 'rgba(255,255,255,0.45)', fontSize: '1rem', fontWeight: 700,
-                    pointerEvents: 'none',
-                  }}>{prefix}</span>
+                  <span style={{ position: 'absolute', left: '13px', zIndex: 1, color: '#71717a', fontSize: '1rem', fontWeight: 700, pointerEvents: 'none' }}>{prefix}</span>
                 )}
                 <input
                   type={type}
@@ -105,15 +83,12 @@ export default function InputModal({
                 onClick={onCancel}
                 style={{
                   padding: '8px 18px',
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(255,255,255,0.08)',
+                  background: '#f4f4f5',
+                  border: '1px solid #e4e4e7',
                   borderRadius: '10px',
-                  color: 'rgba(255,255,255,0.4)',
+                  color: '#52525b',
                   cursor: 'pointer', fontSize: '0.83rem', fontWeight: 500,
-                  transition: 'color 0.18s',
                 }}
-                onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}
-                onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.4)'}
               >Cancel</button>
 
               <motion.button
@@ -122,8 +97,8 @@ export default function InputModal({
                 onClick={handleConfirm}
                 style={{
                   padding: '8px 22px',
-                  background: `linear-gradient(135deg, ${accentColor}30, rgba(168,85,247,0.2))`,
-                  border: `1px solid ${accentColor}42`,
+                  background: accentColor,
+                  border: 'none',
                   borderRadius: '10px',
                   color: '#fff',
                   cursor: 'pointer', fontSize: '0.83rem', fontWeight: 600,

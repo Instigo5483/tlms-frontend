@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar'
 import { useAuth } from '../hooks/useAuth'
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL
+const ACCENT = '#4f46e5'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -54,34 +55,26 @@ export default function Login() {
   ]
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#fafafa' }}>
       <Navbar />
 
       <div style={{
         flex: 1, display: 'flex',
         alignItems: 'center', justifyContent: 'center',
-        padding: '80px 1.5rem 2rem', position: 'relative', zIndex: 1
+        padding: '100px 1.5rem 2rem',
       }}>
         <motion.div
           initial={{ opacity: 0, y: 30, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           style={{
             width: '100%', maxWidth: '400px',
-            background: 'rgba(10,10,15,0.9)',
-            border: '1px solid rgba(168,85,247,0.2)',
+            background: '#fff',
+            border: '1px solid #e4e4e7',
             borderRadius: '24px', padding: '2.5rem',
-            position: 'relative', overflow: 'hidden'
+            boxShadow: '0 24px 60px rgba(24,24,27,0.08)',
           }}
         >
-          {/* Top glow line */}
-          <div style={{
-            position: 'absolute', top: 0, left: '50%',
-            transform: 'translateX(-50%)',
-            width: '60%', height: '1px',
-            background: 'linear-gradient(90deg, transparent, rgba(168,85,247,0.6), transparent)'
-          }} />
-
           {/* Logo */}
           <div style={{ textAlign: 'center', marginBottom: '1.8rem' }}>
             <img
@@ -89,26 +82,25 @@ export default function Login() {
               alt="TLMS"
               style={{ width: '52px', height: '52px', borderRadius: '14px', objectFit: 'cover', marginBottom: '0.8rem' }}
             />
-            <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase' }}>
+            <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', color: '#a1a1aa', textTransform: 'uppercase' }}>
               Connect · Learn · Succeed
             </div>
           </div>
 
           {/* Mode toggle */}
           <div style={{
-            display: 'flex', background: 'rgba(255,255,255,0.04)',
+            display: 'flex', background: '#f4f4f5',
             borderRadius: '12px', padding: '3px',
-            marginBottom: '2rem', border: '1px solid rgba(255,255,255,0.06)'
+            marginBottom: '2rem',
           }}>
             {['login', 'signup'].map(m => (
               <button key={m} onClick={() => { setMode(m); setError('') }} style={{
                 flex: 1, padding: '8px', border: 'none',
                 borderRadius: '10px', fontSize: '0.85rem', fontWeight: 600,
                 cursor: 'pointer', transition: 'all 0.2s',
-                background: mode === m
-                  ? 'linear-gradient(135deg, rgba(168,85,247,0.3), rgba(6,182,212,0.3))'
-                  : 'transparent',
-                color: mode === m ? '#fff' : 'rgba(255,255,255,0.35)',
+                background: mode === m ? '#fff' : 'transparent',
+                color: mode === m ? '#18181b' : '#a1a1aa',
+                boxShadow: mode === m ? '0 1px 3px rgba(24,24,27,0.1)' : 'none',
               }}>
                 {m === 'login' ? 'Sign In' : 'Sign Up'}
               </button>
@@ -125,15 +117,10 @@ export default function Login() {
               transition={{ duration: 0.25 }}
               style={{ marginBottom: '1.8rem' }}
             >
-              <h2 style={{
-                fontWeight: 700, fontSize: '1.3rem',
-                letterSpacing: '-0.02em', marginBottom: '0.3rem',
-                background: 'linear-gradient(135deg, #fff, rgba(255,255,255,0.7))',
-                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
-              }}>
+              <h2 className="font-display" style={{ fontWeight: 700, fontSize: '1.35rem', letterSpacing: '-0.02em', marginBottom: '0.3rem', color: '#18181b' }}>
                 {mode === 'login' ? 'Welcome back' : 'Create account'}
               </h2>
-              <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.85rem' }}>
+              <p style={{ color: '#a1a1aa', fontSize: '0.85rem' }}>
                 {mode === 'login'
                   ? 'Enter your credentials to continue'
                   : 'Fill in your details to get started'}
@@ -151,21 +138,15 @@ export default function Login() {
                 transition={{ duration: 0.3 }}
                 style={{ marginBottom: '1.2rem', overflow: 'hidden' }}
               >
-                <div style={{
-                  display: 'flex', gap: '4px',
-                  background: 'rgba(255,255,255,0.04)',
-                  borderRadius: '10px', padding: '3px',
-                  border: '1px solid rgba(255,255,255,0.06)'
-                }}>
+                <div style={{ display: 'flex', gap: '4px', background: '#f4f4f5', borderRadius: '10px', padding: '3px' }}>
                   {roles.map(r => (
                     <button key={r.key} onClick={() => setRole(r.key)} style={{
                       flex: 1, padding: '7px 4px', border: 'none',
                       borderRadius: '8px', fontSize: '0.78rem', fontWeight: 600,
                       cursor: 'pointer', transition: 'all 0.2s',
-                      background: role === r.key
-                        ? 'linear-gradient(135deg, rgba(168,85,247,0.25), rgba(6,182,212,0.25))'
-                        : 'transparent',
-                      color: role === r.key ? '#fff' : 'rgba(255,255,255,0.35)',
+                      background: role === r.key ? '#fff' : 'transparent',
+                      color: role === r.key ? '#18181b' : '#a1a1aa',
+                      boxShadow: role === r.key ? '0 1px 3px rgba(24,24,27,0.1)' : 'none',
                     }}>
                       {r.label}
                     </button>
@@ -228,10 +209,10 @@ export default function Login() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   style={{
-                    color: '#f87171', fontSize: '0.82rem',
-                    background: 'rgba(248,113,113,0.08)',
-                    border: '1px solid rgba(248,113,113,0.15)',
-                    padding: '10px 12px', borderRadius: '8px'
+                    color: '#dc2626', fontSize: '0.82rem',
+                    background: '#fef2f2',
+                    border: '1px solid #fecaca',
+                    padding: '10px 12px', borderRadius: '10px'
                   }}
                 >{error}</motion.p>
               )}
@@ -243,11 +224,9 @@ export default function Login() {
               whileTap={{ scale: loading ? 1 : 0.98 }}
               style={{
                 marginTop: '4px', height: '46px',
-                background: loading
-                  ? 'rgba(255,255,255,0.08)'
-                  : 'linear-gradient(135deg, #a855f7, #06b6d4)',
-                color: loading ? 'rgba(255,255,255,0.3)' : '#fff',
-                border: 'none', borderRadius: '12px',
+                background: loading ? '#e4e4e7' : '#18181b',
+                color: loading ? '#a1a1aa' : '#fff',
+                border: 'none', borderRadius: '999px',
                 fontWeight: 700, fontSize: '0.95rem',
                 cursor: loading ? 'not-allowed' : 'pointer',
                 transition: 'opacity 0.2s'
@@ -257,17 +236,10 @@ export default function Login() {
             </motion.button>
           </form>
 
-          <p style={{
-            textAlign: 'center', marginTop: '1.5rem',
-            fontSize: '0.82rem', color: 'rgba(255,255,255,0.25)'
-          }}>
+          <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.82rem', color: '#a1a1aa' }}>
             {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
             <button onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setError('') }}
-              style={{
-                background: 'none', border: 'none',
-                color: 'rgba(168,85,247,0.8)', fontWeight: 600,
-                cursor: 'pointer', fontSize: '0.82rem'
-              }}>
+              style={{ background: 'none', border: 'none', color: ACCENT, fontWeight: 600, cursor: 'pointer', fontSize: '0.82rem' }}>
               {mode === 'login' ? 'Sign up' : 'Sign in'}
             </button>
           </p>
@@ -280,11 +252,7 @@ export default function Login() {
 function Field({ label, children }) {
   return (
     <div>
-      <label style={{
-        display: 'block', fontSize: '0.78rem',
-        fontWeight: 500, color: 'rgba(255,255,255,0.4)',
-        marginBottom: '6px', letterSpacing: '0.02em'
-      }}>{label}</label>
+      <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 500, color: '#71717a', marginBottom: '6px', letterSpacing: '0.02em' }}>{label}</label>
       {children}
     </div>
   )
@@ -292,8 +260,4 @@ function Field({ label, children }) {
 
 const inputStyle = {
   width: '100%', height: '42px', padding: '0 12px',
-  background: 'rgba(255,255,255,0.04) !important',
-  border: '1px solid rgba(168,85,247,0.15) !important',
-  borderRadius: '10px !important', color: '#fff !important',
-  fontSize: '0.9rem'
 }

@@ -5,6 +5,7 @@ import { useAuth } from '../hooks/useAuth'
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL
 const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY_ID
+const ACCENT = '#4f46e5'
 
 export default function Payments() {
   const { user, token } = useAuth()
@@ -70,7 +71,7 @@ export default function Payments() {
           }
         },
         prefill: { email: user.email, name: user.full_name },
-        theme: { color: '#a855f7' },
+        theme: { color: ACCENT },
         modal: { ondismiss: () => setPaying(null) }
       }
       const rzp = new window.Razorpay(options)
@@ -89,9 +90,9 @@ export default function Payments() {
   const current = tab === 'pending' ? pending : tab === 'paid' ? paid : overdue
 
   return (
-    <div style={{ minHeight: '100vh', position: 'relative' }}>
+    <div style={{ minHeight: '100vh', background: '#fff' }}>
       <Navbar />
-      <main style={{ padding: '88px 2.5rem 3rem', maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+      <main style={{ padding: '96px 2.5rem 4rem', maxWidth: '1400px', margin: '0 auto' }}>
 
         {/* Header */}
         <motion.div
@@ -100,13 +101,8 @@ export default function Payments() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           style={{ marginBottom: '2rem', paddingTop: '1rem' }}
         >
-          <h1 style={{
-            fontWeight: 900, fontSize: 'clamp(1.5rem, 4vw, 2rem)',
-            letterSpacing: '-0.03em', marginBottom: '0.3rem',
-            background: 'linear-gradient(135deg, #fff, rgba(255,255,255,0.7))',
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
-          }}>Payments</h1>
-          <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.88rem' }}>
+          <h1 className="font-display" style={{ fontWeight: 700, fontSize: 'clamp(1.5rem, 4vw, 2rem)', letterSpacing: '-0.02em', marginBottom: '0.3rem', color: '#18181b' }}>Payments</h1>
+          <p style={{ color: '#a1a1aa', fontSize: '0.88rem' }}>
             {user?.role === 'student' ? 'Your monthly fee bills' : 'Payments from your students'}
           </p>
         </motion.div>
@@ -116,26 +112,16 @@ export default function Payments() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          style={{
-            display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '1px', marginBottom: '2rem',
-            background: 'rgba(168,85,247,0.15)',
-            borderRadius: '16px', overflow: 'hidden',
-            border: '1px solid rgba(168,85,247,0.2)'
-          }}
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '2rem' }}
         >
           {[
-            { label: 'Pending', value: pending.length, gradient: 'linear-gradient(135deg, #a855f7, #06b6d4)' },
-            { label: 'Paid', value: paid.length, gradient: 'linear-gradient(135deg, #10b981, #06b6d4)' },
-            { label: 'Overdue', value: overdue.length, gradient: 'linear-gradient(135deg, #f87171, #f97316)' },
+            { label: 'Pending', value: pending.length, color: ACCENT },
+            { label: 'Paid', value: paid.length, color: '#059669' },
+            { label: 'Overdue', value: overdue.length, color: '#dc2626' },
           ].map(s => (
-            <div key={s.label} style={{ padding: '1.2rem', background: '#050508', textAlign: 'center' }}>
-              <div style={{
-                fontSize: '1.8rem', fontWeight: 800, letterSpacing: '-0.03em',
-                background: s.gradient,
-                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
-              }}>{s.value}</div>
-              <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)', marginTop: '4px' }}>{s.label}</div>
+            <div key={s.label} style={{ padding: '1.2rem', background: '#fff', border: '1px solid #e4e4e7', borderRadius: '16px', textAlign: 'center', boxShadow: '0 1px 2px rgba(24,24,27,0.04)' }}>
+              <div className="font-display" style={{ fontSize: '1.8rem', fontWeight: 700, letterSpacing: '-0.02em', color: s.color }}>{s.value}</div>
+              <div style={{ fontSize: '0.75rem', color: '#a1a1aa', marginTop: '4px' }}>{s.label}</div>
             </div>
           ))}
         </motion.div>
@@ -145,12 +131,7 @@ export default function Payments() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.15 }}
-          style={{
-            display: 'flex', gap: '4px', marginBottom: '1.5rem',
-            background: 'rgba(255,255,255,0.03)', padding: '4px',
-            borderRadius: '12px', width: 'fit-content',
-            border: '1px solid rgba(255,255,255,0.06)'
-          }}
+          style={{ display: 'flex', gap: '4px', marginBottom: '1.5rem', background: '#f4f4f5', padding: '4px', borderRadius: '12px', width: 'fit-content' }}
         >
           {[
             { key: 'pending', label: `Pending (${pending.length})` },
@@ -159,11 +140,10 @@ export default function Payments() {
           ].map(t => (
             <button key={t.key} onClick={() => setTab(t.key)} style={{
               padding: '7px 16px', border: 'none', cursor: 'pointer',
-              borderRadius: '8px', fontSize: '0.82rem', fontWeight: 600,
-              background: tab === t.key
-                ? 'linear-gradient(135deg, rgba(168,85,247,0.25), rgba(6,182,212,0.25))'
-                : 'transparent',
-              color: tab === t.key ? '#fff' : 'rgba(255,255,255,0.35)',
+              borderRadius: '9px', fontSize: '0.82rem', fontWeight: 600,
+              background: tab === t.key ? '#fff' : 'transparent',
+              color: tab === t.key ? '#18181b' : '#a1a1aa',
+              boxShadow: tab === t.key ? '0 1px 3px rgba(24,24,27,0.1)' : 'none',
               transition: 'all 0.2s', whiteSpace: 'nowrap'
             }}>{t.label}</button>
           ))}
@@ -178,9 +158,9 @@ export default function Payments() {
             >
               {[1,2,3].map(i => (
                 <motion.div key={i}
-                  animate={{ opacity: [0.2, 0.5, 0.2] }}
+                  animate={{ opacity: [0.4, 0.7, 0.4] }}
                   transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.15 }}
-                  style={{ height: '80px', background: 'rgba(168,85,247,0.05)', borderRadius: '14px', border: '1px solid rgba(168,85,247,0.1)' }}
+                  style={{ height: '80px', background: '#fafafa', borderRadius: '16px', border: '1px solid #f0f0f1' }}
                 />
               ))}
             </motion.div>
@@ -193,18 +173,10 @@ export default function Payments() {
               {current.length === 0 ? (
                 <motion.div
                   initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                  style={{
-                    textAlign: 'center', padding: '4rem 1rem',
-                    border: '1px solid rgba(168,85,247,0.15)',
-                    borderRadius: '20px', background: 'rgba(168,85,247,0.04)'
-                  }}
+                  style={{ textAlign: 'center', padding: '4rem 1rem', border: '1px solid #e4e4e7', borderRadius: '24px', background: '#fafafa' }}
                 >
-                  <div style={{
-                    fontSize: '2rem', marginBottom: '1rem',
-                    background: 'linear-gradient(135deg, #a855f7, #06b6d4)',
-                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
-                  }}>◎</div>
-                  <p style={{ color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>No {tab} bills</p>
+                  <div style={{ fontSize: '2rem', marginBottom: '1rem', opacity: 0.6 }}>◎</div>
+                  <p style={{ color: '#52525b', fontWeight: 600 }}>No {tab} bills</p>
                 </motion.div>
               ) : current.map((bill, i) => (
                 <BillCard
@@ -229,9 +201,8 @@ export default function Payments() {
             transition={{ duration: 0.3 }}
             style={{
               position: 'fixed', inset: 0, zIndex: 999,
-              background: 'rgba(0,0,0,0.75)',
-              backdropFilter: 'blur(16px)',
-              WebkitBackdropFilter: 'blur(16px)',
+              background: 'rgba(24,24,27,0.4)',
+              backdropFilter: 'blur(6px)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               padding: '1.5rem'
             }}
@@ -244,28 +215,14 @@ export default function Payments() {
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
               onClick={e => e.stopPropagation()}
               style={{
-                background: '#050508',
-                border: '1px solid rgba(16,185,129,0.3)',
+                background: '#fff',
+                border: '1px solid #e4e4e7',
                 borderRadius: '28px', padding: '2.5rem',
                 maxWidth: '380px', width: '100%',
-                textAlign: 'center', position: 'relative', overflow: 'hidden'
+                textAlign: 'center',
+                boxShadow: '0 32px 64px rgba(24,24,27,0.18)',
               }}
             >
-              {/* Background blob */}
-              <div style={{
-                position: 'absolute', top: '-30%', left: '50%', transform: 'translateX(-50%)',
-                width: '300px', height: '300px',
-                background: 'radial-gradient(circle, rgba(16,185,129,0.15) 0%, transparent 70%)',
-                pointerEvents: 'none', filter: 'blur(30px)'
-              }} />
-
-              {/* Top glow line */}
-              <div style={{
-                position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
-                width: '60%', height: '1px',
-                background: 'linear-gradient(90deg, transparent, rgba(16,185,129,0.8), transparent)'
-              }} />
-
               {/* Animated checkmark */}
               <motion.div
                 initial={{ scale: 0, rotate: -180 }}
@@ -273,29 +230,21 @@ export default function Payments() {
                 transition={{ delay: 0.2, duration: 0.6, type: 'spring', stiffness: 180 }}
                 style={{
                   width: '76px', height: '76px', borderRadius: '50%',
-                  background: 'rgba(16,185,129,0.12)',
-                  border: '2px solid rgba(16,185,129,0.4)',
+                  background: '#ecfdf5',
+                  border: '2px solid #a7f3d0',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  margin: '0 auto 1.5rem', fontSize: '2rem',
-                  position: 'relative', zIndex: 1,
-                  boxShadow: '0 0 30px rgba(16,185,129,0.2)'
+                  margin: '0 auto 1.5rem', fontSize: '2rem', color: '#059669',
                 }}
               >
                 ✓
               </motion.div>
 
-              {/* Title */}
               <motion.h2
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                style={{
-                  fontWeight: 900, fontSize: '1.5rem',
-                  letterSpacing: '-0.02em', marginBottom: '0.4rem',
-                  background: 'linear-gradient(135deg, #10b981, #06b6d4)',
-                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-                  position: 'relative', zIndex: 1
-                }}
+                className="font-display"
+                style={{ fontWeight: 700, fontSize: '1.5rem', letterSpacing: '-0.02em', marginBottom: '0.4rem', color: '#18181b' }}
               >
                 Payment Successful!
               </motion.h2>
@@ -304,10 +253,7 @@ export default function Payments() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.35 }}
-                style={{
-                  color: 'rgba(255,255,255,0.35)', fontSize: '0.85rem',
-                  marginBottom: '2rem', position: 'relative', zIndex: 1
-                }}
+                style={{ color: '#a1a1aa', fontSize: '0.85rem', marginBottom: '2rem' }}
               >
                 Your payment has been confirmed
               </motion.p>
@@ -317,25 +263,12 @@ export default function Payments() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                style={{
-                  background: 'rgba(16,185,129,0.06)',
-                  border: '1px solid rgba(16,185,129,0.15)',
-                  borderRadius: '16px', padding: '1.4rem',
-                  marginBottom: '1rem', position: 'relative', zIndex: 1
-                }}
+                style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '16px', padding: '1.4rem', marginBottom: '1rem' }}
               >
-                <p style={{
-                  color: 'rgba(255,255,255,0.3)', fontSize: '0.7rem',
-                  letterSpacing: '0.12em', marginBottom: '0.5rem', textTransform: 'uppercase'
-                }}>Amount Paid</p>
-                <p style={{
-                  fontWeight: 900, fontSize: '2.2rem', letterSpacing: '-0.04em',
-                  background: 'linear-gradient(135deg, #10b981, #06b6d4)',
-                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-                  marginBottom: '0.4rem'
-                }}>₹{successData.amount}</p>
-                <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.82rem' }}>
-                  to <span style={{ color: 'rgba(255,255,255,0.6)', fontWeight: 600 }}>{successData.name}</span>
+                <p style={{ color: '#a1a1aa', fontSize: '0.7rem', letterSpacing: '0.12em', marginBottom: '0.5rem', textTransform: 'uppercase' }}>Amount Paid</p>
+                <p className="font-display" style={{ fontWeight: 700, fontSize: '2.2rem', letterSpacing: '-0.03em', color: '#059669', marginBottom: '0.4rem' }}>₹{successData.amount}</p>
+                <p style={{ color: '#a1a1aa', fontSize: '0.82rem' }}>
+                  to <span style={{ color: '#52525b', fontWeight: 600 }}>{successData.name}</span>
                 </p>
               </motion.div>
 
@@ -345,11 +278,7 @@ export default function Payments() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.45 }}
-                  style={{
-                    color: 'rgba(255,255,255,0.18)', fontSize: '0.7rem',
-                    marginBottom: '1.5rem', position: 'relative', zIndex: 1,
-                    letterSpacing: '0.06em'
-                  }}
+                  style={{ color: '#d4d4d8', fontSize: '0.7rem', marginBottom: '1.5rem', letterSpacing: '0.06em' }}
                 >
                   {successData.invoice}
                 </motion.p>
@@ -365,11 +294,10 @@ export default function Payments() {
                 onClick={() => setSuccessData(null)}
                 style={{
                   width: '100%', height: '48px',
-                  background: 'linear-gradient(135deg, #10b981, #06b6d4)',
-                  color: '#fff', border: 'none', borderRadius: '14px',
+                  background: '#059669',
+                  color: '#fff', border: 'none', borderRadius: '999px',
                   fontWeight: 700, fontSize: '0.95rem',
-                  cursor: 'pointer', position: 'relative', zIndex: 1,
-                  boxShadow: '0 8px 24px rgba(16,185,129,0.25)'
+                  cursor: 'pointer',
                 }}
               >
                 Done
@@ -388,69 +316,43 @@ function BillCard({ bill, userRole, onPay, paying, index }) {
   const isPending = bill.status === 'pending'
   const name = userRole === 'student' ? bill.tutor_name : bill.student_name
 
-  const statusGradient = isPaid
-    ? 'linear-gradient(135deg, #10b981, #06b6d4)'
-    : isOverdue
-    ? 'linear-gradient(135deg, #f87171, #f97316)'
-    : 'linear-gradient(135deg, #a855f7, #06b6d4)'
-
-  const borderColor = isPaid
-    ? 'rgba(16,185,129,0.15)'
-    : isOverdue
-    ? 'rgba(248,113,113,0.15)'
-    : 'rgba(168,85,247,0.15)'
-
-  const bgColor = isPaid
-    ? 'rgba(16,185,129,0.04)'
-    : isOverdue
-    ? 'rgba(248,113,113,0.04)'
-    : 'rgba(168,85,247,0.04)'
+  const statusColor = isPaid ? '#059669' : isOverdue ? '#dc2626' : ACCENT
+  const bgColor = isPaid ? '#ecfdf5' : isOverdue ? '#fef2f2' : '#eef2ff'
+  const borderColor = isPaid ? '#a7f3d0' : isOverdue ? '#fecaca' : '#e0e7ff'
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
+      whileHover={{ y: -3, boxShadow: '0 12px 24px rgba(24,24,27,0.08)' }}
       style={{
-        background: bgColor,
-        border: `1px solid ${borderColor}`,
-        borderRadius: '14px', padding: '1.2rem 1.4rem',
+        background: '#fff',
+        border: '1px solid #e4e4e7',
+        borderRadius: '16px', padding: '1.2rem 1.4rem',
         display: 'flex', alignItems: 'center',
         justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem',
-        position: 'relative', overflow: 'hidden'
+        boxShadow: '0 1px 2px rgba(24,24,27,0.04)',
       }}
     >
-      <div style={{
-        position: 'absolute', top: 0, left: 0, right: 0, height: '1px',
-        background: statusGradient, opacity: 0.4
-      }} />
-
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '5px', flexWrap: 'wrap' }}>
-          <p style={{ color: '#fff', fontWeight: 600, fontSize: '0.9rem' }}>{name}</p>
-          <span style={{
-            fontSize: '0.68rem', padding: '2px 10px', borderRadius: '999px', fontWeight: 600,
-            background: bgColor, border: `1px solid ${borderColor}`,
-            color: isPaid ? '#10b981' : isOverdue ? '#f87171' : '#a855f7'
-          }}>
+          <p style={{ color: '#18181b', fontWeight: 600, fontSize: '0.9rem' }}>{name}</p>
+          <span style={{ fontSize: '0.68rem', padding: '2px 10px', borderRadius: '999px', fontWeight: 600, background: bgColor, border: `1px solid ${borderColor}`, color: statusColor }}>
             {isPaid ? '✓ Paid' : isOverdue ? '⚠ Overdue' : '⏳ Pending'}
           </span>
         </div>
-        <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.78rem' }}>
+        <p style={{ color: '#a1a1aa', fontSize: '0.78rem' }}>
           Due {new Date(bill.due_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
         </p>
         {bill.invoice_number && (
-          <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.72rem', marginTop: '2px' }}>
+          <p style={{ color: '#d4d4d8', fontSize: '0.72rem', marginTop: '2px' }}>
             {bill.invoice_number}
           </p>
         )}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <span style={{
-          fontWeight: 800, fontSize: '1.1rem', letterSpacing: '-0.02em',
-          background: statusGradient,
-          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
-        }}>
+        <span style={{ fontWeight: 800, fontSize: '1.1rem', letterSpacing: '-0.02em', color: statusColor }}>
           ₹{bill.amount}
         </span>
         {userRole === 'student' && isPending && (
@@ -459,9 +361,9 @@ function BillCard({ bill, userRole, onPay, paying, index }) {
             onClick={onPay} disabled={paying}
             style={{
               padding: '8px 20px',
-              background: paying ? 'rgba(168,85,247,0.1)' : 'linear-gradient(135deg, #a855f7, #06b6d4)',
-              color: paying ? 'rgba(255,255,255,0.3)' : '#fff',
-              border: 'none', borderRadius: '10px',
+              background: paying ? '#e4e4e7' : ACCENT,
+              color: paying ? '#a1a1aa' : '#fff',
+              border: 'none', borderRadius: '999px',
               fontWeight: 700, cursor: paying ? 'not-allowed' : 'pointer',
               fontSize: '0.85rem', whiteSpace: 'nowrap'
             }}

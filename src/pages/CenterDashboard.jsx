@@ -6,6 +6,7 @@ import InputModal from '../components/InputModal'
 import { useAuth } from '../hooks/useAuth'
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL
+const ACCENT = '#db2777'
 
 const INDIA_SUBJECTS = [
   'Accountancy','Arts / Drawing','Bengali','Biology','Business Studies','Chemistry',
@@ -32,7 +33,7 @@ const GRADE_LEVELS = [
   'JEE','NEET','UPSC','APSC','WBJEE','CEE',
 ]
 
-function DropdownSingle({ value, onChange, options, placeholder, accentColor = '#ec4899' }) {
+function DropdownSingle({ value, onChange, options, placeholder, accentColor = ACCENT }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
 
@@ -50,15 +51,15 @@ function DropdownSingle({ value, onChange, options, placeholder, accentColor = '
         whileTap={{ scale: 0.99 }}
         style={{
           width: '100%', height: '42px', padding: '0 14px',
-          background: 'rgba(255,255,255,0.04)',
-          border: `1px solid ${open ? accentColor + '55' : 'rgba(255,255,255,0.08)'}`,
+          background: '#fff',
+          border: `1px solid ${open ? accentColor : '#e4e4e7'}`,
           borderRadius: '10px',
           display: 'flex', alignItems: 'center',
           cursor: 'pointer', fontSize: '0.9rem',
           transition: 'border-color 0.2s',
         }}
       >
-        <span style={{ flex: 1, color: value ? '#fff' : 'rgba(255,255,255,0.2)', textAlign: 'left' }}>
+        <span style={{ flex: 1, color: value ? '#18181b' : '#a1a1aa', textAlign: 'left' }}>
           {value || placeholder}
         </span>
         <motion.span
@@ -77,10 +78,10 @@ function DropdownSingle({ value, onChange, options, placeholder, accentColor = '
             transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
             style={{
               position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, zIndex: 300,
-              background: '#0d0d16',
-              border: `1px solid ${accentColor}28`,
+              background: '#fff',
+              border: '1px solid #e4e4e7',
               borderRadius: '12px',
-              boxShadow: `0 24px 60px rgba(0,0,0,0.7), 0 0 0 1px ${accentColor}10`,
+              boxShadow: '0 16px 40px rgba(24,24,27,0.14)',
               transformOrigin: 'top',
             }}
           >
@@ -88,16 +89,16 @@ function DropdownSingle({ value, onChange, options, placeholder, accentColor = '
               {options.map((o, i) => (
                 <motion.button
                   key={o} type="button"
-                  whileHover={{ x: 4, background: accentColor + '12' }}
+                  whileHover={{ x: 4, background: `${accentColor}12` }}
                   whileTap={{ scale: 0.99 }}
                   onClick={() => { onChange(o); setOpen(false) }}
                   style={{
                     width: '100%', padding: '10px 16px',
-                    background: value === o ? accentColor + '18' : 'transparent',
+                    background: value === o ? `${accentColor}15` : 'transparent',
                     border: 'none',
-                    borderBottom: i < options.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                    borderBottom: i < options.length - 1 ? '1px solid #f4f4f5' : 'none',
                     cursor: 'pointer', textAlign: 'left',
-                    color: value === o ? accentColor : 'rgba(255,255,255,0.6)',
+                    color: value === o ? accentColor : '#52525b',
                     fontSize: '0.88rem', fontWeight: value === o ? 600 : 400,
                     display: 'flex', alignItems: 'center', gap: '10px',
                     transition: 'background 0.15s, color 0.15s',
@@ -115,7 +116,7 @@ function DropdownSingle({ value, onChange, options, placeholder, accentColor = '
   )
 }
 
-function DropdownMulti({ value, onChange, options, placeholder, accentColor = '#ec4899' }) {
+function DropdownMulti({ value, onChange, options, placeholder, accentColor = ACCENT }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
   const selected = value ? value.split(',').map(s => s.trim()).filter(Boolean) : []
@@ -139,18 +140,18 @@ function DropdownMulti({ value, onChange, options, placeholder, accentColor = '#
         whileTap={{ scale: 0.99 }}
         style={{
           width: '100%', minHeight: '42px', padding: '6px 14px',
-          background: 'rgba(255,255,255,0.04)',
-          border: `1px solid ${open ? accentColor + '55' : 'rgba(255,255,255,0.08)'}`,
-          borderRadius: '10px', color: '#fff',
+          background: '#fff',
+          border: `1px solid ${open ? accentColor : '#e4e4e7'}`,
+          borderRadius: '10px', color: '#18181b',
           display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '5px',
           cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.2s',
         }}
       >
         {selected.length === 0 ? (
-          <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.9rem', flex: 1 }}>{placeholder}</span>
+          <span style={{ color: '#a1a1aa', fontSize: '0.9rem', flex: 1 }}>{placeholder}</span>
         ) : selected.map(s => (
           <span key={s} style={{
-            background: accentColor + '1a', border: `1px solid ${accentColor}40`,
+            background: `${accentColor}12`, border: `1px solid ${accentColor}35`,
             color: accentColor, borderRadius: '6px', padding: '1px 8px',
             fontSize: '0.75rem', fontWeight: 600,
           }}>{s}</span>
@@ -171,10 +172,10 @@ function DropdownMulti({ value, onChange, options, placeholder, accentColor = '#
             transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
             style={{
               position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, zIndex: 300,
-              background: '#0d0d16',
-              border: `1px solid ${accentColor}28`,
+              background: '#fff',
+              border: '1px solid #e4e4e7',
               borderRadius: '12px',
-              boxShadow: `0 24px 60px rgba(0,0,0,0.7), 0 0 0 1px ${accentColor}10`,
+              boxShadow: '0 16px 40px rgba(24,24,27,0.14)',
               transformOrigin: 'top',
             }}
           >
@@ -184,16 +185,16 @@ function DropdownMulti({ value, onChange, options, placeholder, accentColor = '#
                 return (
                   <motion.button
                     key={o} type="button"
-                    whileHover={{ x: 4, background: active ? accentColor + '22' : 'rgba(255,255,255,0.06)' }}
+                    whileHover={{ x: 4, background: active ? `${accentColor}22` : '#fafafa' }}
                     whileTap={{ scale: 0.99 }}
                     onClick={() => toggle(o)}
                     style={{
                       width: '100%', padding: '10px 16px',
-                      background: active ? accentColor + '15' : 'transparent',
+                      background: active ? `${accentColor}15` : 'transparent',
                       border: 'none',
-                      borderBottom: i < options.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                      borderBottom: i < options.length - 1 ? '1px solid #f4f4f5' : 'none',
                       cursor: 'pointer', textAlign: 'left',
-                      color: active ? accentColor : 'rgba(255,255,255,0.6)',
+                      color: active ? accentColor : '#52525b',
                       fontSize: '0.88rem', fontWeight: active ? 600 : 400,
                       display: 'flex', alignItems: 'center', gap: '10px',
                       transition: 'background 0.15s, color 0.15s',
@@ -201,10 +202,10 @@ function DropdownMulti({ value, onChange, options, placeholder, accentColor = '#
                   >
                     <span style={{
                       width: '15px', height: '15px', borderRadius: '4px', flexShrink: 0,
-                      border: `1.5px solid ${active ? accentColor : 'rgba(255,255,255,0.2)'}`,
+                      border: `1.5px solid ${active ? accentColor : '#d4d4d8'}`,
                       background: active ? accentColor : 'transparent',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '9px', color: '#050508', fontWeight: 900,
+                      fontSize: '9px', color: '#fff', fontWeight: 900,
                       transition: 'all 0.15s',
                     }}>{active ? '✓' : ''}</span>
                     {o}
@@ -219,7 +220,7 @@ function DropdownMulti({ value, onChange, options, placeholder, accentColor = '#
   )
 }
 
-function VisibilityToggle({ checked, onChange, disabled, color = '#ec4899' }) {
+function VisibilityToggle({ checked, onChange, disabled, color = ACCENT }) {
   return (
     <motion.button
       type="button"
@@ -227,16 +228,16 @@ function VisibilityToggle({ checked, onChange, disabled, color = '#ec4899' }) {
       whileTap={{ scale: disabled ? 1 : 0.95 }}
       style={{
         width: '44px', height: '24px', borderRadius: '999px', flexShrink: 0, padding: 0,
-        background: checked ? color : 'rgba(255,255,255,0.1)',
-        border: `1px solid ${checked ? color : 'rgba(255,255,255,0.15)'}`,
+        background: checked ? color : '#e4e4e7',
+        border: 'none',
         position: 'relative', cursor: disabled ? 'not-allowed' : 'pointer',
-        opacity: disabled ? 0.5 : 1, transition: 'background 0.2s, border-color 0.2s',
+        opacity: disabled ? 0.5 : 1, transition: 'background 0.2s',
       }}
     >
       <motion.div
         animate={{ x: checked ? 21 : 2 }}
         transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-        style={{ width: '18px', height: '18px', borderRadius: '50%', background: '#fff', position: 'absolute', top: '2px', left: 0 }}
+        style={{ width: '18px', height: '18px', borderRadius: '50%', background: '#fff', position: 'absolute', top: '2px', left: 0, boxShadow: '0 1px 3px rgba(24,24,27,0.2)' }}
       />
     </motion.button>
   )
@@ -429,9 +430,9 @@ export default function CenterDashboard() {
   ]
 
   return (
-    <div style={{ minHeight: '100vh', position: 'relative' }}>
+    <div style={{ minHeight: '100vh', background: '#fff' }}>
       <Navbar />
-      <main style={{ padding: '88px 2.5rem 3rem', maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+      <main style={{ padding: '96px 2.5rem 4rem', maxWidth: '1400px', margin: '0 auto' }}>
 
         {/* Header */}
         <motion.div
@@ -440,28 +441,12 @@ export default function CenterDashboard() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2.5rem', paddingTop: '1rem', flexWrap: 'wrap' }}
         >
-          <div style={{
-            width: '48px', height: '48px', borderRadius: '12px', flexShrink: 0,
-            background: 'rgba(236,72,153,0.15)',
-            border: '1px solid rgba(236,72,153,0.3)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: 800, fontSize: '1rem', color: '#ec4899'
-          }}>{initials}</div>
+          <div style={{ width: '48px', height: '48px', borderRadius: '14px', flexShrink: 0, background: '#fdf2f8', border: '1px solid #fbcfe8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1rem', color: ACCENT }}>{initials}</div>
           <div>
-            <h1 style={{
-              fontWeight: 800, fontSize: 'clamp(1.2rem, 3vw, 1.5rem)', letterSpacing: '-0.02em',
-              background: 'linear-gradient(135deg, #fff, rgba(255,255,255,0.7))',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
-            }}>{loaded?.center_name || user?.full_name || 'Center'}</h1>
-            <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.82rem', marginTop: '2px' }}>{user?.email}</p>
+            <h1 className="font-display" style={{ fontWeight: 700, fontSize: 'clamp(1.2rem, 3vw, 1.5rem)', letterSpacing: '-0.02em', color: '#18181b' }}>{loaded?.center_name || user?.full_name || 'Center'}</h1>
+            <p style={{ color: '#a1a1aa', fontSize: '0.82rem', marginTop: '2px' }}>{user?.email}</p>
           </div>
-          <span style={{
-            marginLeft: 'auto', fontSize: '0.72rem', fontWeight: 600,
-            padding: '4px 12px', borderRadius: '999px',
-            background: 'rgba(236,72,153,0.1)',
-            border: '1px solid rgba(236,72,153,0.2)',
-            color: 'rgba(236,72,153,0.8)', whiteSpace: 'nowrap'
-          }}>Tuition Center</span>
+          <span style={{ marginLeft: 'auto', fontSize: '0.72rem', fontWeight: 600, padding: '4px 12px', borderRadius: '999px', background: '#fdf2f8', border: '1px solid #fbcfe8', color: ACCENT, whiteSpace: 'nowrap' }}>Tuition Center</span>
         </motion.div>
 
         {/* Stats */}
@@ -469,26 +454,16 @@ export default function CenterDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          style={{
-            display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '1px', marginBottom: '2rem',
-            background: 'rgba(236,72,153,0.15)',
-            borderRadius: '16px', overflow: 'hidden',
-            border: '1px solid rgba(236,72,153,0.2)'
-          }}
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '2rem' }}
         >
           {[
-            { label: 'Students', value: accepted.length, gradient: 'linear-gradient(135deg, #ec4899, #f97316)' },
-            { label: 'Requests', value: pending.length, gradient: 'linear-gradient(135deg, #a855f7, #06b6d4)' },
-            { label: 'Subjects', value: loaded?.subjects?.length || 0, gradient: 'linear-gradient(135deg, #10b981, #06b6d4)' },
+            { label: 'Students', value: accepted.length, color: ACCENT },
+            { label: 'Requests', value: pending.length, color: '#4f46e5' },
+            { label: 'Subjects', value: loaded?.subjects?.length || 0, color: '#059669' },
           ].map(s => (
-            <div key={s.label} style={{ padding: '1.2rem', background: '#050508', textAlign: 'center' }}>
-              <div style={{
-                fontSize: '1.8rem', fontWeight: 800, letterSpacing: '-0.03em',
-                background: s.gradient,
-                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
-              }}>{s.value}</div>
-              <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.35)', marginTop: '4px' }}>{s.label}</div>
+            <div key={s.label} style={{ padding: '1.2rem', background: '#fff', border: '1px solid #e4e4e7', borderRadius: '16px', textAlign: 'center', boxShadow: '0 1px 2px rgba(24,24,27,0.04)' }}>
+              <div className="font-display" style={{ fontSize: '1.8rem', fontWeight: 700, letterSpacing: '-0.02em', color: s.color }}>{s.value}</div>
+              <div style={{ fontSize: '0.72rem', color: '#a1a1aa', marginTop: '4px' }}>{s.label}</div>
             </div>
           ))}
         </motion.div>
@@ -498,12 +473,7 @@ export default function CenterDashboard() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.15 }}
-          style={{
-            display: 'flex', gap: '4px', marginBottom: '1.5rem',
-            background: 'rgba(255,255,255,0.03)', padding: '4px',
-            borderRadius: '12px', width: 'fit-content',
-            border: '1px solid rgba(255,255,255,0.06)'
-          }}
+          style={{ display: 'flex', gap: '4px', marginBottom: '1.5rem', background: '#f4f4f5', padding: '4px', borderRadius: '12px', width: 'fit-content' }}
         >
           {[
             { key: 'profile', label: 'Profile' },
@@ -512,11 +482,10 @@ export default function CenterDashboard() {
           ].map(t => (
             <button key={t.key} onClick={() => setTab(t.key)} style={{
               padding: '7px 16px', border: 'none', cursor: 'pointer',
-              borderRadius: '8px', fontSize: '0.82rem', fontWeight: 600,
-              background: tab === t.key
-                ? 'linear-gradient(135deg, rgba(236,72,153,0.2), rgba(168,85,247,0.2))'
-                : 'transparent',
-              color: tab === t.key ? '#fff' : 'rgba(255,255,255,0.35)',
+              borderRadius: '9px', fontSize: '0.82rem', fontWeight: 600,
+              background: tab === t.key ? '#fff' : 'transparent',
+              color: tab === t.key ? '#18181b' : '#a1a1aa',
+              boxShadow: tab === t.key ? '0 1px 3px rgba(24,24,27,0.1)' : 'none',
               transition: 'all 0.2s', whiteSpace: 'nowrap'
             }}>{t.label}</button>
           ))}
@@ -529,30 +498,20 @@ export default function CenterDashboard() {
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}
             >
-              <div style={{
-                background: 'rgba(236,72,153,0.04)',
-                border: '1px solid rgba(236,72,153,0.15)',
-                borderRadius: '16px', padding: '1.8rem',
-                position: 'relative', overflow: 'hidden'
-              }}>
-                <div style={{
-                  position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
-                  width: '40%', height: '1px',
-                  background: 'linear-gradient(90deg, transparent, rgba(236,72,153,0.5), transparent)'
-                }} />
+              <div style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '20px', padding: '1.8rem', boxShadow: '0 1px 2px rgba(24,24,27,0.04)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.4rem', flexWrap: 'wrap', gap: '10px' }}>
-                  <h2 style={{ color: '#fff', fontWeight: 700, fontSize: '0.95rem' }}>Center Profile</h2>
+                  <h2 style={{ color: '#18181b', fontWeight: 700, fontSize: '0.95rem' }}>Center Profile</h2>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '0.78rem', fontWeight: 600, color: loaded?.is_visible ? '#ec4899' : 'rgba(255,255,255,0.35)', whiteSpace: 'nowrap' }}>
+                      <span style={{ fontSize: '0.78rem', fontWeight: 600, color: loaded?.is_visible ? ACCENT : '#a1a1aa', whiteSpace: 'nowrap' }}>
                         {loaded?.is_visible ? 'Visible on Discover' : 'Hidden from Discover'}
                       </span>
                       <VisibilityToggle checked={!!loaded?.is_visible} onChange={toggleVisibility} disabled={togglingVisibility} />
                     </div>
                     <button onClick={() => setEditing(!editing)} style={{
-                      padding: '6px 16px', borderRadius: '8px',
-                      border: '1px solid rgba(236,72,153,0.2)',
-                      background: 'rgba(236,72,153,0.08)', color: 'rgba(236,72,153,0.8)',
+                      padding: '6px 16px', borderRadius: '999px',
+                      border: '1px solid #e4e4e7',
+                      background: '#fff', color: '#18181b',
                       cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600
                     }}>{editing ? 'Cancel' : 'Edit'}</button>
                   </div>
@@ -566,14 +525,14 @@ export default function CenterDashboard() {
                     >
                       {fields.map(f => (
                         <div key={f.name}>
-                          <label style={{ display: 'block', fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)', marginBottom: '6px', fontWeight: 500 }}>
+                          <label style={{ display: 'block', fontSize: '0.75rem', color: '#71717a', marginBottom: '6px', fontWeight: 500 }}>
                             {f.label}
                           </label>
                           {f.type === 'textarea' ? (
                             <textarea rows={3} placeholder={f.placeholder}
                               value={profile[f.name]}
                               onChange={e => setProfile(p => ({ ...p, [f.name]: e.target.value }))}
-                              style={{ width: '100%', padding: '10px 14px', background: 'rgba(255,255,255,0.04) !important', border: '1px solid rgba(236,72,153,0.15) !important', borderRadius: '10px !important', color: '#fff !important', fontSize: '0.9rem', resize: 'vertical' }}
+                              style={{ width: '100%', padding: '10px 14px', resize: 'vertical' }}
                             />
                           ) : f.type === 'select' ? (
                             <DropdownSingle
@@ -581,7 +540,6 @@ export default function CenterDashboard() {
                               onChange={val => setProfile(p => ({ ...p, [f.name]: val }))}
                               options={f.options}
                               placeholder={`Select ${f.label.toLowerCase()}...`}
-                              accentColor="#ec4899"
                             />
                           ) : f.type === 'multiselect' ? (
                             <DropdownMulti
@@ -589,13 +547,12 @@ export default function CenterDashboard() {
                               onChange={val => setProfile(p => ({ ...p, [f.name]: val }))}
                               options={f.options}
                               placeholder={f.placeholder}
-                              accentColor="#ec4899"
                             />
                           ) : (
                             <input type={f.type === 'number' ? 'number' : 'text'} placeholder={f.placeholder}
                               value={profile[f.name] ?? ''}
                               onChange={e => setProfile(p => ({ ...p, [f.name]: e.target.value }))}
-                              style={{ width: '100%', height: '42px', padding: '0 14px', background: 'rgba(255,255,255,0.04) !important', border: '1px solid rgba(236,72,153,0.15) !important', borderRadius: '10px !important', color: '#fff !important', fontSize: '0.9rem' }}
+                              style={{ width: '100%', height: '42px', padding: '0 14px' }}
                             />
                           )}
                         </div>
@@ -605,9 +562,9 @@ export default function CenterDashboard() {
                         onClick={save} disabled={saving}
                         style={{
                           alignSelf: 'flex-start', padding: '10px 28px',
-                          background: saving ? 'rgba(236,72,153,0.1)' : 'linear-gradient(135deg, #ec4899, #a855f7)',
-                          color: saving ? 'rgba(255,255,255,0.3)' : '#fff',
-                          border: 'none', borderRadius: '10px', fontWeight: 700,
+                          background: saving ? '#e4e4e7' : ACCENT,
+                          color: saving ? '#a1a1aa' : '#fff',
+                          border: 'none', borderRadius: '999px', fontWeight: 700,
                           cursor: saving ? 'not-allowed' : 'pointer', fontSize: '0.9rem'
                         }}
                       >{saving ? 'Saving...' : 'Save Changes'}</motion.button>
@@ -617,38 +574,31 @@ export default function CenterDashboard() {
                       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                       style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
                     >
-                      <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem', lineHeight: 1.7 }}>{loaded.bio}</p>
-                      {loaded.address && <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.82rem' }}>{loaded.address}</p>}
-                      {loaded.phone && <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.82rem' }}>{loaded.phone}</p>}
+                      <p style={{ color: '#52525b', fontSize: '0.9rem', lineHeight: 1.7 }}>{loaded.bio}</p>
+                      {loaded.address && <p style={{ color: '#a1a1aa', fontSize: '0.82rem' }}>{loaded.address}</p>}
+                      {loaded.phone && <p style={{ color: '#a1a1aa', fontSize: '0.82rem' }}>{loaded.phone}</p>}
                       {loaded.website && (
-                        <a href={loaded.website} target="_blank" rel="noreferrer" style={{
-                          fontSize: '0.82rem',
-                          background: 'linear-gradient(135deg, #ec4899, #a855f7)',
-                          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
-                        }}>{loaded.website}</a>
+                        <a href={loaded.website} target="_blank" rel="noreferrer" style={{ fontSize: '0.82rem', color: ACCENT }}>{loaded.website}</a>
                       )}
                       {loaded.subjects?.length > 0 && (
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                           {loaded.subjects.map(s => (
-                            <span key={s} style={{
-                              background: 'rgba(236,72,153,0.08)', border: '1px solid rgba(236,72,153,0.15)',
-                              color: 'rgba(236,72,153,0.8)', fontSize: '0.78rem', padding: '3px 10px', borderRadius: '6px'
-                            }}>{s}</span>
+                            <span key={s} style={{ background: '#fdf2f8', border: '1px solid #fbcfe8', color: ACCENT, fontSize: '0.78rem', padding: '3px 10px', borderRadius: '6px' }}>{s}</span>
                           ))}
                         </div>
                       )}
                       {loaded.grade_levels?.length > 0 && (
-                        <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.82rem' }}>{loaded.grade_levels.join(', ')}</p>
+                        <p style={{ color: '#a1a1aa', fontSize: '0.82rem' }}>{loaded.grade_levels.join(', ')}</p>
                       )}
                       {(loaded.district || loaded.state) && (
-                        <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.82rem' }}>
+                        <p style={{ color: '#a1a1aa', fontSize: '0.82rem' }}>
                           {[loaded.area, loaded.district, loaded.state, loaded.country].filter(Boolean).join(', ')}
                         </p>
                       )}
                     </motion.div>
                   ) : (
                     <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                      style={{ color: 'rgba(255,255,255,0.25)', fontSize: '0.9rem', lineHeight: 1.7 }}
+                      style={{ color: '#a1a1aa', fontSize: '0.9rem', lineHeight: 1.7 }}
                     >Complete your center profile so students can find you.</motion.div>
                   )}
                 </AnimatePresence>
@@ -666,49 +616,31 @@ export default function CenterDashboard() {
               {studentsLoading ? (
                 [1,2,3].map(i => (
                   <motion.div key={i}
-                    animate={{ opacity: [0.2, 0.5, 0.2] }}
+                    animate={{ opacity: [0.4, 0.7, 0.4] }}
                     transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.15 }}
-                    style={{ height: '80px', background: 'rgba(236,72,153,0.04)', borderRadius: '14px', border: '1px solid rgba(236,72,153,0.1)' }}
+                    style={{ height: '80px', background: '#fafafa', borderRadius: '16px', border: '1px solid #f0f0f1' }}
                   />
                 ))
               ) : pending.length === 0 ? (
-                <EmptyState text="No pending requests" sub="New connection requests will appear here" color="#ec4899" />
+                <EmptyState text="No pending requests" sub="New connection requests will appear here" />
               ) : pending.map((s, i) => (
                 <motion.div key={s.id}
                   initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  style={{
-                    background: 'rgba(236,72,153,0.03)',
-                    border: '1px solid rgba(236,72,153,0.12)',
-                    borderRadius: '14px', padding: '1.1rem 1.2rem',
-                    display: 'flex', alignItems: 'center',
-                    justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem'
-                  }}
+                  style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '16px', padding: '1.1rem 1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', boxShadow: '0 1px 2px rgba(24,24,27,0.04)' }}
                 >
                   <div>
-                    <p style={{ color: '#fff', fontWeight: 600, fontSize: '0.9rem' }}>{s.full_name}</p>
-                    <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.78rem', marginTop: '2px' }}>{s.email}</p>
-                    <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.72rem', marginTop: '2px' }}>
+                    <p style={{ color: '#18181b', fontWeight: 600, fontSize: '0.9rem' }}>{s.full_name}</p>
+                    <p style={{ color: '#71717a', fontSize: '0.78rem', marginTop: '2px' }}>{s.email}</p>
+                    <p style={{ color: '#a1a1aa', fontSize: '0.72rem', marginTop: '2px' }}>
                       {new Date(s.requested_at).toLocaleDateString()}
                     </p>
                   </div>
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <motion.button
                       whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                      onClick={() => handleAccept(s.id)} style={{
-                        padding: '7px 16px',
-                        background: 'linear-gradient(135deg, rgba(236,72,153,0.2), rgba(168,85,247,0.2))',
-                        border: '1px solid rgba(236,72,153,0.2)',
-                        borderRadius: '8px', color: '#fff',
-                        cursor: 'pointer', fontSize: '0.78rem', fontWeight: 600
-                      }}>Accept</motion.button>
-                    <button onClick={() => handleReject(s.id)} style={{
-                      padding: '7px 16px',
-                      background: 'rgba(248,113,113,0.06)',
-                      border: '1px solid rgba(248,113,113,0.15)',
-                      borderRadius: '8px', color: '#f87171',
-                      cursor: 'pointer', fontSize: '0.78rem'
-                    }}>Decline</button>
+                      onClick={() => handleAccept(s.id)} style={{ padding: '7px 16px', background: ACCENT, border: 'none', borderRadius: '999px', color: '#fff', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 600 }}>Accept</motion.button>
+                    <button onClick={() => handleReject(s.id)} style={{ padding: '7px 16px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '999px', color: '#dc2626', cursor: 'pointer', fontSize: '0.78rem' }}>Decline</button>
                   </div>
                 </motion.div>
               ))}
@@ -723,37 +655,21 @@ export default function CenterDashboard() {
               style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '10px' }}
             >
               {accepted.length === 0 ? (
-                <EmptyState text="No students yet" sub="Accept connection requests to add students" color="#ec4899" />
+                <EmptyState text="No students yet" sub="Accept connection requests to add students" />
               ) : accepted.map((s, i) => (
                 <motion.div key={s.id}
                   initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  style={{
-                    background: 'rgba(236,72,153,0.03)',
-                    border: '1px solid rgba(236,72,153,0.12)',
-                    borderRadius: '14px', padding: '1.1rem 1.2rem',
-                    display: 'flex', alignItems: 'center',
-                    justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem'
-                  }}
+                  style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '16px', padding: '1.1rem 1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', boxShadow: '0 1px 2px rgba(24,24,27,0.04)' }}
                 >
                   <div>
-                    <p style={{ color: '#fff', fontWeight: 600, fontSize: '0.9rem' }}>{s.full_name}</p>
-                    <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.78rem', marginTop: '2px' }}>{s.email}</p>
+                    <p style={{ color: '#18181b', fontWeight: 600, fontSize: '0.9rem' }}>{s.full_name}</p>
+                    <p style={{ color: '#71717a', fontSize: '0.78rem', marginTop: '2px' }}>{s.email}</p>
                     {s.monthly_fee > 0 && (
-                      <p style={{
-                        fontSize: '0.75rem', marginTop: '3px', fontWeight: 600,
-                        background: 'linear-gradient(135deg, #ec4899, #a855f7)',
-                        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
-                      }}>₹{s.monthly_fee}/month · due day {s.fee_day || 1}</p>
+                      <p style={{ fontSize: '0.75rem', marginTop: '3px', fontWeight: 600, color: ACCENT }}>₹{s.monthly_fee}/month · due day {s.fee_day || 1}</p>
                     )}
                   </div>
-                  <button onClick={() => handleRemoveStudent(s.id)} style={{
-                    padding: '7px 14px',
-                    background: 'rgba(248,113,113,0.06)',
-                    border: '1px solid rgba(248,113,113,0.15)',
-                    borderRadius: '8px', color: '#f87171',
-                    cursor: 'pointer', fontSize: '0.78rem'
-                  }}>Remove</button>
+                  <button onClick={() => handleRemoveStudent(s.id)} style={{ padding: '7px 14px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '999px', color: '#dc2626', cursor: 'pointer', fontSize: '0.78rem' }}>Remove</button>
                 </motion.div>
               ))}
             </motion.div>
@@ -772,7 +688,7 @@ export default function CenterDashboard() {
         confirmLabel="Accept Student"
         onConfirm={submitAccept}
         onCancel={() => setFeeModal(null)}
-        accentColor="#ec4899"
+        accentColor={ACCENT}
       />
 
       <ConfirmModal
@@ -782,7 +698,7 @@ export default function CenterDashboard() {
         confirmLabel={modal?.confirmLabel}
         onConfirm={modal?.onConfirm}
         onCancel={() => setModal(null)}
-        accentColor="#f87171"
+        accentColor="#dc2626"
       />
 
       <ConfirmModal
@@ -793,30 +709,21 @@ export default function CenterDashboard() {
         onConfirm={() => setAlertMsg(null)}
         onCancel={() => setAlertMsg(null)}
         hideCancel
-        accentColor="#f87171"
+        accentColor="#dc2626"
       />
     </div>
   )
 }
 
-function EmptyState({ text, sub, color = '#ec4899' }) {
+function EmptyState({ text, sub }) {
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-      style={{
-        textAlign: 'center', padding: '4rem 1rem',
-        border: `1px solid ${color}25`,
-        borderRadius: '20px',
-        background: `${color}08`
-      }}
+      style={{ textAlign: 'center', padding: '4rem 1rem', border: '1px solid #e4e4e7', borderRadius: '24px', background: '#fafafa' }}
     >
-      <div style={{
-        fontSize: '2rem', marginBottom: '1rem',
-        background: `linear-gradient(135deg, ${color}, #a855f7)`,
-        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
-      }}>◎</div>
-      <p style={{ color: 'rgba(255,255,255,0.4)', fontWeight: 600, marginBottom: '0.3rem' }}>{text}</p>
-      <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.82rem' }}>{sub}</p>
+      <div style={{ fontSize: '2rem', marginBottom: '1rem', opacity: 0.6 }}>◎</div>
+      <p style={{ color: '#52525b', fontWeight: 600, marginBottom: '0.3rem' }}>{text}</p>
+      <p style={{ color: '#a1a1aa', fontSize: '0.82rem' }}>{sub}</p>
     </motion.div>
   )
 }
