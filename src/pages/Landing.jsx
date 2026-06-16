@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
-import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react'
-import { useRef, useState } from 'react'
+import { motion, useScroll, useTransform, useMotionValue, animate, AnimatePresence } from 'motion/react'
+import { useRef, useState, useEffect } from 'react'
 import Navbar from '../components/Navbar'
 
 const grad = {
@@ -8,6 +8,27 @@ const grad = {
   pink:   'linear-gradient(135deg, #ec4899, #f97316)',
   green:  'linear-gradient(135deg, #10b981, #06b6d4)',
   warm:   'linear-gradient(135deg, #f97316, #ec4899)',
+  sky:    'linear-gradient(135deg, #3b82f6, #06b6d4)',
+}
+
+function AnimatedStat({ value, label, gradient, delay }) {
+  const numericValue = parseInt(value.replace(/[^0-9]/g, ''), 10) || 0
+  const suffix = value.replace(/[0-9]/g, '')
+  const count = useMotionValue(0)
+  const [display, setDisplay] = useState(0)
+
+  useEffect(() => {
+    const unsub = count.on('change', v => setDisplay(Math.round(v)))
+    const controls = animate(count, numericValue, { duration: 1.4, delay, ease: [0.22, 1, 0.36, 1] })
+    return () => { controls.stop(); unsub() }
+  }, [])
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay }} style={{ textAlign: 'center' }}>
+      <div style={{ fontSize: 'clamp(1.4rem, 3vw, 1.8rem)', fontWeight: 800, background: gradient, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{display}{suffix}</div>
+      <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.3)', marginTop: '2px' }}>{label}</div>
+    </motion.div>
+  )
 }
 
 function SectionBadge({ label, color = '#a855f7' }) {
@@ -223,14 +244,12 @@ export default function Landing() {
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.5 }} style={{ position: 'relative', zIndex: 1, display: 'flex', gap: 'clamp(1.5rem, 4vw, 3rem)', flexWrap: 'wrap', justifyContent: 'center' }}>
           {[
-            { value: '500+', label: 'Verified Tutors', gradient: grad.purple },
-            { value: '20+',  label: 'Subjects',        gradient: grad.pink },
-            { value: '50+',  label: 'Centers',         gradient: grad.green },
+            { value: '1000+', label: 'Students',        gradient: grad.sky },
+            { value: '500+',  label: 'Verified Tutors', gradient: grad.purple },
+            { value: '20+',   label: 'Subjects',        gradient: grad.pink },
+            { value: '50+',   label: 'Centers',         gradient: grad.green },
           ].map((stat, i) => (
-            <motion.div key={stat.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 + i * 0.1 }} style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 'clamp(1.4rem, 3vw, 1.8rem)', fontWeight: 800, background: stat.gradient, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{stat.value}</div>
-              <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.3)', marginTop: '2px' }}>{stat.label}</div>
-            </motion.div>
+            <AnimatedStat key={stat.label} value={stat.value} label={stat.label} gradient={stat.gradient} delay={0.5 + i * 0.1} />
           ))}
         </motion.div>
 
