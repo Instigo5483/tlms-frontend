@@ -219,6 +219,29 @@ function DropdownMulti({ value, onChange, options, placeholder, accentColor = '#
   )
 }
 
+function VisibilityToggle({ checked, onChange, disabled, color = '#06b6d4' }) {
+  return (
+    <motion.button
+      type="button"
+      onClick={() => !disabled && onChange(!checked)}
+      whileTap={{ scale: disabled ? 1 : 0.95 }}
+      style={{
+        width: '44px', height: '24px', borderRadius: '999px', flexShrink: 0, padding: 0,
+        background: checked ? color : 'rgba(255,255,255,0.1)',
+        border: `1px solid ${checked ? color : 'rgba(255,255,255,0.15)'}`,
+        position: 'relative', cursor: disabled ? 'not-allowed' : 'pointer',
+        opacity: disabled ? 0.5 : 1, transition: 'background 0.2s, border-color 0.2s',
+      }}
+    >
+      <motion.div
+        animate={{ x: checked ? 21 : 2 }}
+        transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+        style={{ width: '18px', height: '18px', borderRadius: '50%', background: '#fff', position: 'absolute', top: '2px', left: 0 }}
+      />
+    </motion.button>
+  )
+}
+
 export default function TutorDashboard() {
   const { user, token } = useAuth()
 
@@ -235,6 +258,7 @@ export default function TutorDashboard() {
   const [modal, setModal] = useState(null)
   const [feeModal, setFeeModal] = useState(null)
   const [alertMsg, setAlertMsg] = useState(null)
+  const [togglingVisibility, setTogglingVisibility] = useState(false)
   const [profile, setProfile] = useState({
     bio: '', monthly_rate: '', subjects: '', grade_levels: '',
     phone: '', country: '', state: '', district: '', area: ''
@@ -288,6 +312,7 @@ export default function TutorDashboard() {
           grade_levels: profile.grade_levels.split(',').map(s => s.trim()).filter(Boolean),
           phone: profile.phone, country: profile.country,
           state: profile.state, district: profile.district, area: profile.area,
+          is_visible: !!loadedProfile?.is_visible,
         })
       })
       const data = await res.json()
@@ -303,6 +328,32 @@ export default function TutorDashboard() {
       setEditing(false)
     } catch { setAlertMsg('Failed to save. Try again.') }
     finally { setSaving(false) }
+  }
+
+  async function toggleVisibility(next) {
+    setTogglingVisibility(true)
+    try {
+      const res = await fetch(`${BACKEND}/api/tutor/${user.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({
+          bio: loadedProfile?.bio || '',
+          monthly_rate: Number(loadedProfile?.monthly_rate) || 0,
+          subjects: loadedProfile?.subjects || [],
+          grade_levels: loadedProfile?.grade_levels || [],
+          phone: loadedProfile?.phone || '',
+          country: loadedProfile?.country || '',
+          state: loadedProfile?.state || '',
+          district: loadedProfile?.district || '',
+          area: loadedProfile?.area || '',
+          is_visible: next,
+        })
+      })
+      const data = await res.json()
+      if (!res.ok) { setAlertMsg(data.error || 'Failed to update visibility'); return }
+      setLoadedProfile(prev => ({ ...prev, is_visible: next }))
+    } catch { setAlertMsg('Failed to update visibility. Try again.') }
+    finally { setTogglingVisibility(false) }
   }
 
   function handleAccept(enrollmentId) {
@@ -377,7 +428,7 @@ export default function TutorDashboard() {
     { label: 'Country', name: 'country', type: 'select', options: ['India'] },
     { label: 'State', name: 'state', type: 'select', options: INDIA_STATES },
     { label: 'District', name: 'district', placeholder: 'Kamrup' },
-    { label: 'Area (optional)', name: 'area', placeholder: 'Guwahati' },
+    { label: 'Area', name: 'area', placeholder: 'Guwahati' },
   ]
 
   return (
@@ -493,14 +544,22 @@ export default function TutorDashboard() {
                   width: '40%', height: '1px',
                   background: 'linear-gradient(90deg, transparent, rgba(6,182,212,0.5), transparent)'
                 }} />
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.4rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.4rem', flexWrap: 'wrap', gap: '10px' }}>
                   <h2 style={{ color: '#fff', fontWeight: 700, fontSize: '0.95rem' }}>Your Profile</h2>
-                  <button onClick={() => setEditing(!editing)} style={{
-                    padding: '6px 16px', borderRadius: '8px',
-                    border: '1px solid rgba(6,182,212,0.2)',
-                    background: 'rgba(6,182,212,0.08)', color: 'rgba(6,182,212,0.8)',
-                    cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600
-                  }}>{editing ? 'Cancel' : 'Edit'}</button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '0.78rem', fontWeight: 600, color: loadedProfile?.is_visible ? '#06b6d4' : 'rgba(255,255,255,0.35)', whiteSpace: 'nowrap' }}>
+                        {loadedProfile?.is_visible ? 'Visible on Discover' : 'Hidden from Discover'}
+                      </span>
+                      <VisibilityToggle checked={!!loadedProfile?.is_visible} onChange={toggleVisibility} disabled={togglingVisibility} />
+                    </div>
+                    <button onClick={() => setEditing(!editing)} style={{
+                      padding: '6px 16px', borderRadius: '8px',
+                      border: '1px solid rgba(6,182,212,0.2)',
+                      background: 'rgba(6,182,212,0.08)', color: 'rgba(6,182,212,0.8)',
+                      cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600
+                    }}>{editing ? 'Cancel' : 'Edit'}</button>
+                  </div>
                 </div>
 
                 <AnimatePresence mode="wait">
