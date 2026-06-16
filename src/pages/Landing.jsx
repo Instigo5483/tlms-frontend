@@ -217,7 +217,7 @@ export default function Landing() {
         </motion.p>
 
         <motion.form onSubmit={handleSearch} initial={{ opacity: 0, y: 20, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }} style={{ position: 'relative', zIndex: 1, display: 'flex', gap: '8px', width: '100%', maxWidth: '540px', marginBottom: '4rem' }}>
-          <input type="text" placeholder="Search by subject, name, or grade..." value={search} onChange={e => setSearch(e.target.value)} style={{ flex: 1, height: '52px', padding: '0 1.2rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(168,85,247,0.2)', borderRadius: '14px', color: '#fff', fontSize: '0.95rem' }} />
+          <input type="text" placeholder="Search by subject, name, or class..." value={search} onChange={e => setSearch(e.target.value)} style={{ flex: 1, height: '52px', padding: '0 1.2rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(168,85,247,0.2)', borderRadius: '14px', color: '#fff', fontSize: '0.95rem' }} />
           <motion.button type="submit" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} style={{ height: '52px', padding: '0 1.6rem', background: 'linear-gradient(135deg, #a855f7, #06b6d4)', color: '#fff', border: 'none', borderRadius: '14px', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer', whiteSpace: 'nowrap' }}>Search</motion.button>
         </motion.form>
 
