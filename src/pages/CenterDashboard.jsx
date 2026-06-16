@@ -6,7 +6,7 @@ import InputModal from '../components/InputModal'
 import { useAuth } from '../hooks/useAuth'
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL
-const ACCENT = '#334155'
+const ACCENT = '#2563eb'
 
 const INDIA_SUBJECTS = [
   'Accountancy','Arts / Drawing','Bengali','Biology','Business Studies','Chemistry',
@@ -441,12 +441,12 @@ export default function CenterDashboard() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2.5rem', paddingTop: '1rem', flexWrap: 'wrap' }}
         >
-          <div style={{ width: '48px', height: '48px', borderRadius: '14px', flexShrink: 0, background: '#f1f5f9', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1rem', color: ACCENT }}>{initials}</div>
+          <div style={{ width: '48px', height: '48px', borderRadius: '14px', flexShrink: 0, background: '#eff6ff', border: '1px solid #bfdbfe', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1rem', color: ACCENT }}>{initials}</div>
           <div>
             <h1 className="font-display" style={{ fontWeight: 700, fontSize: 'clamp(1.2rem, 3vw, 1.5rem)', letterSpacing: '-0.02em', color: '#18181b' }}>{loaded?.center_name || user?.full_name || 'Center'}</h1>
             <p style={{ color: '#a1a1aa', fontSize: '0.82rem', marginTop: '2px' }}>{user?.email}</p>
           </div>
-          <span style={{ marginLeft: 'auto', fontSize: '0.72rem', fontWeight: 600, padding: '4px 12px', borderRadius: '999px', background: '#f1f5f9', border: '1px solid #e2e8f0', color: ACCENT, whiteSpace: 'nowrap' }}>Tuition Center</span>
+          <span style={{ marginLeft: 'auto', fontSize: '0.72rem', fontWeight: 600, padding: '4px 12px', borderRadius: '999px', background: '#eff6ff', border: '1px solid #bfdbfe', color: ACCENT, whiteSpace: 'nowrap' }}>Tuition Center</span>
         </motion.div>
 
         {/* Stats */}
@@ -583,7 +583,7 @@ export default function CenterDashboard() {
                       {loaded.subjects?.length > 0 && (
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                           {loaded.subjects.map(s => (
-                            <span key={s} style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', color: ACCENT, fontSize: '0.78rem', padding: '3px 10px', borderRadius: '6px' }}>{s}</span>
+                            <span key={s} style={{ background: '#eff6ff', border: '1px solid #bfdbfe', color: ACCENT, fontSize: '0.78rem', padding: '3px 10px', borderRadius: '6px' }}>{s}</span>
                           ))}
                         </div>
                       )}
