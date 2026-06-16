@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react'
 import Navbar from '../components/Navbar'
 import ConfirmModal from '../components/ConfirmModal'
 import InputModal from '../components/InputModal'
+import StudentInfoModal from '../components/StudentInfoModal'
 import { useAuth } from '../hooks/useAuth'
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL
@@ -258,6 +259,7 @@ export default function CenterDashboard() {
   const [studentsLoading, setStudentsLoading] = useState(false)
   const [modal, setModal] = useState(null)
   const [feeModal, setFeeModal] = useState(null)
+  const [studentModal, setStudentModal] = useState(null)
   const [alertMsg, setAlertMsg] = useState(null)
   const [togglingVisibility, setTogglingVisibility] = useState(false)
   const [profile, setProfile] = useState({
@@ -410,6 +412,10 @@ export default function CenterDashboard() {
       }
     })
   }
+
+  function handleAcceptFromModal(id) { setStudentModal(null); handleAccept(id) }
+  function handleDeclineFromModal(id) { setStudentModal(null); handleReject(id) }
+  function handleRemoveFromModal(id) { setStudentModal(null); handleRemoveStudent(id) }
 
   const pending = students.filter(s => s.status === 'pending')
   const accepted = students.filter(s => s.status === 'accepted')
@@ -627,7 +633,9 @@ export default function CenterDashboard() {
                 <motion.div key={s.id}
                   initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '16px', padding: '1.1rem 1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', boxShadow: '0 1px 2px rgba(24,24,27,0.04)' }}
+                  onClick={() => setStudentModal(s)}
+                  whileHover={{ y: -3, boxShadow: '0 12px 24px rgba(24,24,27,0.08)' }}
+                  style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '16px', padding: '1.1rem 1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', boxShadow: '0 1px 2px rgba(24,24,27,0.04)', cursor: 'pointer' }}
                 >
                   <div>
                     <p style={{ color: '#18181b', fontWeight: 600, fontSize: '0.9rem' }}>{s.full_name}</p>
@@ -636,12 +644,7 @@ export default function CenterDashboard() {
                       {new Date(s.requested_at).toLocaleDateString()}
                     </p>
                   </div>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <motion.button
-                      whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                      onClick={() => handleAccept(s.id)} style={{ padding: '7px 16px', background: ACCENT, border: 'none', borderRadius: '999px', color: '#fff', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 600 }}>Accept</motion.button>
-                    <button onClick={() => handleReject(s.id)} style={{ padding: '7px 16px', background: '#f4f4f5', border: '1px solid #d4d4d8', borderRadius: '999px', color: '#18181b', cursor: 'pointer', fontSize: '0.78rem' }}>Decline</button>
-                  </div>
+                  <span style={{ fontSize: '0.75rem', color: ACCENT, fontWeight: 600, whiteSpace: 'nowrap' }}>View →</span>
                 </motion.div>
               ))}
             </motion.div>
@@ -660,7 +663,9 @@ export default function CenterDashboard() {
                 <motion.div key={s.id}
                   initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '16px', padding: '1.1rem 1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', boxShadow: '0 1px 2px rgba(24,24,27,0.04)' }}
+                  onClick={() => setStudentModal(s)}
+                  whileHover={{ y: -3, boxShadow: '0 12px 24px rgba(24,24,27,0.08)' }}
+                  style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '16px', padding: '1.1rem 1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', boxShadow: '0 1px 2px rgba(24,24,27,0.04)', cursor: 'pointer' }}
                 >
                   <div>
                     <p style={{ color: '#18181b', fontWeight: 600, fontSize: '0.9rem' }}>{s.full_name}</p>
@@ -669,13 +674,23 @@ export default function CenterDashboard() {
                       <p style={{ fontSize: '0.75rem', marginTop: '3px', fontWeight: 600, color: ACCENT }}>₹{s.monthly_fee}/month · due day {s.fee_day || 1}</p>
                     )}
                   </div>
-                  <button onClick={() => handleRemoveStudent(s.id)} style={{ padding: '7px 14px', background: '#f4f4f5', border: '1px solid #d4d4d8', borderRadius: '999px', color: '#18181b', cursor: 'pointer', fontSize: '0.78rem' }}>Remove</button>
+                  <span style={{ fontSize: '0.75rem', color: ACCENT, fontWeight: 600, whiteSpace: 'nowrap' }}>View →</span>
                 </motion.div>
               ))}
             </motion.div>
           )}
         </AnimatePresence>
       </main>
+
+      <StudentInfoModal
+        open={!!studentModal}
+        student={studentModal}
+        onClose={() => setStudentModal(null)}
+        onAccept={handleAcceptFromModal}
+        onDecline={handleDeclineFromModal}
+        onRemove={handleRemoveFromModal}
+        accentColor={ACCENT}
+      />
 
       <InputModal
         open={feeModal !== null}

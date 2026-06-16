@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'motion/react'
 import Navbar from '../components/Navbar'
@@ -8,20 +8,295 @@ import { useAuth } from '../hooks/useAuth'
 const BACKEND = import.meta.env.VITE_BACKEND_URL
 const ACCENT = '#4f46e5'
 
+const INDIA_SUBJECTS = [
+  'Accountancy','Arts / Drawing','Bengali','Biology','Business Studies','Chemistry',
+  'Computer Science','Economics','English','Geography','Gujarati','Hindi','History',
+  'Kannada','Malayalam','Marathi','Mathematics','Music','Physical Education',
+  'Physics','Political Science','Punjabi','Sanskrit','Social Science',
+  'Tamil','Telugu','Urdu',
+]
+
+const INDIA_STATES = [
+  'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat',
+  'Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh',
+  'Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Punjab','Rajasthan',
+  'Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand','West Bengal',
+  'Andaman and Nicobar Islands','Chandigarh','Dadra and Nagar Haveli and Daman and Diu',
+  'Delhi','Jammu and Kashmir','Ladakh','Lakshadweep','Puducherry',
+]
+
+const GRADE_LEVELS = [
+  'Nursery','LKG','UKG',
+  'Class 1','Class 2','Class 3','Class 4','Class 5',
+  'Class 6','Class 7','Class 8','Class 9','Class 10',
+  'Class 11','Class 12',
+  'JEE','NEET','UPSC','APSC','WBJEE','CEE',
+]
+
+function DropdownSingle({ value, onChange, options, placeholder, accentColor = ACCENT }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+
+  useEffect(() => {
+    function onOut(e) { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
+    if (open) document.addEventListener('mousedown', onOut)
+    return () => document.removeEventListener('mousedown', onOut)
+  }, [open])
+
+  return (
+    <div ref={ref} style={{ position: 'relative' }}>
+      <motion.button
+        type="button"
+        onClick={() => setOpen(v => !v)}
+        whileTap={{ scale: 0.99 }}
+        style={{
+          width: '100%', height: '42px', padding: '0 14px',
+          background: '#fff',
+          border: `1px solid ${open ? accentColor : '#e4e4e7'}`,
+          borderRadius: '10px',
+          display: 'flex', alignItems: 'center',
+          cursor: 'pointer', fontSize: '0.9rem',
+          transition: 'border-color 0.2s',
+        }}
+      >
+        <span style={{ flex: 1, color: value ? '#18181b' : '#a1a1aa', textAlign: 'left' }}>
+          {value || placeholder}
+        </span>
+        <motion.span
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+          style={{ opacity: 0.4, fontSize: '0.7rem', flexShrink: 0 }}
+        >▾</motion.span>
+      </motion.button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, scaleY: 0.94 }}
+            animate={{ opacity: 1, y: 0, scaleY: 1 }}
+            exit={{ opacity: 0, y: -8, scaleY: 0.94 }}
+            transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+            style={{
+              position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, zIndex: 300,
+              background: '#fff',
+              border: '1px solid #e4e4e7',
+              borderRadius: '12px',
+              boxShadow: '0 16px 40px rgba(24,24,27,0.14)',
+              transformOrigin: 'top',
+            }}
+          >
+            <div className="no-scrollbar" style={{ maxHeight: '260px', overflowY: 'auto', borderRadius: '12px' }}>
+              {options.map((o, i) => (
+                <motion.button
+                  key={o} type="button"
+                  whileHover={{ x: 4, background: `${accentColor}12` }}
+                  whileTap={{ scale: 0.99 }}
+                  onClick={() => { onChange(o); setOpen(false) }}
+                  style={{
+                    width: '100%', padding: '10px 16px',
+                    background: value === o ? `${accentColor}15` : 'transparent',
+                    border: 'none',
+                    borderBottom: i < options.length - 1 ? '1px solid #f4f4f5' : 'none',
+                    cursor: 'pointer', textAlign: 'left',
+                    color: value === o ? accentColor : '#52525b',
+                    fontSize: '0.88rem', fontWeight: value === o ? 600 : 400,
+                    display: 'flex', alignItems: 'center', gap: '10px',
+                    transition: 'background 0.15s, color 0.15s',
+                  }}
+                >
+                  <span style={{ width: '14px', flexShrink: 0, color: accentColor, fontSize: '0.72rem', fontWeight: 800, opacity: value === o ? 1 : 0 }}>✓</span>
+                  {o}
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+function DropdownMulti({ value, onChange, options, placeholder, accentColor = ACCENT }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+  const selected = value ? value.split(',').map(s => s.trim()).filter(Boolean) : []
+
+  useEffect(() => {
+    function onOut(e) { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
+    if (open) document.addEventListener('mousedown', onOut)
+    return () => document.removeEventListener('mousedown', onOut)
+  }, [open])
+
+  function toggle(o) {
+    const next = selected.includes(o) ? selected.filter(x => x !== o) : [...selected, o]
+    onChange(next.join(', '))
+  }
+
+  return (
+    <div ref={ref} style={{ position: 'relative' }}>
+      <motion.button
+        type="button"
+        onClick={() => setOpen(v => !v)}
+        whileTap={{ scale: 0.99 }}
+        style={{
+          width: '100%', minHeight: '42px', padding: '6px 14px',
+          background: '#fff',
+          border: `1px solid ${open ? accentColor : '#e4e4e7'}`,
+          borderRadius: '10px', color: '#18181b',
+          display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '5px',
+          cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.2s',
+        }}
+      >
+        {selected.length === 0 ? (
+          <span style={{ color: '#a1a1aa', fontSize: '0.9rem', flex: 1 }}>{placeholder}</span>
+        ) : selected.map(s => (
+          <span key={s} style={{
+            background: `${accentColor}12`, border: `1px solid ${accentColor}35`,
+            color: accentColor, borderRadius: '6px', padding: '1px 8px',
+            fontSize: '0.75rem', fontWeight: 600,
+          }}>{s}</span>
+        ))}
+        <motion.span
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+          style={{ marginLeft: 'auto', opacity: 0.4, fontSize: '0.7rem', flexShrink: 0, paddingLeft: '4px' }}
+        >▾</motion.span>
+      </motion.button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, scaleY: 0.94 }}
+            animate={{ opacity: 1, y: 0, scaleY: 1 }}
+            exit={{ opacity: 0, y: -8, scaleY: 0.94 }}
+            transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+            style={{
+              position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, zIndex: 300,
+              background: '#fff',
+              border: '1px solid #e4e4e7',
+              borderRadius: '12px',
+              boxShadow: '0 16px 40px rgba(24,24,27,0.14)',
+              transformOrigin: 'top',
+            }}
+          >
+            <div className="no-scrollbar" style={{ maxHeight: '260px', overflowY: 'auto', borderRadius: '12px' }}>
+              {options.map((o, i) => {
+                const active = selected.includes(o)
+                return (
+                  <motion.button
+                    key={o} type="button"
+                    whileHover={{ x: 4, background: active ? `${accentColor}22` : '#fafafa' }}
+                    whileTap={{ scale: 0.99 }}
+                    onClick={() => toggle(o)}
+                    style={{
+                      width: '100%', padding: '10px 16px',
+                      background: active ? `${accentColor}15` : 'transparent',
+                      border: 'none',
+                      borderBottom: i < options.length - 1 ? '1px solid #f4f4f5' : 'none',
+                      cursor: 'pointer', textAlign: 'left',
+                      color: active ? accentColor : '#52525b',
+                      fontSize: '0.88rem', fontWeight: active ? 600 : 400,
+                      display: 'flex', alignItems: 'center', gap: '10px',
+                      transition: 'background 0.15s, color 0.15s',
+                    }}
+                  >
+                    <span style={{
+                      width: '15px', height: '15px', borderRadius: '4px', flexShrink: 0,
+                      border: `1.5px solid ${active ? accentColor : '#d4d4d8'}`,
+                      background: active ? accentColor : 'transparent',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '9px', color: '#fff', fontWeight: 900,
+                      transition: 'all 0.15s',
+                    }}>{active ? '✓' : ''}</span>
+                    {o}
+                  </motion.button>
+                )
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+function isProfileComplete(p) {
+  return !!(
+    p.bio?.trim() &&
+    p.subjects && p.subjects.split(',').map(s => s.trim()).filter(Boolean).length > 0 &&
+    p.grade_levels && p.grade_levels.split(',').map(s => s.trim()).filter(Boolean).length > 0 &&
+    p.phone?.trim() && p.country?.trim() && p.state?.trim() && p.district?.trim() && p.area?.trim()
+  )
+}
+
 export default function StudentDashboard() {
   const { user, token } = useAuth()
   const navigate = useNavigate()
-  const [tab, setTab] = useState('connected')
+  const [tab, setTab] = useState('profile')
   const [enrollments, setEnrollments] = useState([])
   const [loading, setLoading] = useState(true)
   const [removeModal, setRemoveModal] = useState(null)
   const [alertMsg, setAlertMsg] = useState(null)
+  const [editing, setEditing] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [loadedProfile, setLoadedProfile] = useState(null)
+  const [profile, setProfile] = useState({
+    bio: '', subjects: '', grade_levels: '', phone: '', country: '', state: '', district: '', area: ''
+  })
 
   const initials = user?.full_name
     ? user.full_name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
     : '??'
 
-  useEffect(() => { loadEnrollments() }, [])
+  useEffect(() => { loadEnrollments(); loadProfile() }, [])
+
+  async function loadProfile() {
+    try {
+      const res = await fetch(`${BACKEND}/api/auth/me`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      const data = await res.json()
+      setLoadedProfile(data)
+      setProfile({
+        bio: data.bio || '',
+        subjects: data.subjects?.join(', ') || '',
+        grade_levels: data.grade_levels?.join(', ') || '',
+        phone: data.phone || '',
+        country: data.country || '',
+        state: data.state || '',
+        district: data.district || '',
+        area: data.area || '',
+      })
+    } catch (err) { console.error(err) }
+  }
+
+  async function saveProfile() {
+    setSaving(true)
+    try {
+      const res = await fetch(`${BACKEND}/api/student/${user.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({
+          bio: profile.bio,
+          subjects: profile.subjects.split(',').map(s => s.trim()).filter(Boolean),
+          grade_levels: profile.grade_levels.split(',').map(s => s.trim()).filter(Boolean),
+          phone: profile.phone, country: profile.country,
+          state: profile.state, district: profile.district, area: profile.area,
+        })
+      })
+      const data = await res.json()
+      if (!res.ok) { setAlertMsg(data.error || 'Failed to save'); return }
+      setLoadedProfile(prev => ({
+        ...prev, bio: profile.bio,
+        subjects: profile.subjects.split(',').map(s => s.trim()).filter(Boolean),
+        grade_levels: profile.grade_levels.split(',').map(s => s.trim()).filter(Boolean),
+        phone: profile.phone, country: profile.country,
+        state: profile.state, district: profile.district, area: profile.area,
+      }))
+      setEditing(false)
+    } catch { setAlertMsg('Failed to save. Try again.') }
+    finally { setSaving(false) }
+  }
 
   async function loadEnrollments() {
     try {
@@ -53,8 +328,21 @@ export default function StudentDashboard() {
 
   const connected = enrollments.filter(e => e.status === 'accepted')
   const pending = enrollments.filter(e => e.status === 'pending')
+  const profileComplete = isProfileComplete(profile)
+
+  const fields = [
+    { label: 'Bio', name: 'bio', placeholder: 'Tell tutors and centers about yourself...', type: 'textarea' },
+    { label: 'Subjects you need help with', name: 'subjects', type: 'multiselect', options: INDIA_SUBJECTS, placeholder: 'Select subjects...' },
+    { label: 'Your Class', name: 'grade_levels', type: 'select', options: GRADE_LEVELS },
+    { label: 'Phone', name: 'phone', placeholder: '+91 98765 43210' },
+    { label: 'Country', name: 'country', type: 'select', options: ['India'] },
+    { label: 'State', name: 'state', type: 'select', options: INDIA_STATES },
+    { label: 'District', name: 'district', placeholder: 'Kamrup' },
+    { label: 'Area', name: 'area', placeholder: 'Guwahati' },
+  ]
 
   const tabs = [
+    { key: 'profile', label: 'Profile', count: null },
     { key: 'connected', label: 'Connected', count: connected.length },
     { key: 'pending', label: 'Pending', count: pending.length },
     { key: 'explore', label: 'Find Tutors', count: null },
@@ -87,6 +375,18 @@ export default function StudentDashboard() {
           <span style={{ marginLeft: 'auto', fontSize: '0.72rem', fontWeight: 600, padding: '4px 12px', borderRadius: '999px', background: '#eef2ff', border: '1px solid #e0e7ff', color: ACCENT, whiteSpace: 'nowrap' }}>Student</span>
         </motion.div>
 
+        {/* Profile completeness banner */}
+        {!profileComplete && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+            style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 16px', background: '#f4f4f5', border: '1px solid #d4d4d8', borderRadius: '14px', marginBottom: '1.5rem', fontSize: '0.85rem', color: '#18181b' }}
+          >
+            <span>⚠</span>
+            <span>Complete your profile before you can send a connection request to a tutor or center.</span>
+            <button onClick={() => { setTab('profile'); setEditing(true) }} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: ACCENT, fontWeight: 600, cursor: 'pointer', fontSize: '0.85rem', whiteSpace: 'nowrap' }}>Complete now →</button>
+          </motion.div>
+        )}
+
         {/* Stats */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -114,7 +414,7 @@ export default function StudentDashboard() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.15 }}
-          style={{ display: 'flex', gap: '4px', marginBottom: '1.5rem', background: '#f4f4f5', padding: '4px', borderRadius: '12px', width: 'fit-content' }}
+          style={{ display: 'flex', gap: '4px', marginBottom: '1.5rem', background: '#f4f4f5', padding: '4px', borderRadius: '12px', width: 'fit-content', flexWrap: 'wrap' }}
         >
           {tabs.map(t => (
             <button key={t.key} onClick={() => setTab(t.key)} style={{
@@ -132,7 +432,108 @@ export default function StudentDashboard() {
 
         {/* Content */}
         <AnimatePresence mode="wait">
-          {loading ? (
+          {tab === 'profile' ? (
+            <motion.div key="profile"
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}
+            >
+              <div style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '20px', padding: '1.8rem', boxShadow: '0 1px 2px rgba(24,24,27,0.04)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.4rem', flexWrap: 'wrap', gap: '10px' }}>
+                  <h2 style={{ color: '#18181b', fontWeight: 700, fontSize: '0.95rem' }}>Your Profile</h2>
+                  <button onClick={() => setEditing(!editing)} style={{
+                    padding: '6px 16px', borderRadius: '999px',
+                    border: '1px solid #e4e4e7',
+                    background: '#fff', color: '#18181b',
+                    cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600
+                  }}>{editing ? 'Cancel' : 'Edit'}</button>
+                </div>
+
+                <AnimatePresence mode="wait">
+                  {editing ? (
+                    <motion.div key="edit"
+                      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                      style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}
+                    >
+                      {fields.map(f => (
+                        <div key={f.name}>
+                          <label style={{ display: 'block', fontSize: '0.75rem', color: '#71717a', marginBottom: '6px', fontWeight: 500 }}>
+                            {f.label}
+                          </label>
+                          {f.type === 'textarea' ? (
+                            <textarea rows={3} placeholder={f.placeholder}
+                              value={profile[f.name]}
+                              onChange={e => setProfile(p => ({ ...p, [f.name]: e.target.value }))}
+                              style={{ width: '100%', padding: '10px 14px', resize: 'vertical' }}
+                            />
+                          ) : f.type === 'select' ? (
+                            <DropdownSingle
+                              value={profile[f.name] || ''}
+                              onChange={val => setProfile(p => ({ ...p, [f.name]: val }))}
+                              options={f.options}
+                              placeholder={`Select ${f.label.toLowerCase()}...`}
+                            />
+                          ) : f.type === 'multiselect' ? (
+                            <DropdownMulti
+                              value={profile[f.name]}
+                              onChange={val => setProfile(p => ({ ...p, [f.name]: val }))}
+                              options={f.options}
+                              placeholder={f.placeholder}
+                            />
+                          ) : (
+                            <input type="text" placeholder={f.placeholder}
+                              value={profile[f.name]}
+                              onChange={e => setProfile(p => ({ ...p, [f.name]: e.target.value }))}
+                              style={{ width: '100%', height: '42px', padding: '0 14px' }}
+                            />
+                          )}
+                        </div>
+                      ))}
+                      <motion.button
+                        whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                        onClick={saveProfile} disabled={saving}
+                        style={{
+                          alignSelf: 'flex-start', padding: '10px 28px',
+                          background: saving ? '#e4e4e7' : ACCENT,
+                          color: saving ? '#a1a1aa' : '#fff',
+                          border: 'none', borderRadius: '999px', fontWeight: 700,
+                          cursor: saving ? 'not-allowed' : 'pointer', fontSize: '0.9rem'
+                        }}
+                      >{saving ? 'Saving...' : 'Save Changes'}</motion.button>
+                    </motion.div>
+                  ) : loadedProfile?.bio ? (
+                    <motion.div key="view"
+                      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                      style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
+                    >
+                      <p style={{ color: '#52525b', fontSize: '0.9rem', lineHeight: 1.7 }}>{loadedProfile.bio}</p>
+                      {loadedProfile.subjects?.length > 0 && (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                          {loadedProfile.subjects.map(s => (
+                            <span key={s} style={{ background: '#eef2ff', border: '1px solid #e0e7ff', color: ACCENT, fontSize: '0.78rem', padding: '3px 10px', borderRadius: '6px' }}>{s}</span>
+                          ))}
+                        </div>
+                      )}
+                      {loadedProfile.grade_levels?.length > 0 && (
+                        <p style={{ color: '#a1a1aa', fontSize: '0.82rem' }}>{loadedProfile.grade_levels.join(', ')}</p>
+                      )}
+                      {loadedProfile.phone && (
+                        <p style={{ color: '#a1a1aa', fontSize: '0.82rem' }}>{loadedProfile.phone}</p>
+                      )}
+                      {(loadedProfile.district || loadedProfile.state) && (
+                        <p style={{ color: '#a1a1aa', fontSize: '0.82rem' }}>
+                          {[loadedProfile.area, loadedProfile.district, loadedProfile.state, loadedProfile.country].filter(Boolean).join(', ')}
+                        </p>
+                      )}
+                    </motion.div>
+                  ) : (
+                    <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                      style={{ color: '#a1a1aa', fontSize: '0.9rem', lineHeight: 1.7 }}
+                    >Complete your profile so you can send connection requests to tutors and centers.</motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          ) : loading ? (
             <motion.div key="loading"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
