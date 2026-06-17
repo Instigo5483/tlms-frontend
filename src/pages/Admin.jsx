@@ -160,7 +160,10 @@ export default function Admin() {
                           {w.status}
                         </span>
                       </div>
-                      <p style={{ fontSize: '0.8rem', color: '#71717a', marginBottom: '2px' }}>{w.email}</p>
+                      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '4px' }}>
+                        <a href={`mailto:${w.email}`} style={{ fontSize: '0.8rem', color: ACCENT, textDecoration: 'none' }}>{w.email}</a>
+                        {w.phone && <a href={`tel:${w.phone}`} style={{ fontSize: '0.8rem', color: ACCENT, textDecoration: 'none' }}>{w.phone}</a>}
+                      </div>
                       <p style={{ fontSize: '0.8rem', color: '#71717a', marginBottom: '2px' }}>
                         {isUpi
                           ? `UPI: ${w.bank_account}`
