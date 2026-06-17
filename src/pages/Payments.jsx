@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import Navbar from '../components/Navbar'
 import { useAuth } from '../hooks/useAuth'
+import InvoiceModal from '../components/InvoiceModal'
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL
 const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY_ID
@@ -14,6 +15,7 @@ export default function Payments() {
   const [paying, setPaying] = useState(null)
   const [tab, setTab] = useState('pending')
   const [successData, setSuccessData] = useState(null)
+  const [invoiceBillId, setInvoiceBillId] = useState(null)
 
   useEffect(() => { loadBills() }, [])
 
@@ -184,12 +186,20 @@ export default function Payments() {
                   userRole={user?.role}
                   onPay={() => handlePay(bill)}
                   paying={paying === bill.id}
+                  onInvoice={() => setInvoiceBillId(bill.id)}
                 />
               ))}
             </motion.div>
           )}
         </AnimatePresence>
       </main>
+
+      {/* Invoice Modal */}
+      <AnimatePresence>
+        {invoiceBillId && (
+          <InvoiceModal billId={invoiceBillId} onClose={() => setInvoiceBillId(null)} />
+        )}
+      </AnimatePresence>
 
       {/* Success Modal */}
       <AnimatePresence>
@@ -310,7 +320,7 @@ export default function Payments() {
   )
 }
 
-function BillCard({ bill, userRole, onPay, paying, index }) {
+function BillCard({ bill, userRole, onPay, paying, onInvoice, index }) {
   const isPaid = bill.status === 'paid'
   const isOverdue = bill.status === 'overdue'
   const isPending = bill.status === 'pending'
@@ -369,6 +379,23 @@ function BillCard({ bill, userRole, onPay, paying, index }) {
             }}
           >
             {paying ? '...' : 'Pay Now'}
+          </motion.button>
+        )}
+        {userRole === 'student' && isPaid && (
+          <motion.button
+            whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+            onClick={onInvoice}
+            style={{
+              padding: '8px 18px',
+              background: '#fff',
+              color: '#2563eb',
+              border: '1.5px solid #bfdbfe',
+              borderRadius: '999px',
+              fontWeight: 700, cursor: 'pointer',
+              fontSize: '0.82rem', whiteSpace: 'nowrap'
+            }}
+          >
+            Invoice
           </motion.button>
         )}
       </div>
