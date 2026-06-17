@@ -151,7 +151,7 @@ export default function Wallet() {
         >
           <h1 className="font-display" style={{ fontWeight: 700, fontSize: 'clamp(1.5rem, 4vw, 2rem)', letterSpacing: '-0.02em', marginBottom: '0.3rem', color: '#18181b' }}>Wallet</h1>
           <p style={{ color: '#a1a1aa', fontSize: '0.88rem' }}>
-            Student payments are held by Razorpay. Withdraw to your bank — platform fee is deducted automatically.
+            Manage your earnings. Request a withdrawal and you'll be paid to your saved bank or UPI account.
           </p>
         </motion.div>
 
@@ -315,7 +315,7 @@ export default function Wallet() {
               <div style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '20px', padding: '1.8rem', boxShadow: '0 1px 2px rgba(24,24,27,0.04)', maxWidth: '480px' }}>
                 <h2 style={{ fontWeight: 700, fontSize: '0.95rem', marginBottom: '0.35rem', color: '#18181b' }}>Payout Account</h2>
                 <p style={{ color: '#a1a1aa', fontSize: '0.82rem', marginBottom: '1.6rem', lineHeight: 1.6 }}>
-                  Razorpay sends your withdrawal directly to this account. Your personal bank only ever receives the platform fee — the rest goes straight to you.
+                  Save your bank or UPI details. When you request a withdrawal, the platform admin will manually send the payment to this account.
                 </p>
 
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '1.4rem' }}>
