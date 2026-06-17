@@ -452,6 +452,11 @@ export default function Wallet() {
                         {new Date(w.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                         {' · '}fee ₹{w.platform_fee}
                       </p>
+                      {w.utr_reference && (
+                        <p style={{ color: '#a1a1aa', fontSize: '0.72rem', marginTop: '2px' }}>
+                          UTR: <span style={{ color: '#71717a', fontWeight: 600 }}>{w.utr_reference}</span>
+                        </p>
+                      )}
                     </div>
                     <div style={{ textAlign: 'right' }}>
                       <p style={{ fontWeight: 800, fontSize: '1rem', letterSpacing: '-0.02em', color: ACCENT }}>₹{w.net_amount}</p>
