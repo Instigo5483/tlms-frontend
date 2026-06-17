@@ -5,7 +5,7 @@ import { useAuth } from '../hooks/useAuth'
 const BACKEND = import.meta.env.VITE_BACKEND_URL
 
 function buildInvoiceHTML(inv) {
-  const paidDate = new Date(inv.paid_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
+  const paidDate = new Date(inv.paid_at).toLocaleString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })
   const dueDate = new Date(inv.due_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
 
   return `<!DOCTYPE html>
@@ -154,7 +154,7 @@ export default function InvoiceModal({ billId, onClose }) {
     }
   }
 
-  const paidDate = inv ? new Date(inv.paid_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : ''
+  const paidDate = inv ? new Date(inv.paid_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''
   const dueDate = inv ? new Date(inv.due_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : ''
 
   return (

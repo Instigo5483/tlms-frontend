@@ -65,7 +65,8 @@ export default function Payments() {
             setSuccessData({
               invoice: verifyData.invoice_number,
               amount: bill.amount,
-              name: bill.tutor_name
+              name: bill.tutor_name,
+              billId: bill.id
             })
             loadBills()
           } else {
@@ -294,24 +295,41 @@ export default function Payments() {
                 </motion.p>
               )}
 
-              {/* Done button */}
-              <motion.button
+              {/* Buttons */}
+              <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => setSuccessData(null)}
-                style={{
-                  width: '100%', height: '48px',
-                  background: '#2563eb',
-                  color: '#fff', border: 'none', borderRadius: '999px',
-                  fontWeight: 700, fontSize: '0.95rem',
-                  cursor: 'pointer',
-                }}
+                style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
               >
-                Done
-              </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+                  onClick={() => {
+                    setInvoiceBillId(successData.billId)
+                    setSuccessData(null)
+                  }}
+                  style={{
+                    width: '100%', height: '48px',
+                    background: '#2563eb',
+                    color: '#fff', border: 'none', borderRadius: '999px',
+                    fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer',
+                  }}
+                >
+                  View Invoice
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+                  onClick={() => setSuccessData(null)}
+                  style={{
+                    width: '100%', height: '44px',
+                    background: '#fff', color: '#71717a',
+                    border: '1px solid #e4e4e7', borderRadius: '999px',
+                    fontWeight: 600, fontSize: '0.88rem', cursor: 'pointer',
+                  }}
+                >
+                  Done
+                </motion.button>
+              </motion.div>
             </motion.div>
           </motion.div>
         )}
@@ -321,6 +339,7 @@ export default function Payments() {
 }
 
 function BillCard({ bill, userRole, onPay, paying, onInvoice, index }) {
+  const paidAt = bill.paid_at ? new Date(bill.paid_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : null
   const isPaid = bill.status === 'paid'
   const isOverdue = bill.status === 'overdue'
   const isPending = bill.status === 'pending'
@@ -355,6 +374,11 @@ function BillCard({ bill, userRole, onPay, paying, onInvoice, index }) {
         <p style={{ color: '#a1a1aa', fontSize: '0.78rem' }}>
           Due {new Date(bill.due_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
         </p>
+        {isPaid && paidAt && (
+          <p style={{ color: '#2563eb', fontSize: '0.72rem', marginTop: '2px', fontWeight: 500 }}>
+            Paid {paidAt}
+          </p>
+        )}
         {bill.invoice_number && (
           <p style={{ color: '#d4d4d8', fontSize: '0.72rem', marginTop: '2px' }}>
             {bill.invoice_number}
