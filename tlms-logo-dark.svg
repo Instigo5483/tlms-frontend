@@ -1,43 +1,59 @@
-<svg width="320" height="80" viewBox="0 0 320 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
 
-  <!-- ── Icon Mark (white badge on dark bg) ─── -->
-  <rect x="0" y="10" width="60" height="60" rx="14" fill="white"/>
+  <!-- Dark background -->
+  <rect width="400" height="400" fill="#0a0a0a"/>
 
-  <!-- T mark: accent node -->
-  <circle cx="30" cy="24" r="5.5" fill="#2563eb"/>
+  <!-- Green halo circle behind pin -->
+  <circle cx="200" cy="122" r="64" fill="#00C48C"/>
 
-  <!-- T mark: crossbar -->
-  <rect x="11" y="26" width="38" height="8" rx="4" fill="#2563eb"/>
+  <!-- Map pin (white teardrop on dark bg) -->
+  <path d="
+    M 200 76
+    C 173 76, 150 98, 150 124
+    C 150 149, 163 163, 179 174
+    L 200 202
+    L 221 174
+    C 237 163, 250 149, 250 124
+    C 250 98, 227 76, 200 76
+    Z
+  " fill="white"/>
 
-  <!-- T mark: vertical stem -->
-  <rect x="26" y="30" width="8" height="27" rx="4" fill="#2563eb"/>
+  <!-- Pin inner dark hole -->
+  <circle cx="200" cy="124" r="17" fill="#0a0a0a"/>
 
-  <!-- ── Divider ──────────────────────────────── -->
-  <rect x="72" y="22" width="1" height="36" rx="0.5" fill="rgba(255,255,255,0.2)"/>
+  <!-- Green platform bars -->
+  <rect x="155" y="202" width="90" height="9"  rx="4.5" fill="#00C48C"/>
+  <rect x="163" y="212" width="74" height="7"  rx="3.5" fill="#00C48C"/>
+  <rect x="172" y="220" width="56" height="5"  rx="2.5" fill="#00C48C"/>
 
-  <!-- ── Wordmark ────────────────────────────── -->
+  <!-- TLMS wordmark (white on dark) -->
   <text
-    x="81" y="47"
-    font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif"
-    font-weight="800"
-    font-size="28"
-    letter-spacing="-1.5"
-    fill="white">T</text>
-  <text
-    x="98" y="47"
-    font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif"
-    font-weight="800"
-    font-size="28"
-    letter-spacing="-1"
-    fill="rgba(255,255,255,0.85)">LMS</text>
+    x="200" y="293"
+    font-family="Georgia, 'Playfair Display', 'Times New Roman', Times, serif"
+    font-size="72"
+    font-weight="400"
+    fill="white"
+    text-anchor="middle"
+    letter-spacing="-1">TLMS</text>
 
-  <!-- ── Tagline ─────────────────────────────── -->
+  <!-- Tagline line 1 -->
   <text
-    x="81" y="63"
+    x="200" y="318"
     font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif"
-    font-weight="500"
     font-size="10.5"
-    letter-spacing="0.3"
-    fill="rgba(255,255,255,0.45)">The Learning Management System</text>
+    font-weight="400"
+    fill="rgba(255,255,255,0.55)"
+    text-anchor="middle"
+    letter-spacing="3">TUTION LOCATE &amp; MANAGEMENT</text>
+
+  <!-- Tagline line 2 -->
+  <text
+    x="200" y="335"
+    font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif"
+    font-size="10.5"
+    font-weight="400"
+    fill="rgba(255,255,255,0.55)"
+    text-anchor="middle"
+    letter-spacing="3">SERVICE</text>
 
 </svg>
