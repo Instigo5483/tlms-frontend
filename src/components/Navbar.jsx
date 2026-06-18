@@ -86,13 +86,18 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" onClick={() => setMenuOpen(false)} style={{
             textDecoration: 'none', display: 'flex',
-            alignItems: 'center', flexShrink: 0
+            alignItems: 'center', gap: '7px', flexShrink: 0
           }}>
             <img
-              src="/tlms-logo-sm.svg"
+              src="/tlms-icon.svg"
               alt="TLMS"
-              style={{ height: '34px', width: 'auto' }}
+              style={{ width: '28px', height: '28px' }}
             />
+            <span style={{
+              fontWeight: 700, fontSize: '1rem',
+              letterSpacing: '0.02em', whiteSpace: 'nowrap', color: '#18181b',
+              fontFamily: 'Georgia, serif'
+            }}>TLMS</span>
           </Link>
 
           {/* Desktop nav links */}

@@ -219,8 +219,8 @@ export default function Landing() {
         }} />
 
         <motion.div initial={{ opacity: 0, y: -10, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          style={{ position: 'relative', zIndex: 1, marginBottom: '2rem', width: '84px', height: '84px', borderRadius: '22px', boxShadow: '0 16px 32px rgba(37,99,235,0.18), 0 2px 6px rgba(24,24,27,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-          <img src="/logo.jpeg" alt="TLMS" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          style={{ position: 'relative', zIndex: 1, marginBottom: '2rem' }}>
+          <img src="/tlms-icon.svg" alt="TLMS" style={{ width: '96px', height: '96px' }} />
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }} style={{ position: 'relative', zIndex: 1, maxWidth: '860px', marginBottom: '1.4rem' }}>
@@ -547,7 +547,7 @@ export default function Landing() {
       {/* ── Footer ── */}
       <footer style={{ borderTop: '1px solid #f0f0f1', padding: '2rem 1.5rem', textAlign: 'center', color: '#a1a1aa', fontSize: '0.82rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '0.4rem' }}>
-          <img src="/logo.jpeg" alt="TLMS" style={{ width: '20px', height: '20px', borderRadius: '6px', objectFit: 'cover' }} />
+          <img src="/tlms-icon.svg" alt="TLMS" style={{ width: '22px', height: '22px' }} />
           <span style={{ fontWeight: 700, color: '#18181b' }}>TLMS</span>
         </div>
         © 2026 TLMS — Connect. Learn. Succeed.

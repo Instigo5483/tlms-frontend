@@ -102,9 +102,9 @@ export default function Login() {
           {/* Logo */}
           <div style={{ textAlign: 'center', marginBottom: '1.8rem' }}>
             <img
-              src="/logo.jpeg"
+              src="/tlms-icon.svg"
               alt="TLMS"
-              style={{ width: '52px', height: '52px', borderRadius: '14px', objectFit: 'cover', marginBottom: '0.8rem' }}
+              style={{ width: '72px', height: '72px', marginBottom: '0.8rem' }}
             />
             <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', color: '#a1a1aa', textTransform: 'uppercase' }}>
               Connect · Learn · Succeed
