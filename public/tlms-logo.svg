@@ -1,0 +1,59 @@
+<svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- White background -->
+  <rect width="400" height="400" fill="white"/>
+
+  <!-- ── Green halo circle behind pin ── -->
+  <circle cx="200" cy="122" r="64" fill="#00C48C"/>
+
+  <!-- ── Map pin (black teardrop) ── -->
+  <path d="
+    M 200 76
+    C 173 76, 150 98, 150 124
+    C 150 149, 163 163, 179 174
+    L 200 202
+    L 221 174
+    C 237 163, 250 149, 250 124
+    C 250 98, 227 76, 200 76
+    Z
+  " fill="#0a0a0a"/>
+
+  <!-- Pin inner white hole -->
+  <circle cx="200" cy="124" r="17" fill="white"/>
+
+  <!-- ── Green platform bars (shadow/base under pin) ── -->
+  <rect x="155" y="202" width="90" height="9"  rx="4.5" fill="#00C48C"/>
+  <rect x="163" y="212" width="74" height="7"  rx="3.5" fill="#00C48C"/>
+  <rect x="172" y="220" width="56" height="5"  rx="2.5" fill="#00C48C"/>
+
+  <!-- ── TLMS wordmark (serif) ── -->
+  <text
+    x="200" y="293"
+    font-family="Georgia, 'Playfair Display', 'Times New Roman', Times, serif"
+    font-size="72"
+    font-weight="400"
+    fill="#0a0a0a"
+    text-anchor="middle"
+    letter-spacing="-1">TLMS</text>
+
+  <!-- ── Tagline line 1 ── -->
+  <text
+    x="200" y="318"
+    font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif"
+    font-size="10.5"
+    font-weight="400"
+    fill="#222222"
+    text-anchor="middle"
+    letter-spacing="3">TUTION LOCATE &amp; MANAGEMENT</text>
+
+  <!-- ── Tagline line 2 ── -->
+  <text
+    x="200" y="335"
+    font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif"
+    font-size="10.5"
+    font-weight="400"
+    fill="#222222"
+    text-anchor="middle"
+    letter-spacing="3">SERVICE</text>
+
+</svg>
