@@ -1,0 +1,44 @@
+<svg width="320" height="80" viewBox="0 0 320 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- ── Icon Mark ─────────────────────────────── -->
+  <!-- Blue rounded square badge -->
+  <rect x="0" y="10" width="60" height="60" rx="14" fill="#2563eb"/>
+
+  <!-- T mark: accent node (top of stem) -->
+  <circle cx="30" cy="24" r="5.5" fill="white"/>
+
+  <!-- T mark: crossbar -->
+  <rect x="11" y="26" width="38" height="8" rx="4" fill="white"/>
+
+  <!-- T mark: vertical stem -->
+  <rect x="26" y="30" width="8" height="27" rx="4" fill="white"/>
+
+  <!-- ── Divider ──────────────────────────────── -->
+  <rect x="72" y="22" width="1" height="36" rx="0.5" fill="#e4e4e7"/>
+
+  <!-- ── Wordmark ────────────────────────────── -->
+  <text
+    x="81" y="47"
+    font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif"
+    font-weight="800"
+    font-size="28"
+    letter-spacing="-1.5"
+    fill="#2563eb">T</text>
+  <text
+    x="98" y="47"
+    font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif"
+    font-weight="800"
+    font-size="28"
+    letter-spacing="-1"
+    fill="#18181b">LMS</text>
+
+  <!-- ── Tagline ─────────────────────────────── -->
+  <text
+    x="81" y="63"
+    font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif"
+    font-weight="500"
+    font-size="10.5"
+    letter-spacing="0.3"
+    fill="#a1a1aa">The Learning Management System</text>
+
+</svg>

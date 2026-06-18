@@ -1,0 +1,15 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Blue rounded square -->
+  <rect width="64" height="64" rx="15" fill="#2563eb"/>
+
+  <!-- T mark: accent node (sits atop crossbar center) -->
+  <circle cx="32" cy="17" r="6" fill="white"/>
+
+  <!-- T mark: crossbar -->
+  <rect x="11" y="19" width="42" height="9" rx="4.5" fill="white"/>
+
+  <!-- T mark: vertical stem -->
+  <rect x="27.5" y="24" width="9" height="29" rx="4.5" fill="white"/>
+
+</svg>

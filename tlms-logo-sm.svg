@@ -1,0 +1,31 @@
+<svg width="160" height="44" viewBox="0 0 160 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- ── Icon Mark (compact 36×36) ───────────── -->
+  <rect x="0" y="4" width="36" height="36" rx="9" fill="#2563eb"/>
+
+  <!-- T mark: accent node -->
+  <circle cx="18" cy="14" r="3.5" fill="white"/>
+
+  <!-- T mark: crossbar -->
+  <rect x="6.5" y="16" width="23" height="5" rx="2.5" fill="white"/>
+
+  <!-- T mark: stem -->
+  <rect x="15.5" y="19" width="5" height="16" rx="2.5" fill="white"/>
+
+  <!-- ── Wordmark ────────────────────────────── -->
+  <text
+    x="44" y="28"
+    font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif"
+    font-weight="800"
+    font-size="22"
+    letter-spacing="-1.2"
+    fill="#2563eb">T</text>
+  <text
+    x="57" y="28"
+    font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif"
+    font-weight="800"
+    font-size="22"
+    letter-spacing="-0.8"
+    fill="#18181b">LMS</text>
+
+</svg>
