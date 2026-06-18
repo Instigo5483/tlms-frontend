@@ -1,32 +1,32 @@
-<svg width="180" height="44" viewBox="0 0 180 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="130" height="36" viewBox="0 0 130 36" fill="none" xmlns="http://www.w3.org/2000/svg">
 
   <!-- Green halo circle -->
-  <circle cx="22" cy="18" r="14" fill="#00C48C"/>
+  <circle cx="18" cy="13" r="11" fill="#00C48C"/>
 
-  <!-- Map pin (black teardrop, compact) -->
+  <!-- Map pin (black teardrop) -->
   <path d="
-    M 22 7
-    C 15 7, 9 12, 9 19
-    C 9 24, 12 28, 16 31
-    L 22 38
-    L 28 31
-    C 32 28, 35 24, 35 19
-    C 35 12, 29 7, 22 7
+    M 18 4
+    C 11.4 4, 7 8.5, 7 14
+    C 7 18.5, 9.8 21.8, 13.2 24.2
+    L 18 30
+    L 22.8 24.2
+    C 26.2 21.8, 29 18.5, 29 14
+    C 29 8.5, 24.6 4, 18 4
     Z
   " fill="#0a0a0a"/>
 
-  <!-- Pin hole -->
-  <circle cx="22" cy="19" r="5" fill="white"/>
+  <!-- Pin inner white hole -->
+  <circle cx="18" cy="14" r="4.5" fill="white"/>
 
-  <!-- Platform bars -->
-  <rect x="9"  y="38" width="26" height="3"  rx="1.5" fill="#00C48C"/>
-  <rect x="12" y="42" width="20" height="2"  rx="1"   fill="#00C48C"/>
+  <!-- Green platform bars -->
+  <rect x="8"  y="30" width="20" height="2.5" rx="1.25" fill="#00C48C"/>
+  <rect x="10" y="33" width="16" height="2"   rx="1"    fill="#00C48C"/>
 
   <!-- TLMS wordmark -->
   <text
-    x="46" y="30"
+    x="37" y="26"
     font-family="Georgia, 'Playfair Display', 'Times New Roman', Times, serif"
-    font-size="26"
+    font-size="23"
     font-weight="400"
     fill="#0a0a0a"
     letter-spacing="-0.5">TLMS</text>
