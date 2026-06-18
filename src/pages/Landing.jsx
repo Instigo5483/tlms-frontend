@@ -3,6 +3,10 @@ import { motion, useMotionValue, animate, AnimatePresence } from 'motion/react'
 import { useRef, useState, useEffect } from 'react'
 import Navbar from '../components/Navbar'
 
+const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'
+const STATS_CACHE_KEY = 'tlms_stats_cache'
+const STATS_CACHE_TTL = 8 * 60 * 60 * 1000
+
 const C = {
   indigo: '#4f46e5',
   purple: '#1d4ed8',
@@ -21,8 +25,8 @@ const cardBase = {
 const cardHover = { y: -6, boxShadow: '0 20px 40px rgba(24,24,27,0.10)', transition: { duration: 0.25, ease: [0.22, 1, 0.36, 1] } }
 
 function AnimatedStat({ value, label, color, delay }) {
-  const numericValue = parseInt(value.replace(/[^0-9]/g, ''), 10) || 0
-  const suffix = value.replace(/[0-9]/g, '')
+  const numericValue = parseInt(String(value).replace(/[^0-9]/g, ''), 10) || 0
+  const suffix = String(value).replace(/[0-9]/g, '')
   const count = useMotionValue(0)
   const [display, setDisplay] = useState(0)
 
@@ -30,7 +34,7 @@ function AnimatedStat({ value, label, color, delay }) {
     const unsub = count.on('change', v => setDisplay(Math.round(v)))
     const controls = animate(count, numericValue, { duration: 1.4, delay, ease: [0.22, 1, 0.36, 1] })
     return () => { controls.stop(); unsub() }
-  }, [])
+  }, [numericValue])
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay }} style={{ textAlign: 'center' }}>
@@ -192,6 +196,25 @@ function FeeCalculator() {
 export default function Landing() {
   const navigate = useNavigate()
   const [search, setSearch] = useState('')
+  const [stats, setStats] = useState({ students: 1000, tutors: 500, subjects: 20, centers: 50 })
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const cached = JSON.parse(localStorage.getItem(STATS_CACHE_KEY) || 'null')
+        if (cached && Date.now() - cached.ts < STATS_CACHE_TTL) {
+          setStats(cached.data)
+          return
+        }
+        const res = await fetch(`${BACKEND}/api/stats`)
+        if (!res.ok) return
+        const data = await res.json()
+        setStats(data)
+        localStorage.setItem(STATS_CACHE_KEY, JSON.stringify({ ts: Date.now(), data }))
+      } catch {}
+    }
+    fetchStats()
+  }, [])
 
   function handleSearch(e) {
     e.preventDefault()
@@ -246,12 +269,12 @@ export default function Landing() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.5 }}
           style={{ position: 'relative', zIndex: 1, display: 'flex', gap: 'clamp(1.6rem, 4vw, 3.2rem)', flexWrap: 'wrap', justifyContent: 'center' }}>
           {[
-            { value: '1000+', label: 'Students',        color: C.indigo },
-            { value: '500+',  label: 'Verified Tutors', color: C.indigo },
-            { value: '20+',   label: 'Subjects',        color: C.indigo },
-            { value: '50+',   label: 'Centers',         color: C.indigo },
+            { value: stats.students, label: 'Students',        color: C.indigo },
+            { value: stats.tutors,   label: 'Verified Tutors', color: C.indigo },
+            { value: stats.subjects, label: 'Subjects',        color: C.indigo },
+            { value: stats.centers,  label: 'Centers',         color: C.indigo },
           ].map((stat, i) => (
-            <AnimatedStat key={stat.label} value={stat.value} label={stat.label} color={stat.color} delay={0.5 + i * 0.1} />
+            <AnimatedStat key={stat.label} value={`${stat.value}+`} label={stat.label} color={stat.color} delay={0.5 + i * 0.1} />
           ))}
         </motion.div>
       </section>
