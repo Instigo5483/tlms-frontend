@@ -6,7 +6,7 @@ function dayOrdinal(n) {
   return n + (s[(v - 20) % 10] || s[v] || s[0])
 }
 
-export default function StudentInfoModal({ open, student, onClose, onAccept, onDecline, onRemove, accentColor = '#4f46e5' }) {
+export default function StudentInfoModal({ open, student, onClose, onAccept, onDecline, onRemove, onEdit, accentColor = '#4f46e5' }) {
   const [avatarError, setAvatarError] = useState(false)
   useEffect(() => setAvatarError(false), [student?.id])
 
@@ -138,8 +138,7 @@ export default function StudentInfoModal({ open, student, onClose, onAccept, onD
               )}
               {isAccepted && (
                 <>
-                  <button onClick={() => onEditTags?.(student.id)} style={{ padding: '9px 18px', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '999px', color: '#2563eb', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}>Edit Tags</button>
-                  <button onClick={() => onEditFee?.(student.id)} style={{ padding: '9px 18px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '999px', color: '#059669', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}>Edit Fee</button>
+                  <button onClick={() => onEdit?.(student.id)} style={{ padding: '9px 18px', background: '#f4f4f5', border: '1px solid #e4e4e7', borderRadius: '999px', color: '#18181b', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}>Edit</button>
                   <button onClick={() => onRemove(student.id)} style={{ padding: '9px 18px', background: '#f4f4f5', border: '1px solid #d4d4d8', borderRadius: '999px', color: '#18181b', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}>Remove</button>
                 </>
               )}

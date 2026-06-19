@@ -4,8 +4,7 @@ import Navbar from '../components/Navbar'
 import ConfirmModal from '../components/ConfirmModal'
 import AcceptStudentModal from '../components/AcceptStudentModal'
 import StudentInfoModal from '../components/StudentInfoModal'
-import EditTagsModal from '../components/EditTagsModal'
-import EditFeeModal from '../components/EditFeeModal'
+import EditStudentModal from '../components/EditStudentModal'
 import AvatarUpload from '../components/AvatarUpload'
 import { useAuth } from '../hooks/useAuth'
 
@@ -268,8 +267,7 @@ export default function TutorDashboard() {
   const [modal, setModal] = useState(null)
   const [feeModal, setFeeModal] = useState(null)
   const [studentModal, setStudentModal] = useState(null)
-  const [tagModal, setTagModal] = useState(null)
-  const [editFeeModal, setEditFeeModal] = useState(null)
+  const [editStudentModal, setEditStudentModal] = useState(null)
   const [filterClass, setFilterClass] = useState('')
   const [filterSubjects, setFilterSubjects] = useState([])
   const [alertMsg, setAlertMsg] = useState(null)
@@ -436,45 +434,37 @@ export default function TutorDashboard() {
   function handleDeclineFromModal(id) { setStudentModal(null); handleReject(id) }
   function handleRemoveFromModal(id) { setStudentModal(null); handleRemoveStudent(id) }
 
-  function handleEditTagsFromModal(id) {
+  function handleEditFromModal(id) {
     const s = students.find(st => st.id === id)
     setStudentModal(null)
-    setTagModal(s)
-  }
-  function handleEditFeeFromModal(id) {
-    const s = students.find(st => st.id === id)
-    setStudentModal(null)
-    setEditFeeModal(s)
+    setEditStudentModal(s)
   }
 
-  async function submitTagEdit({ tagClass, tagSubjects }) {
-    const id = tagModal.id
-    setTagModal(null)
+  async function submitStudentEdit({ fee, feeDay, applyFrom, tagClass, tagSubjects }) {
+    const id = editStudentModal.id
+    setEditStudentModal(null)
     try {
-      const res = await fetch(`${BACKEND}/api/enrollments/${id}/tags`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ tag_class: tagClass, tag_subjects: tagSubjects })
-      })
-      if (!res.ok) { setAlertMsg('Failed to update tags. Try again.'); return }
-      const updated = await res.json()
-      setStudents(prev => prev.map(s => s.id === id ? { ...s, tag_class: updated.tag_class, tag_subjects: updated.tag_subjects } : s))
-    } catch { setAlertMsg('Failed to update tags. Try again.') }
-  }
-
-  async function submitFeeEdit({ fee, feeDay, applyFrom }) {
-    const id = editFeeModal.id
-    setEditFeeModal(null)
-    try {
-      const res = await fetch(`${BACKEND}/api/enrollments/${id}/fee`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ monthly_fee: fee, fee_day: feeDay, apply_from: applyFrom })
-      })
-      if (!res.ok) { setAlertMsg('Failed to update fee. Try again.'); return }
-      const updated = await res.json()
-      setStudents(prev => prev.map(s => s.id === id ? { ...s, monthly_fee: updated.monthly_fee, fee_day: updated.fee_day } : s))
-    } catch { setAlertMsg('Failed to update fee. Try again.') }
+      const [feeRes, tagRes] = await Promise.all([
+        fetch(`${BACKEND}/api/enrollments/${id}/fee`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ monthly_fee: fee, fee_day: feeDay, apply_from: applyFrom })
+        }),
+        fetch(`${BACKEND}/api/enrollments/${id}/tags`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ tag_class: tagClass, tag_subjects: tagSubjects })
+        }),
+      ])
+      if (!feeRes.ok || !tagRes.ok) { setAlertMsg('Failed to save changes. Try again.'); return }
+      const feeData = await feeRes.json()
+      const tagData = await tagRes.json()
+      setStudents(prev => prev.map(s => s.id === id ? {
+        ...s,
+        monthly_fee: feeData.monthly_fee, fee_day: feeData.fee_day,
+        tag_class: tagData.tag_class, tag_subjects: tagData.tag_subjects,
+      } : s))
+    } catch { setAlertMsg('Failed to save changes. Try again.') }
   }
 
   const pending = students.filter(s => s.status === 'pending')
@@ -798,8 +788,7 @@ export default function TutorDashboard() {
         onAccept={handleAcceptFromModal}
         onDecline={handleDeclineFromModal}
         onRemove={handleRemoveFromModal}
-        onEditTags={handleEditTagsFromModal}
-        onEditFee={handleEditFeeFromModal}
+        onEdit={handleEditFromModal}
         accentColor={ACCENT}
       />
 
@@ -813,19 +802,11 @@ export default function TutorDashboard() {
         accentColor={ACCENT}
       />
 
-      <EditTagsModal
-        open={!!tagModal}
-        student={tagModal}
-        onConfirm={submitTagEdit}
-        onCancel={() => setTagModal(null)}
-        accentColor={ACCENT}
-      />
-
-      <EditFeeModal
-        open={!!editFeeModal}
-        student={editFeeModal}
-        onConfirm={submitFeeEdit}
-        onCancel={() => setEditFeeModal(null)}
+      <EditStudentModal
+        open={!!editStudentModal}
+        student={editStudentModal}
+        onConfirm={submitStudentEdit}
+        onCancel={() => setEditStudentModal(null)}
         accentColor={ACCENT}
       />
 
