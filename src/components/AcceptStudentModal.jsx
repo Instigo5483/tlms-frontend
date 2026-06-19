@@ -1,6 +1,22 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 
+const CLASS_OPTIONS = [
+  'Nursery','LKG','UKG',
+  'Class 1','Class 2','Class 3','Class 4','Class 5',
+  'Class 6','Class 7','Class 8','Class 9','Class 10',
+  'Class 11','Class 12',
+  'JEE','NEET','UPSC','APSC','WBJEE','CEE',
+]
+
+const SUBJECT_OPTIONS = [
+  'Accountancy','Arts / Drawing','Bengali','Biology','Business Studies','Chemistry',
+  'Computer Science','Economics','English','Geography','Gujarati','Hindi','History',
+  'Kannada','Malayalam','Marathi','Mathematics','Music','Physical Education',
+  'Physics','Political Science','Punjabi','Sanskrit','Social Science',
+  'Tamil','Telugu','Urdu',
+]
+
 function todayISO() {
   return new Date().toISOString().split('T')[0]
 }
@@ -19,21 +35,32 @@ function dayOrdinal(n) {
 }
 
 export default function AcceptStudentModal({
-  open, studentName, onConfirm, onCancel, accentColor = '#4f46e5'
+  open, studentName, studentSubjects, studentGrades, onConfirm, onCancel, accentColor = '#4f46e5'
 }) {
   const [fee, setFee] = useState('')
   const [startDate, setStartDate] = useState(todayISO())
+  const [tagClass, setTagClass] = useState('')
+  const [tagSubjects, setTagSubjects] = useState([])
 
   useEffect(() => {
-    if (open) { setFee(''); setStartDate(todayISO()) }
+    if (open) {
+      setFee('')
+      setStartDate(todayISO())
+      setTagClass(studentGrades?.[0] || '')
+      setTagSubjects(studentSubjects || [])
+    }
   }, [open])
 
   const day = startDate ? parseInt(startDate.split('-')[2], 10) : null
 
+  function toggleSubject(sub) {
+    setTagSubjects(prev => prev.includes(sub) ? prev.filter(s => s !== sub) : [...prev, sub])
+  }
+
   function handleConfirm() {
     if (!fee || Number(fee) < 0) return
     if (!startDate) return
-    onConfirm({ fee: Number(fee), startDate })
+    onConfirm({ fee: Number(fee), startDate, tagClass, tagSubjects })
   }
 
   return (
@@ -143,6 +170,42 @@ export default function AcceptStudentModal({
                 )}
               </div>
             )}
+
+            {/* Tags */}
+            <div style={{ marginBottom: '1.4rem' }}>
+              <p style={{ fontSize: '0.72rem', fontWeight: 600, color: '#71717a', letterSpacing: '0.05em', marginBottom: '6px' }}>
+                CLASS TAG <span style={{ fontWeight: 400, color: '#a1a1aa' }}>· optional</span>
+              </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginBottom: '12px' }}>
+                {CLASS_OPTIONS.map(opt => {
+                  const sel = tagClass === opt
+                  return (
+                    <button key={opt} onClick={() => setTagClass(sel ? '' : opt)} style={{
+                      padding: '3px 10px', borderRadius: '999px', fontSize: '0.72rem', fontWeight: 600,
+                      cursor: 'pointer', border: 'none',
+                      background: sel ? '#2563eb' : '#eff6ff', color: sel ? '#fff' : '#2563eb',
+                      outline: sel ? 'none' : '1px solid #bfdbfe',
+                    }}>{opt}</button>
+                  )
+                })}
+              </div>
+              <p style={{ fontSize: '0.72rem', fontWeight: 600, color: '#71717a', letterSpacing: '0.05em', marginBottom: '6px' }}>
+                SUBJECT TAGS <span style={{ fontWeight: 400, color: '#a1a1aa' }}>· optional, multiple</span>
+              </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                {SUBJECT_OPTIONS.map(sub => {
+                  const sel = tagSubjects.includes(sub)
+                  return (
+                    <button key={sub} onClick={() => toggleSubject(sub)} style={{
+                      padding: '3px 10px', borderRadius: '999px', fontSize: '0.72rem', fontWeight: 600,
+                      cursor: 'pointer', border: 'none',
+                      background: sel ? '#059669' : '#ecfdf5', color: sel ? '#fff' : '#059669',
+                      outline: sel ? 'none' : '1px solid #a7f3d0',
+                    }}>{sub}</button>
+                  )
+                })}
+              </div>
+            </div>
 
             <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
               <button

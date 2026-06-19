@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 
+function dayOrdinal(n) {
+  const s = ['th','st','nd','rd'], v = n % 100
+  return n + (s[(v - 20) % 10] || s[v] || s[0])
+}
+
 export default function StudentInfoModal({ open, student, onClose, onAccept, onDecline, onRemove, accentColor = '#4f46e5' }) {
   const [avatarError, setAvatarError] = useState(false)
   useEffect(() => setAvatarError(false), [student?.id])
@@ -104,12 +109,27 @@ export default function StudentInfoModal({ open, student, onClose, onAccept, onD
               {isAccepted && student.monthly_fee > 0 && (
                 <div>
                   <p style={{ fontSize: '0.7rem', color: '#a1a1aa', letterSpacing: '0.06em', marginBottom: '4px' }}>FEE</p>
-                  <p style={{ fontSize: '0.88rem', color: accentColor, fontWeight: 700 }}>₹{student.monthly_fee}/month · due day {student.fee_day || 1}</p>
+                  <p style={{ fontSize: '0.88rem', color: accentColor, fontWeight: 700 }}>₹{student.monthly_fee}/month · billed on the {dayOrdinal(student.fee_day || 1)} each month</p>
                 </div>
               )}
             </div>
 
-            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+            {/* Tags display */}
+            {isAccepted && (student.tag_class || student.tag_subjects?.length > 0) && (
+              <div style={{ marginBottom: '1rem' }}>
+                <p style={{ fontSize: '0.7rem', color: '#a1a1aa', letterSpacing: '0.06em', marginBottom: '6px' }}>TAGS</p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                  {student.tag_class && (
+                    <span style={{ background: '#eff6ff', color: '#2563eb', border: '1px solid #bfdbfe', fontSize: '0.75rem', fontWeight: 700, padding: '3px 10px', borderRadius: '999px' }}>{student.tag_class}</span>
+                  )}
+                  {student.tag_subjects?.map(s => (
+                    <span key={s} style={{ background: '#ecfdf5', color: '#059669', border: '1px solid #a7f3d0', fontSize: '0.75rem', fontWeight: 700, padding: '3px 10px', borderRadius: '999px' }}>{s}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
               {isPending && (
                 <>
                   <button onClick={() => onDecline(student.id)} style={{ padding: '9px 18px', background: '#f4f4f5', border: '1px solid #d4d4d8', borderRadius: '999px', color: '#18181b', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}>Decline</button>
@@ -117,7 +137,11 @@ export default function StudentInfoModal({ open, student, onClose, onAccept, onD
                 </>
               )}
               {isAccepted && (
-                <button onClick={() => onRemove(student.id)} style={{ padding: '9px 18px', background: '#f4f4f5', border: '1px solid #d4d4d8', borderRadius: '999px', color: '#18181b', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}>Remove Student</button>
+                <>
+                  <button onClick={() => onEditTags?.(student.id)} style={{ padding: '9px 18px', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '999px', color: '#2563eb', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}>Edit Tags</button>
+                  <button onClick={() => onEditFee?.(student.id)} style={{ padding: '9px 18px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '999px', color: '#059669', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}>Edit Fee</button>
+                  <button onClick={() => onRemove(student.id)} style={{ padding: '9px 18px', background: '#f4f4f5', border: '1px solid #d4d4d8', borderRadius: '999px', color: '#18181b', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}>Remove</button>
+                </>
               )}
               <button onClick={onClose} style={{ padding: '9px 18px', background: 'transparent', border: '1px solid #e4e4e7', borderRadius: '999px', color: '#71717a', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 500 }}>Close</button>
             </div>

@@ -4,6 +4,8 @@ import Navbar from '../components/Navbar'
 import ConfirmModal from '../components/ConfirmModal'
 import AcceptStudentModal from '../components/AcceptStudentModal'
 import StudentInfoModal from '../components/StudentInfoModal'
+import EditTagsModal from '../components/EditTagsModal'
+import EditFeeModal from '../components/EditFeeModal'
 import AvatarUpload from '../components/AvatarUpload'
 import { useAuth } from '../hooks/useAuth'
 
@@ -266,6 +268,10 @@ export default function CenterDashboard() {
   const [modal, setModal] = useState(null)
   const [feeModal, setFeeModal] = useState(null)
   const [studentModal, setStudentModal] = useState(null)
+  const [tagModal, setTagModal] = useState(null)
+  const [editFeeModal, setEditFeeModal] = useState(null)
+  const [filterClass, setFilterClass] = useState('')
+  const [filterSubjects, setFilterSubjects] = useState([])
   const [alertMsg, setAlertMsg] = useState(null)
   const [togglingVisibility, setTogglingVisibility] = useState(false)
   const [profile, setProfile] = useState({
@@ -363,19 +369,19 @@ export default function CenterDashboard() {
     setFeeModal(enrollmentId)
   }
 
-  async function submitAccept({ fee, startDate }) {
+  async function submitAccept({ fee, startDate, tagClass, tagSubjects }) {
     const enrollmentId = feeModal
     setFeeModal(null)
     try {
       const res = await fetch(`${BACKEND}/api/enrollments/${enrollmentId}/accept`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ monthly_fee: Number(fee), payment_start_date: startDate })
+        body: JSON.stringify({ monthly_fee: Number(fee), payment_start_date: startDate, tag_class: tagClass, tag_subjects: tagSubjects })
       })
       if (!res.ok) { setAlertMsg('Failed to accept the request. Please try again.'); return }
       const updated = await res.json()
       setStudents(prev => prev.map(s =>
-        s.id === enrollmentId ? { ...s, status: 'accepted', monthly_fee: Number(fee), fee_day: updated.fee_day } : s
+        s.id === enrollmentId ? { ...s, status: 'accepted', monthly_fee: Number(fee), fee_day: updated.fee_day, tag_class: updated.tag_class, tag_subjects: updated.tag_subjects } : s
       ))
     } catch { setAlertMsg('Failed to accept the request. Please try again.') }
   }
@@ -424,8 +430,57 @@ export default function CenterDashboard() {
   function handleDeclineFromModal(id) { setStudentModal(null); handleReject(id) }
   function handleRemoveFromModal(id) { setStudentModal(null); handleRemoveStudent(id) }
 
+  function handleEditTagsFromModal(id) {
+    const s = students.find(st => st.id === id)
+    setStudentModal(null)
+    setTagModal(s)
+  }
+  function handleEditFeeFromModal(id) {
+    const s = students.find(st => st.id === id)
+    setStudentModal(null)
+    setEditFeeModal(s)
+  }
+
+  async function submitTagEdit({ tagClass, tagSubjects }) {
+    const id = tagModal.id
+    setTagModal(null)
+    try {
+      const res = await fetch(`${BACKEND}/api/enrollments/${id}/tags`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ tag_class: tagClass, tag_subjects: tagSubjects })
+      })
+      if (!res.ok) { setAlertMsg('Failed to update tags. Try again.'); return }
+      const updated = await res.json()
+      setStudents(prev => prev.map(s => s.id === id ? { ...s, tag_class: updated.tag_class, tag_subjects: updated.tag_subjects } : s))
+    } catch { setAlertMsg('Failed to update tags. Try again.') }
+  }
+
+  async function submitFeeEdit({ fee, feeDay, applyFrom }) {
+    const id = editFeeModal.id
+    setEditFeeModal(null)
+    try {
+      const res = await fetch(`${BACKEND}/api/enrollments/${id}/fee`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ monthly_fee: fee, fee_day: feeDay, apply_from: applyFrom })
+      })
+      if (!res.ok) { setAlertMsg('Failed to update fee. Try again.'); return }
+      const updated = await res.json()
+      setStudents(prev => prev.map(s => s.id === id ? { ...s, monthly_fee: updated.monthly_fee, fee_day: updated.fee_day } : s))
+    } catch { setAlertMsg('Failed to update fee. Try again.') }
+  }
+
   const pending = students.filter(s => s.status === 'pending')
   const accepted = students.filter(s => s.status === 'accepted')
+
+  const allFilterClasses = [...new Set(accepted.map(s => s.tag_class).filter(Boolean))]
+  const allFilterSubjects = [...new Set(accepted.flatMap(s => s.tag_subjects || []))]
+  const filteredAccepted = accepted.filter(s => {
+    if (filterClass && s.tag_class !== filterClass) return false
+    if (filterSubjects.length > 0 && !filterSubjects.every(sub => (s.tag_subjects || []).includes(sub))) return false
+    return true
+  })
 
   const fields = [
     { label: 'Center Name', name: 'center_name', placeholder: 'ABC Tuition Center' },
@@ -662,30 +717,70 @@ export default function CenterDashboard() {
             <motion.div key="students"
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}
-              style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '10px' }}
             >
-              {accepted.length === 0 ? (
-                <EmptyState text="No students yet" sub="Accept connection requests to add students" />
-              ) : accepted.map((s, i) => (
-                <motion.div key={s.id}
-                  initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                  onClick={() => setStudentModal(s)}
-                  whileHover={{ y: -3, boxShadow: '0 12px 24px rgba(24,24,27,0.08)' }}
-                  style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '16px', padding: '1.1rem 1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', boxShadow: '0 1px 2px rgba(24,24,27,0.04)', cursor: 'pointer' }}
-                >
-                  <div>
-                    <p style={{ color: '#18181b', fontWeight: 600, fontSize: '0.9rem' }}>{s.full_name}</p>
-                    <p style={{ color: '#71717a', fontSize: '0.78rem', marginTop: '2px' }}>{s.email}</p>
-                    {s.monthly_fee > 0 && (
-                      <p style={{ fontSize: '0.75rem', marginTop: '3px', fontWeight: 600, color: ACCENT }}>
-                        ₹{s.monthly_fee}/month · billed on the {s.fee_day ? dayOrdinal(s.fee_day) : '1st'} each month
-                      </p>
-                    )}
-                  </div>
-                  <span style={{ fontSize: '0.75rem', color: ACCENT, fontWeight: 600, whiteSpace: 'nowrap' }}>View →</span>
-                </motion.div>
-              ))}
+              {/* Filter bar */}
+              {(allFilterClasses.length > 0 || allFilterSubjects.length > 0) && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center', marginBottom: '12px' }}>
+                  <span style={{ fontSize: '0.68rem', color: '#a1a1aa', fontWeight: 600, letterSpacing: '0.05em' }}>FILTER</span>
+                  {allFilterClasses.map(cls => (
+                    <button key={cls} onClick={() => setFilterClass(f => f === cls ? '' : cls)} style={{
+                      padding: '3px 10px', borderRadius: '999px', fontSize: '0.73rem', fontWeight: 700,
+                      cursor: 'pointer', border: 'none', transition: 'all 0.15s',
+                      background: filterClass === cls ? '#2563eb' : '#eff6ff',
+                      color: filterClass === cls ? '#fff' : '#2563eb',
+                      outline: filterClass === cls ? 'none' : '1px solid #bfdbfe',
+                    }}>{cls}</button>
+                  ))}
+                  {allFilterSubjects.map(sub => (
+                    <button key={sub} onClick={() => setFilterSubjects(prev => prev.includes(sub) ? prev.filter(s => s !== sub) : [...prev, sub])} style={{
+                      padding: '3px 10px', borderRadius: '999px', fontSize: '0.73rem', fontWeight: 700,
+                      cursor: 'pointer', border: 'none', transition: 'all 0.15s',
+                      background: filterSubjects.includes(sub) ? '#059669' : '#ecfdf5',
+                      color: filterSubjects.includes(sub) ? '#fff' : '#059669',
+                      outline: filterSubjects.includes(sub) ? 'none' : '1px solid #a7f3d0',
+                    }}>{sub}</button>
+                  ))}
+                  {(filterClass || filterSubjects.length > 0) && (
+                    <button onClick={() => { setFilterClass(''); setFilterSubjects([]) }} style={{
+                      padding: '3px 10px', borderRadius: '999px', fontSize: '0.73rem', fontWeight: 600,
+                      cursor: 'pointer', background: '#f4f4f5', border: '1px solid #e4e4e7', color: '#71717a',
+                    }}>✕ Clear</button>
+                  )}
+                </div>
+              )}
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '10px' }}>
+                {accepted.length === 0 ? (
+                  <EmptyState text="No students yet" sub="Accept connection requests to add students" />
+                ) : filteredAccepted.length === 0 ? (
+                  <EmptyState text="No matches" sub="Try clearing or changing filters" />
+                ) : filteredAccepted.map((s, i) => (
+                  <motion.div key={s.id}
+                    initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    onClick={() => setStudentModal(s)}
+                    whileHover={{ y: -3, boxShadow: '0 12px 24px rgba(24,24,27,0.08)' }}
+                    style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '16px', padding: '1.1rem 1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.8rem', boxShadow: '0 1px 2px rgba(24,24,27,0.04)', cursor: 'pointer' }}
+                  >
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ color: '#18181b', fontWeight: 600, fontSize: '0.9rem' }}>{s.full_name}</p>
+                      <p style={{ color: '#71717a', fontSize: '0.78rem', marginTop: '2px' }}>{s.email}</p>
+                      {s.monthly_fee > 0 && (
+                        <p style={{ fontSize: '0.75rem', marginTop: '3px', fontWeight: 600, color: ACCENT }}>
+                          ₹{s.monthly_fee}/month · billed on the {s.fee_day ? dayOrdinal(s.fee_day) : '1st'} each month
+                        </p>
+                      )}
+                      {(s.tag_class || s.tag_subjects?.length > 0) && (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '7px' }}>
+                          {s.tag_class && <span style={{ background: '#eff6ff', color: '#2563eb', border: '1px solid #bfdbfe', fontSize: '0.68rem', fontWeight: 700, padding: '2px 8px', borderRadius: '999px' }}>{s.tag_class}</span>}
+                          {s.tag_subjects?.map(sub => <span key={sub} style={{ background: '#ecfdf5', color: '#059669', border: '1px solid #a7f3d0', fontSize: '0.68rem', fontWeight: 700, padding: '2px 8px', borderRadius: '999px' }}>{sub}</span>)}
+                        </div>
+                      )}
+                    </div>
+                    <span style={{ fontSize: '0.75rem', color: ACCENT, fontWeight: 600, whiteSpace: 'nowrap' }}>View →</span>
+                  </motion.div>
+                ))}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -698,14 +793,34 @@ export default function CenterDashboard() {
         onAccept={handleAcceptFromModal}
         onDecline={handleDeclineFromModal}
         onRemove={handleRemoveFromModal}
+        onEditTags={handleEditTagsFromModal}
+        onEditFee={handleEditFeeFromModal}
         accentColor={ACCENT}
       />
 
       <AcceptStudentModal
         open={feeModal !== null}
         studentName={students.find(s => s.id === feeModal)?.full_name}
+        studentSubjects={students.find(s => s.id === feeModal)?.student_subjects}
+        studentGrades={students.find(s => s.id === feeModal)?.student_grades}
         onConfirm={submitAccept}
         onCancel={() => setFeeModal(null)}
+        accentColor={ACCENT}
+      />
+
+      <EditTagsModal
+        open={!!tagModal}
+        student={tagModal}
+        onConfirm={submitTagEdit}
+        onCancel={() => setTagModal(null)}
+        accentColor={ACCENT}
+      />
+
+      <EditFeeModal
+        open={!!editFeeModal}
+        student={editFeeModal}
+        onConfirm={submitFeeEdit}
+        onCancel={() => setEditFeeModal(null)}
         accentColor={ACCENT}
       />
 
