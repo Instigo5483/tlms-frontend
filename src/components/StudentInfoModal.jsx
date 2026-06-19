@@ -1,9 +1,14 @@
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 
 export default function StudentInfoModal({ open, student, onClose, onAccept, onDecline, onRemove, accentColor = '#4f46e5' }) {
+  const [avatarError, setAvatarError] = useState(false)
+  useEffect(() => setAvatarError(false), [student?.id])
+
   if (!student) return null
   const isPending = student.status === 'pending'
   const isAccepted = student.status === 'accepted'
+  const initials = student.full_name?.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '??'
 
   return (
     <AnimatePresence>
@@ -38,9 +43,15 @@ export default function StudentInfoModal({ open, student, onClose, onAccept, onD
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontWeight: 800, fontSize: '1rem', color: accentColor, overflow: 'hidden',
               }}>
-                {student.avatar_url
-                  ? <img src={student.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  : (student.full_name?.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '??')}
+                {student.avatar_url && !avatarError
+                  ? <img
+                      src={student.avatar_url}
+                      alt=""
+                      referrerPolicy="no-referrer"
+                      onError={() => setAvatarError(true)}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  : initials}
               </div>
               <div>
                 <div style={{ fontWeight: 700, fontSize: '1rem', color: '#18181b' }}>{student.full_name || 'Student'}</div>
