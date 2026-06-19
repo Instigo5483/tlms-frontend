@@ -120,7 +120,16 @@ export default function Profile() {
       </div>
     )
     if (enrollStatus.status === 'rejected') return (
-      <span style={{ padding: '8px 16px', borderRadius: '10px', background: '#f4f4f5', border: '1px solid #d4d4d8', color: '#18181b', fontSize: '0.82rem', fontWeight: 600 }}>Request Declined</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+        <span style={{ padding: '8px 16px', borderRadius: '10px', background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', fontSize: '0.82rem', fontWeight: 600 }}>Request Declined</span>
+        <motion.button
+          onClick={handleEnroll}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+          style={{ padding: '8px 16px', background: ACCENT, color: '#fff', border: 'none', borderRadius: '999px', fontWeight: 700, cursor: 'pointer', fontSize: '0.82rem' }}>
+          Try Again
+        </motion.button>
+      </div>
     )
     return null
   }

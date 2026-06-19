@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 
 const ALL_SUBJECTS = [
@@ -21,9 +21,10 @@ export default function ConnectModal({ open, tutorName, tutorSubjects, tutorGrad
   const [subjects, setSubjects] = useState([])
   const [grade, setGrade] = useState('')
   const [sending, setSending] = useState(false)
+  const inFlight = useRef(false)
 
   useEffect(() => {
-    if (open) { setSubjects([]); setGrade(''); setSending(false) }
+    if (open) { setSubjects([]); setGrade(''); setSending(false); inFlight.current = false }
   }, [open])
 
   const subjectOptions = tutorSubjects?.length > 0 ? tutorSubjects : ALL_SUBJECTS
@@ -34,9 +35,15 @@ export default function ConnectModal({ open, tutorName, tutorSubjects, tutorGrad
   }
 
   async function handleSend() {
+    if (inFlight.current) return
+    inFlight.current = true
     setSending(true)
-    await onConfirm({ subjects, grade })
-    setSending(false)
+    try {
+      await onConfirm({ subjects, grade })
+    } finally {
+      inFlight.current = false
+      setSending(false)
+    }
   }
 
   return (
