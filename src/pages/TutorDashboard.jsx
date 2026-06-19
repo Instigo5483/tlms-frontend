@@ -796,7 +796,7 @@ export default function TutorDashboard() {
         open={feeModal !== null}
         studentName={students.find(s => s.id === feeModal)?.full_name}
         studentSubjects={students.find(s => s.id === feeModal)?.student_subjects}
-        studentGrades={students.find(s => s.id === feeModal)?.student_grades}
+        studentGrades={[students.find(s => s.id === feeModal)?.student_grade].filter(Boolean)}
         onConfirm={submitAccept}
         onCancel={() => setFeeModal(null)}
         accentColor={ACCENT}

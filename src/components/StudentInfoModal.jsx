@@ -72,10 +72,10 @@ export default function StudentInfoModal({ open, student, onClose, onAccept, onD
                 </div>
               )}
 
-              {student.student_grades?.length > 0 && (
+              {student.student_grade && (
                 <div>
                   <p style={{ fontSize: '0.7rem', color: '#a1a1aa', letterSpacing: '0.06em', marginBottom: '4px' }}>CLASS</p>
-                  <p style={{ fontSize: '0.88rem', color: '#3f3f46' }}>{student.student_grades.join(', ')}</p>
+                  <p style={{ fontSize: '0.88rem', color: '#3f3f46' }}>{student.student_grade}</p>
                 </div>
               )}
 

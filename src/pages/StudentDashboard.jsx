@@ -224,8 +224,6 @@ function DropdownMulti({ value, onChange, options, placeholder, accentColor = AC
 function isProfileComplete(p) {
   return !!(
     p.bio?.trim() &&
-    p.subjects && p.subjects.split(',').map(s => s.trim()).filter(Boolean).length > 0 &&
-    p.grade_levels && p.grade_levels.split(',').map(s => s.trim()).filter(Boolean).length > 0 &&
     p.phone?.trim() && p.country?.trim() && p.state?.trim() && p.district?.trim() && p.area?.trim()
   )
 }
@@ -242,7 +240,7 @@ export default function StudentDashboard() {
   const [saving, setSaving] = useState(false)
   const [loadedProfile, setLoadedProfile] = useState(null)
   const [profile, setProfile] = useState({
-    bio: '', subjects: '', grade_levels: '', phone: '', country: '', state: '', district: '', area: ''
+    bio: '', phone: '', country: '', state: '', district: '', area: ''
   })
 
   const initials = user?.full_name
@@ -260,8 +258,6 @@ export default function StudentDashboard() {
       setLoadedProfile(data)
       setProfile({
         bio: data.bio || '',
-        subjects: data.subjects?.join(', ') || '',
-        grade_levels: data.grade_levels?.join(', ') || '',
         phone: data.phone || '',
         country: data.country || '',
         state: data.state || '',
@@ -279,8 +275,6 @@ export default function StudentDashboard() {
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({
           bio: profile.bio,
-          subjects: profile.subjects.split(',').map(s => s.trim()).filter(Boolean),
-          grade_levels: profile.grade_levels.split(',').map(s => s.trim()).filter(Boolean),
           phone: profile.phone, country: profile.country,
           state: profile.state, district: profile.district, area: profile.area,
         })
@@ -289,8 +283,6 @@ export default function StudentDashboard() {
       if (!res.ok) { setAlertMsg(data.error || 'Failed to save'); return }
       setLoadedProfile(prev => ({
         ...prev, bio: profile.bio,
-        subjects: profile.subjects.split(',').map(s => s.trim()).filter(Boolean),
-        grade_levels: profile.grade_levels.split(',').map(s => s.trim()).filter(Boolean),
         phone: profile.phone, country: profile.country,
         state: profile.state, district: profile.district, area: profile.area,
       }))
@@ -333,8 +325,6 @@ export default function StudentDashboard() {
 
   const fields = [
     { label: 'Bio', name: 'bio', placeholder: 'Tell tutors and centers about yourself...', type: 'textarea' },
-    { label: 'Subjects you need help with', name: 'subjects', type: 'multiselect', options: INDIA_SUBJECTS, placeholder: 'Select subjects...' },
-    { label: 'Your Class', name: 'grade_levels', type: 'select', options: GRADE_LEVELS },
     { label: 'Phone', name: 'phone', placeholder: '+91 98765 43210' },
     { label: 'Country', name: 'country', type: 'select', options: ['India'] },
     { label: 'State', name: 'state', type: 'select', options: INDIA_STATES },
@@ -502,16 +492,6 @@ export default function StudentDashboard() {
                       style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
                     >
                       <p style={{ color: '#52525b', fontSize: '0.9rem', lineHeight: 1.7 }}>{loadedProfile.bio}</p>
-                      {loadedProfile.subjects?.length > 0 && (
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                          {loadedProfile.subjects.map(s => (
-                            <span key={s} style={{ background: '#eef2ff', border: '1px solid #e0e7ff', color: ACCENT, fontSize: '0.78rem', padding: '3px 10px', borderRadius: '6px' }}>{s}</span>
-                          ))}
-                        </div>
-                      )}
-                      {loadedProfile.grade_levels?.length > 0 && (
-                        <p style={{ color: '#a1a1aa', fontSize: '0.82rem' }}>{loadedProfile.grade_levels.join(', ')}</p>
-                      )}
                       {loadedProfile.phone && (
                         <p style={{ color: '#a1a1aa', fontSize: '0.82rem' }}>{loadedProfile.phone}</p>
                       )}

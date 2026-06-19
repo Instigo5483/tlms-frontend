@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'motion/react'
 import Navbar from '../components/Navbar'
 import ConfirmModal from '../components/ConfirmModal'
+import ConnectModal from '../components/ConnectModal'
 import { useAuth } from '../hooks/useAuth'
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL
@@ -16,6 +17,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(true)
   const [enrollStatus, setEnrollStatus] = useState(null)
   const [enrolling, setEnrolling] = useState(false)
+  const [connectModal, setConnectModal] = useState(false)
   const [error, setError] = useState('')
   const [removeModal, setRemoveModal] = useState(false)
   const [alertMsg, setAlertMsg] = useState(null)
@@ -50,17 +52,22 @@ export default function Profile() {
     checkStatus()
   }, [id, type])
 
-  async function handleEnroll() {
+  function handleEnroll() {
     if (!user) { navigate('/login'); return }
+    setConnectModal(true)
+  }
+
+  async function submitEnroll({ subjects, grade }) {
     setEnrolling(true)
     try {
       const res = await fetch(`${BACKEND}/api/enroll`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ tutor_id: id })
+        body: JSON.stringify({ tutor_id: id, student_subjects: subjects, student_grade: grade })
       })
       const data = await res.json()
       if (!res.ok) { setAlertMsg(data.error || 'Failed to send request'); return }
+      setConnectModal(false)
       setEnrollStatus(data)
     } catch { setAlertMsg('Failed to send request. Try again.') }
     finally { setEnrolling(false) }
@@ -87,17 +94,17 @@ export default function Profile() {
     if (!user || user.role !== 'student') return null
     if (!enrollStatus) return (
       <motion.button
-        onClick={handleEnroll} disabled={enrolling}
-        whileHover={{ scale: enrolling ? 1 : 1.03 }}
-        whileTap={{ scale: enrolling ? 1 : 0.97 }}
+        onClick={handleEnroll}
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.97 }}
         style={{
           padding: '10px 24px',
-          background: enrolling ? '#e4e4e7' : ACCENT,
+          background: ACCENT,
           color: '#fff', border: 'none', borderRadius: '999px',
-          fontWeight: 700, cursor: enrolling ? 'not-allowed' : 'pointer',
+          fontWeight: 700, cursor: 'pointer',
           fontSize: '0.9rem', whiteSpace: 'nowrap'
         }}>
-        {enrolling ? 'Sending...' : type === 'center' ? 'Enroll' : 'Connect'}
+        {type === 'center' ? 'Enroll' : 'Connect'}
       </motion.button>
     )
     if (enrollStatus.status === 'pending') return (
@@ -283,6 +290,17 @@ export default function Profile() {
           </motion.div>
         )}
       </main>
+
+      <ConnectModal
+        open={connectModal}
+        tutorName={isCenter ? profile?.center_name : profile?.full_name}
+        tutorSubjects={profile?.subjects}
+        tutorGrades={profile?.grade_levels}
+        isCenter={isCenter}
+        onConfirm={submitEnroll}
+        onCancel={() => setConnectModal(false)}
+        accentColor={ACCENT}
+      />
 
       <ConfirmModal
         open={removeModal}
