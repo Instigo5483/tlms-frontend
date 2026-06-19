@@ -2,13 +2,18 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import Navbar from '../components/Navbar'
 import ConfirmModal from '../components/ConfirmModal'
-import InputModal from '../components/InputModal'
+import AcceptStudentModal from '../components/AcceptStudentModal'
 import StudentInfoModal from '../components/StudentInfoModal'
 import AvatarUpload from '../components/AvatarUpload'
 import { useAuth } from '../hooks/useAuth'
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'
 const ACCENT = '#2563eb'
+
+function dayOrdinal(n) {
+  const s = ['th','st','nd','rd'], v = n % 100
+  return n + (s[(v - 20) % 10] || s[v] || s[0])
+}
 
 const INDIA_SUBJECTS = [
   'Accountancy','Arts / Drawing','Bengali','Biology','Business Studies','Chemistry',
@@ -364,18 +369,19 @@ export default function TutorDashboard() {
     setFeeModal(enrollmentId)
   }
 
-  async function submitAccept(fee) {
+  async function submitAccept({ fee, startDate }) {
     const enrollmentId = feeModal
     setFeeModal(null)
     try {
       const res = await fetch(`${BACKEND}/api/enrollments/${enrollmentId}/accept`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ monthly_fee: Number(fee), fee_day: 1 })
+        body: JSON.stringify({ monthly_fee: Number(fee), payment_start_date: startDate })
       })
       if (!res.ok) { setAlertMsg('Failed to accept the request. Please try again.'); return }
+      const updated = await res.json()
       setStudents(prev => prev.map(s =>
-        s.id === enrollmentId ? { ...s, status: 'accepted', monthly_fee: Number(fee) } : s
+        s.id === enrollmentId ? { ...s, status: 'accepted', monthly_fee: Number(fee), fee_day: updated.fee_day } : s
       ))
     } catch { setAlertMsg('Failed to accept the request. Please try again.') }
   }
@@ -677,7 +683,9 @@ export default function TutorDashboard() {
                     <p style={{ color: '#18181b', fontWeight: 600, fontSize: '0.9rem' }}>{s.full_name}</p>
                     <p style={{ color: '#71717a', fontSize: '0.78rem', marginTop: '2px' }}>{s.email}</p>
                     {s.monthly_fee > 0 && (
-                      <p style={{ fontSize: '0.75rem', marginTop: '3px', fontWeight: 600, color: ACCENT }}>₹{s.monthly_fee}/month · due day {s.fee_day || 1}</p>
+                      <p style={{ fontSize: '0.75rem', marginTop: '3px', fontWeight: 600, color: ACCENT }}>
+                        ₹{s.monthly_fee}/month · billed on the {s.fee_day ? dayOrdinal(s.fee_day) : '1st'} each month
+                      </p>
                     )}
                   </div>
                   <span style={{ fontSize: '0.75rem', color: ACCENT, fontWeight: 600, whiteSpace: 'nowrap' }}>View →</span>
@@ -698,15 +706,9 @@ export default function TutorDashboard() {
         accentColor={ACCENT}
       />
 
-      <InputModal
+      <AcceptStudentModal
         open={feeModal !== null}
-        title="Set Monthly Fee"
-        message="Enter the monthly fee for this student. Set to 0 for a free enrollment."
-        label="Monthly Fee"
-        placeholder="e.g. 2000"
-        type="number"
-        prefix="₹"
-        confirmLabel="Accept Student"
+        studentName={students.find(s => s.id === feeModal)?.full_name}
         onConfirm={submitAccept}
         onCancel={() => setFeeModal(null)}
         accentColor={ACCENT}
