@@ -3,6 +3,14 @@ import { motion, AnimatePresence } from 'motion/react'
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL
 
+const inputStyle = {
+  width: '100%', height: '42px', padding: '0 12px',
+  border: '1px solid #e4e4e7', borderRadius: '10px',
+  fontSize: '0.88rem', outline: 'none',
+  boxSizing: 'border-box', color: '#18181b',
+  background: '#fafafa',
+}
+
 export default function RequestSubjectModal({ open, onClose, token, accentColor = '#4f46e5' }) {
   const [entries, setEntries] = useState([{ subject: '', grade: '' }])
   const [submitting, setSubmitting] = useState(false)
@@ -49,6 +57,8 @@ export default function RequestSubjectModal({ open, onClose, token, accentColor 
     finally { setSubmitting(false); inFlight.current = false }
   }
 
+  const canSubmit = !submitting && entries.some(e => e.subject.trim())
+
   return (
     <AnimatePresence>
       {open && (
@@ -64,16 +74,17 @@ export default function RequestSubjectModal({ open, onClose, token, accentColor 
           }}
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 16 }}
+            initial={{ opacity: 0, scale: 0.92, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.94, y: 8 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             onClick={e => e.stopPropagation()}
             style={{
-              width: '100%', maxWidth: '480px',
+              width: '100%', maxWidth: '460px',
               background: '#fff', border: '1px solid #e4e4e7', borderRadius: '20px',
-              padding: '1.8rem', boxShadow: '0 24px 60px rgba(24,24,27,0.18)',
-              maxHeight: '88vh', overflowY: 'auto',
+              padding: '1.6rem', boxShadow: '0 24px 64px rgba(24,24,27,0.2)',
+              maxHeight: '88vh', overflowY: 'auto', overflowX: 'hidden',
+              boxSizing: 'border-box',
             }}
           >
             <AnimatePresence mode="wait">
@@ -83,95 +94,120 @@ export default function RequestSubjectModal({ open, onClose, token, accentColor 
                   style={{ textAlign: 'center', padding: '2.4rem 0' }}
                 >
                   <div style={{
-                    width: '48px', height: '48px', borderRadius: '50%',
-                    background: '#ecfdf5', border: '1px solid #a7f3d0',
+                    width: '52px', height: '52px', borderRadius: '50%',
+                    background: '#ecfdf5', border: '1.5px solid #6ee7b7',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '1.4rem', margin: '0 auto 14px',
+                    fontSize: '1.5rem', margin: '0 auto 14px', color: '#059669',
                   }}>✓</div>
-                  <p style={{ fontWeight: 700, color: '#18181b', fontSize: '1rem', marginBottom: '4px' }}>Request sent!</p>
-                  <p style={{ color: '#71717a', fontSize: '0.85rem' }}>We'll review and add it to the list soon.</p>
+                  <p style={{ fontWeight: 700, color: '#18181b', fontSize: '1rem', margin: '0 0 4px' }}>Request sent!</p>
+                  <p style={{ color: '#71717a', fontSize: '0.85rem', margin: 0 }}>We'll review and add it to the list soon.</p>
                 </motion.div>
               ) : (
                 <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                  <h3 style={{ fontWeight: 700, fontSize: '1rem', color: '#18181b', marginBottom: '0.25rem' }}>
-                    Request a Subject
-                  </h3>
-                  <p style={{ color: '#71717a', fontSize: '0.83rem', marginBottom: '1.4rem' }}>
-                    Don't see what you need? Tell us the subject name and class level — we'll add it.
-                  </p>
+                  {/* Header */}
+                  <div style={{ marginBottom: '1.2rem' }}>
+                    <h3 style={{ fontWeight: 700, fontSize: '1.02rem', color: '#18181b', margin: '0 0 4px' }}>
+                      Request a Subject
+                    </h3>
+                    <p style={{ color: '#71717a', fontSize: '0.82rem', margin: 0, lineHeight: 1.5 }}>
+                      Don't see what you need? Tell us — we'll add it.
+                    </p>
+                  </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '10px' }}>
+                  {/* Entry cards */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '10px' }}>
                     {entries.map((entry, i) => (
-                      <div key={i} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                        <input
-                          value={entry.subject}
-                          onChange={e => updateEntry(i, 'subject', e.target.value)}
-                          placeholder="Subject name *"
-                          style={{
-                            flex: 1, height: '40px', padding: '0 12px',
-                            border: '1px solid #e4e4e7', borderRadius: '8px',
-                            fontSize: '0.88rem', outline: 'none', boxSizing: 'border-box',
-                          }}
-                        />
-                        <input
-                          value={entry.grade}
-                          onChange={e => updateEntry(i, 'grade', e.target.value)}
-                          placeholder="Class / Level (optional)"
-                          style={{
-                            flex: 1, height: '40px', padding: '0 12px',
-                            border: '1px solid #e4e4e7', borderRadius: '8px',
-                            fontSize: '0.88rem', outline: 'none', boxSizing: 'border-box',
-                          }}
-                        />
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+                        style={{
+                          background: '#f9f9fb', border: '1px solid #e4e4e7',
+                          borderRadius: '12px', padding: '12px',
+                          position: 'relative',
+                        }}
+                      >
                         {entries.length > 1 && (
                           <button
                             onClick={() => removeEntry(i)}
                             style={{
-                              width: '28px', height: '28px', flexShrink: 0,
-                              borderRadius: '50%', border: '1px solid #e4e4e7',
-                              background: '#f4f4f5', cursor: 'pointer',
-                              color: '#71717a', fontSize: '1rem', lineHeight: 1,
+                              position: 'absolute', top: '10px', right: '10px',
+                              width: '22px', height: '22px', flexShrink: 0,
+                              borderRadius: '50%', border: '1px solid #d4d4d8',
+                              background: '#fff', cursor: 'pointer',
+                              color: '#a1a1aa', fontSize: '0.9rem', lineHeight: 1,
                               display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              padding: 0,
                             }}
                           >×</button>
                         )}
-                      </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                          <div>
+                            <label style={{ fontSize: '0.76rem', fontWeight: 600, color: '#52525b', display: 'block', marginBottom: '5px' }}>
+                              Subject name <span style={{ color: '#ef4444' }}>*</span>
+                            </label>
+                            <input
+                              value={entry.subject}
+                              onChange={e => updateEntry(i, 'subject', e.target.value)}
+                              placeholder="e.g. Environmental Science"
+                              style={{ ...inputStyle, paddingRight: entries.length > 1 ? '32px' : '12px' }}
+                            />
+                          </div>
+                          <div>
+                            <label style={{ fontSize: '0.76rem', fontWeight: 600, color: '#52525b', display: 'block', marginBottom: '5px' }}>
+                              Class / Level <span style={{ color: '#a1a1aa', fontWeight: 400 }}>(optional)</span>
+                            </label>
+                            <input
+                              value={entry.grade}
+                              onChange={e => updateEntry(i, 'grade', e.target.value)}
+                              placeholder="e.g. Grade 10, A-Level, Beginners…"
+                              style={inputStyle}
+                            />
+                          </div>
+                        </div>
+                      </motion.div>
                     ))}
                   </div>
 
+                  {/* Add another */}
                   <button
                     onClick={addMore}
                     style={{
-                      width: '100%', padding: '8px', marginBottom: '1.4rem',
-                      background: 'none', border: '1px dashed #d4d4d8', borderRadius: '8px',
+                      width: '100%', padding: '9px', marginBottom: '1.2rem',
+                      background: 'none', border: '1.5px dashed #d4d4d8', borderRadius: '10px',
                       cursor: 'pointer', color: '#71717a', fontSize: '0.82rem', fontWeight: 500,
+                      transition: 'border-color 0.15s, color 0.15s',
                     }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = accentColor; e.currentTarget.style.color = accentColor }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = '#d4d4d8'; e.currentTarget.style.color = '#71717a' }}
                   >
-                    + Add another
+                    + Add another subject
                   </button>
 
-                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                  {/* Footer */}
+                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', alignItems: 'center' }}>
                     <button
                       onClick={onClose}
                       style={{
-                        padding: '8px 18px', background: '#f4f4f5', border: '1px solid #e4e4e7',
+                        padding: '9px 18px', background: '#f4f4f5', border: '1px solid #e4e4e7',
                         borderRadius: '10px', color: '#52525b', cursor: 'pointer',
                         fontSize: '0.83rem', fontWeight: 500,
                       }}
                     >Cancel</button>
                     <motion.button
-                      whileHover={{ scale: submitting ? 1 : 1.03 }}
-                      whileTap={{ scale: submitting ? 1 : 0.97 }}
+                      whileHover={{ scale: canSubmit ? 1.03 : 1 }}
+                      whileTap={{ scale: canSubmit ? 0.97 : 1 }}
                       onClick={handleSubmit}
-                      disabled={submitting || !entries.some(e => e.subject.trim())}
+                      disabled={!canSubmit}
                       style={{
-                        padding: '8px 22px', border: 'none', borderRadius: '10px',
-                        background: (submitting || !entries.some(e => e.subject.trim())) ? '#e4e4e7' : accentColor,
-                        color: (submitting || !entries.some(e => e.subject.trim())) ? '#a1a1aa' : '#fff',
-                        cursor: (submitting || !entries.some(e => e.subject.trim())) ? 'not-allowed' : 'pointer',
+                        padding: '9px 22px', border: 'none', borderRadius: '10px',
+                        background: canSubmit ? accentColor : '#e4e4e7',
+                        color: canSubmit ? '#fff' : '#a1a1aa',
+                        cursor: canSubmit ? 'pointer' : 'not-allowed',
                         fontSize: '0.83rem', fontWeight: 600,
+                        transition: 'background 0.15s',
                       }}
-                    >{submitting ? 'Sending...' : 'Submit Request'}</motion.button>
+                    >{submitting ? 'Sending…' : 'Submit Request'}</motion.button>
                   </div>
                 </motion.div>
               )}
