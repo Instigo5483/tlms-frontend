@@ -15,6 +15,7 @@ export default function Admin() {
   const [filter, setFilter] = useState('pending')
   const [completing, setCompleting] = useState(null)
   const [utrInputs, setUtrInputs] = useState({})
+  const [updatingStatus, setUpdatingStatus] = useState(null)
 
   async function handleLogin(e) {
     e.preventDefault()
@@ -51,6 +52,21 @@ export default function Admin() {
       })
       if (res.ok) setSubjectRequests(await res.json())
     } catch {}
+  }
+
+  async function updateSubjectStatus(id, status) {
+    setUpdatingStatus(id + status)
+    try {
+      const res = await fetch(`${BACKEND}/api/admin/subject-requests/${id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'x-admin-secret': secret },
+        body: JSON.stringify({ status })
+      })
+      if (res.ok) {
+        setSubjectRequests(prev => prev.map(r => r.id === id ? { ...r, status } : r))
+      }
+    } catch {}
+    finally { setUpdatingStatus(null) }
   }
 
   async function markComplete(w) {
@@ -245,41 +261,84 @@ export default function Admin() {
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {subjectRequests.map((r, i) => (
-                  <motion.div key={r.id}
-                    initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.04 }}
-                    style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '16px', padding: '1.2rem 1.4rem', boxShadow: '0 1px 2px rgba(24,24,27,0.04)' }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px', marginBottom: '12px' }}>
-                      <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                          <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#18181b' }}>{r.name || '—'}</span>
-                          <span style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '999px', background: '#f4f4f5', border: '1px solid #e4e4e7', color: '#71717a' }}>{r.role}</span>
+                {subjectRequests.map((r, i) => {
+                  const status = r.status || 'processing'
+                  const statusCfg = {
+                    processing: { label: 'Processing', bg: '#fffbeb', border: '#fde68a', color: '#b45309' },
+                    accepted:   { label: 'Accepted',   bg: '#f0fdf4', border: '#bbf7d0', color: '#15803d' },
+                    rejected:   { label: 'Rejected',   bg: '#fef2f2', border: '#fecaca', color: '#dc2626' },
+                  }[status]
+                  return (
+                    <motion.div key={r.id}
+                      initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.04 }}
+                      style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '16px', padding: '1.2rem 1.4rem', boxShadow: '0 1px 2px rgba(24,24,27,0.04)' }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px', marginBottom: '12px' }}>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                            <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#18181b' }}>{r.name || '—'}</span>
+                            <span style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '999px', background: '#f4f4f5', border: '1px solid #e4e4e7', color: '#71717a' }}>{r.role}</span>
+                            <span style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '999px', background: statusCfg.bg, border: `1px solid ${statusCfg.border}`, color: statusCfg.color, fontWeight: 600 }}>
+                              {statusCfg.label}
+                            </span>
+                          </div>
+                          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                            <a href={`mailto:${r.email}`} style={{ fontSize: '0.8rem', color: ACCENT, textDecoration: 'none' }}>{r.email}</a>
+                            {r.phone && <a href={`tel:${r.phone}`} style={{ fontSize: '0.8rem', color: ACCENT, textDecoration: 'none' }}>{r.phone}</a>}
+                          </div>
                         </div>
-                        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                          <a href={`mailto:${r.email}`} style={{ fontSize: '0.8rem', color: ACCENT, textDecoration: 'none' }}>{r.email}</a>
-                          {r.phone && <a href={`tel:${r.phone}`} style={{ fontSize: '0.8rem', color: ACCENT, textDecoration: 'none' }}>{r.phone}</a>}
-                        </div>
+                        <span style={{ fontSize: '0.72rem', color: '#a1a1aa' }}>
+                          {new Date(r.created_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        </span>
                       </div>
-                      <span style={{ fontSize: '0.72rem', color: '#a1a1aa' }}>
-                        {new Date(r.created_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                      </span>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                      {(r.entries || []).map((entry, j) => (
-                        <div key={j} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                          <span style={{ background: '#eff6ff', border: '1px solid #bfdbfe', color: ACCENT, fontSize: '0.8rem', fontWeight: 600, padding: '3px 10px', borderRadius: '6px' }}>
-                            {entry.subject}
-                          </span>
-                          {entry.grade && (
-                            <span style={{ color: '#71717a', fontSize: '0.78rem' }}>for {entry.grade}</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </motion.div>
-                ))}
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '14px' }}>
+                        {(r.entries || []).map((entry, j) => (
+                          <div key={j} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                            <span style={{ background: '#eff6ff', border: '1px solid #bfdbfe', color: ACCENT, fontSize: '0.8rem', fontWeight: 600, padding: '3px 10px', borderRadius: '6px' }}>
+                              {entry.subject}
+                            </span>
+                            {entry.grade && (
+                              <span style={{ color: '#71717a', fontSize: '0.78rem' }}>for {entry.grade}</span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Status action buttons */}
+                      <div style={{ display: 'flex', gap: '6px', paddingTop: '12px', borderTop: '1px solid #f4f4f5', flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: '0.75rem', color: '#a1a1aa', alignSelf: 'center', marginRight: '4px' }}>Set status:</span>
+                        {[
+                          { key: 'processing', label: 'Processing', activeColor: '#b45309', activeBg: '#fffbeb', activeBorder: '#fde68a' },
+                          { key: 'accepted',   label: 'Accepted',   activeColor: '#15803d', activeBg: '#f0fdf4', activeBorder: '#bbf7d0' },
+                          { key: 'rejected',   label: 'Rejected',   activeColor: '#dc2626', activeBg: '#fef2f2', activeBorder: '#fecaca' },
+                        ].map(opt => {
+                          const isActive = status === opt.key
+                          const isBusy = updatingStatus === r.id + opt.key
+                          return (
+                            <motion.button
+                              key={opt.key}
+                              whileHover={{ scale: isActive ? 1 : 1.03 }}
+                              whileTap={{ scale: 0.97 }}
+                              disabled={isActive || !!updatingStatus}
+                              onClick={() => updateSubjectStatus(r.id, opt.key)}
+                              style={{
+                                padding: '5px 14px', border: `1px solid ${isActive ? opt.activeBorder : '#e4e4e7'}`,
+                                borderRadius: '999px', cursor: isActive ? 'default' : 'pointer',
+                                fontSize: '0.78rem', fontWeight: 600,
+                                background: isActive ? opt.activeBg : '#fff',
+                                color: isActive ? opt.activeColor : '#71717a',
+                                opacity: isBusy ? 0.5 : 1,
+                                transition: 'all 0.15s',
+                              }}
+                            >{isBusy ? '…' : opt.label}</motion.button>
+                          )
+                        })}
+                      </div>
+                    </motion.div>
+                  )
+                })}
               </div>
             )}
           </>

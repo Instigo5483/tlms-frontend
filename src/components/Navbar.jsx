@@ -28,6 +28,7 @@ export default function Navbar() {
     { to: getDashboardPath(), label: 'Dashboard', show: !!user },
     { to: '/payments', label: 'Payments', show: !!user },
     { to: '/wallet', label: 'Wallet', show: !!user && user.role !== 'student' },
+    { to: '/support', label: 'Support', show: !!user },
   ].filter(l => l.show)
 
   return (

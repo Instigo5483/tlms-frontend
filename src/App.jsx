@@ -13,6 +13,7 @@ import Profile from './pages/Profile'
 import Payments from './pages/Payments'
 import Wallet from './pages/Wallet'
 import Admin from './pages/Admin'
+import Support from './pages/Support'
 
 function ProtectedRoute({ children, role }) {
   const { user, loading } = useAuth()
@@ -62,6 +63,9 @@ export default function App() {
             <ProtectedRoute role="center"><CenterDashboard /></ProtectedRoute>
           } />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/support" element={
+            <ProtectedRoute><Support /></ProtectedRoute>
+          } />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
