@@ -5,7 +5,7 @@ import { useAuth } from '../hooks/useAuth'
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL
 const SUPPORT_EMAIL = 'support@tlms.website'
-const DISCORD_URL = 'https://discord.gg/tlms'
+const DISCORD_URL = 'https://discord.gg/6zbbqUrQq9'
 
 const STATUS_CONFIG = {
   processing: { label: 'Processing', bg: '#fffbeb', border: '#fde68a', color: '#b45309' },
