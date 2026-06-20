@@ -14,12 +14,12 @@ const STATUS_CONFIG = {
 }
 
 export default function Support() {
-  const { token } = useAuth()
+  const { token, user } = useAuth()
   const [requests, setRequests] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!token) return
+    if (!token || user?.role === 'student') { setLoading(false); return }
     fetch(`${BACKEND}/api/subject-requests/mine`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
@@ -110,8 +110,8 @@ export default function Support() {
           </a>
         </motion.div>
 
-        {/* Subject Requests */}
-        <motion.div
+        {/* Subject Requests — tutors and centers only */}
+        {user?.role !== 'student' && <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, delay: 0.14, ease: [0.22, 1, 0.36, 1] }}
@@ -183,7 +183,7 @@ export default function Support() {
               })}
             </div>
           )}
-        </motion.div>
+        </motion.div>}
 
       </div>
     </div>
