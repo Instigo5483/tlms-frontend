@@ -6,6 +6,7 @@ import AcceptStudentModal from '../components/AcceptStudentModal'
 import StudentInfoModal from '../components/StudentInfoModal'
 import EditStudentModal from '../components/EditStudentModal'
 import AvatarUpload from '../components/AvatarUpload'
+import RequestSubjectModal from '../components/RequestSubjectModal'
 import { useAuth } from '../hooks/useAuth'
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'
@@ -124,7 +125,7 @@ function DropdownSingle({ value, onChange, options, placeholder, accentColor = A
   )
 }
 
-function DropdownMulti({ value, onChange, options, placeholder, accentColor = ACCENT }) {
+function DropdownMulti({ value, onChange, options, placeholder, accentColor = ACCENT, onRequestCustom }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
   const selected = value ? value.split(',').map(s => s.trim()).filter(Boolean) : []
@@ -200,7 +201,7 @@ function DropdownMulti({ value, onChange, options, placeholder, accentColor = AC
                       width: '100%', padding: '10px 16px',
                       background: active ? `${accentColor}15` : 'transparent',
                       border: 'none',
-                      borderBottom: i < options.length - 1 ? '1px solid #f4f4f5' : 'none',
+                      borderBottom: '1px solid #f4f4f5',
                       cursor: 'pointer', textAlign: 'left',
                       color: active ? accentColor : '#52525b',
                       fontSize: '0.88rem', fontWeight: active ? 600 : 400,
@@ -214,12 +215,35 @@ function DropdownMulti({ value, onChange, options, placeholder, accentColor = AC
                       background: active ? accentColor : 'transparent',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       fontSize: '9px', color: '#fff', fontWeight: 900,
-                      transition: 'all 0.15s', flexShrink: 0,
+                      transition: 'all 0.15s',
                     }}>{active ? '✓' : ''}</span>
                     {o}
                   </motion.button>
                 )
               })}
+              {onRequestCustom && (
+                <motion.button
+                  type="button"
+                  whileHover={{ background: '#fafafa' }}
+                  onClick={() => { setOpen(false); onRequestCustom() }}
+                  style={{
+                    width: '100%', padding: '10px 16px',
+                    background: 'transparent', border: 'none',
+                    cursor: 'pointer', textAlign: 'left',
+                    color: '#71717a', fontSize: '0.82rem', fontWeight: 500,
+                    display: 'flex', alignItems: 'center', gap: '10px',
+                    borderTop: '1px solid #e4e4e7',
+                  }}
+                >
+                  <span style={{
+                    width: '15px', height: '15px', borderRadius: '4px', flexShrink: 0,
+                    border: '1.5px solid #d4d4d8', background: 'transparent',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '11px', color: '#a1a1aa', fontWeight: 700,
+                  }}>+</span>
+                  Request a subject not listed...
+                </motion.button>
+              )}
             </div>
           </motion.div>
         )}
@@ -272,6 +296,7 @@ export default function TutorDashboard() {
   const [filterSubjects, setFilterSubjects] = useState([])
   const [alertMsg, setAlertMsg] = useState(null)
   const [togglingVisibility, setTogglingVisibility] = useState(false)
+  const [requestSubjectOpen, setRequestSubjectOpen] = useState(false)
   const [profile, setProfile] = useState({
     bio: '', monthly_rate: '', subjects: '', grade_levels: '',
     phone: '', country: '', state: '', district: '', area: ''
@@ -609,6 +634,7 @@ export default function TutorDashboard() {
                               onChange={val => setProfile(p => ({ ...p, [f.name]: val }))}
                               options={f.options}
                               placeholder={f.placeholder}
+                              onRequestCustom={f.name === 'subjects' ? () => setRequestSubjectOpen(true) : undefined}
                             />
                           ) : (
                             <input type={f.type || 'text'} placeholder={f.placeholder}
@@ -829,6 +855,12 @@ export default function TutorDashboard() {
         onCancel={() => setAlertMsg(null)}
         hideCancel
         accentColor="#3f3f46"
+      />
+      <RequestSubjectModal
+        open={requestSubjectOpen}
+        onClose={() => setRequestSubjectOpen(false)}
+        token={token}
+        accentColor={ACCENT}
       />
     </div>
   )
