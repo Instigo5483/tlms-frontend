@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="public/logo.jpeg" alt="TLMS Logo" width="80" style="border-radius: 16px" />
+<img src="public/tlms-icon.svg" alt="TLMS Logo" width="80" />
 
 # TLMS Frontend
 
